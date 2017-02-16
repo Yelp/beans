@@ -1,0 +1,29 @@
+{% extends "base_email_template.html" %}
+{% block content %}
+<tr>
+    <td>
+        <p>
+            Hi {{first_name}}!
+        </p>
+        <p>
+            We would like to introduce you to Beans -- here to help you start meeting new people,
+            share knowledge, and explore our diverse culture.  Beans will match you with a different
+            co-worker every week for a 30 minute coffee meeting.
+        </p>
+        <p>
+            <b>How it works:</b> Once you select a meeting preference by clicking the button below,
+            Beans will send you an email each Monday asking if you want to meet someone new that
+            week.  If you select “Yes”, mid-week we will match you.  If don’t select “Yes”, no
+            worries!  We won’t match you that week and will follow up the next week.  Before your
+            meeting, you will receive details about that week's match. On the day of the meeting,
+            look for your match based on the details you receive in the match email and strike up a
+            conversation!
+        </p>
+    </td>
+</tr>
+<tr>
+    <td align="center">
+        <a class="button" href="https://yelp-beans.appspot.com">Subscribe!</a>
+    </td>
+</tr>
+{% endblock %}

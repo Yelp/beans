@@ -1,0 +1,17 @@
+.DS_Store
+*.pyc
+*.swp
+client_secrets.json
+.idea/
+.cache/
+/lib/
+dist/
+venv
+*~
+tests/.cache
+yelp_beans.egg-info/
+.coverage
+coverage-html/
+.node-version
+node_modules/
+/coverage

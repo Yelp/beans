@@ -1,0 +1,56 @@
+* {
+    font-family: "Open Sans";
+    font-size: 12pt;
+}
+input[type='radio'], input[type='checkbox'] {
+    margin-left: 30px;
+    margin-right: 12px;
+}
+.left30 {
+    margin-left: 30px;
+}
+
+.yelp_logo {
+    position: absolute;
+    right: 0px;
+}
+
+.logo {
+    width: 6em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.logo-font {
+    font-size: 38pt;
+    vertical-align: bottom;
+    color: white;
+    font-family: "Pacifico";
+}
+
+.navbar {
+    background-color: #d32323;
+    border-radius: 0px;
+}
+
+.navbar img {
+    height: 80px;
+}
+
+.content {
+    padding-top: .25em;
+    text-align: center;
+}
+
+.preferences {
+    text-align: center;
+}
+
+.profile-img {
+    height: 170px;
+    border-radius: 50%;
+}
+
+.footer_hr {
+    border-top: 2px solid #eee;
+}

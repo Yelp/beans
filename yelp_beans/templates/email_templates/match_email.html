@@ -1,0 +1,46 @@
+{% extends "base_email_template.html" %}
+{% block content %}
+<tr>
+    <td>
+        <p>Hey {{user.first_name}}! </p>
+        <p>
+            Congrats! We've matched you this week for a Yelp Beans meeting on {{meeting_start_day}}
+            from {{meeting_start_time}} to {{meeting_end_time}}.Here's who you are meeting:
+        </p>
+    </td>
+</tr>
+<tr>
+    <td>
+        <table>
+            <tbody>
+                <tr>
+                    {% for participant in participants %}
+                    <td width="80px">
+                        <img style="border-radius:50%;width:80px" src={{participant.photo_url}}>
+                    </td>
+                    <td width="30px">
+                        <p><a href="mailto:{{participant.email}}">{{participant.first_name}} {{participant.last_name}}</a>
+                        </p>
+                        <p>{{participant.department}}</p>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td>
+        <p><b>When:</b> {{meeting_start_date}} from {{meeting_start_time}} to {{meeting_end_time}} (<a
+                href={{calendar_invite_url}}>Add to calendar</a>)</p>
+        <p><b>Where:</b> {{ location }}</p>
+
+        <p><b>Reschedule Policy:</b> Things happen. We get it. If you need to reschedule, please contact
+            the matched yelper and suggest a new time/place for the meeting.
+        </p>
+        <p><b>Meeting Advice:</b> We suggest keeping the meeting short (30 mins). Introduce yourselves,
+            talk about your background, what you're working on at Yelp.
+        </p>
+    </td>
+</tr>
+{% endblock %}

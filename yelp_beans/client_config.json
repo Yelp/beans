@@ -1,0 +1,9 @@
+{
+  "SENDGRID_SENDER": "no-reply@yelp-beans.appspotmail.com",
+  "SENDGRID_API_KEY": "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",
+  "AWS_ACCESS_KEY_ID": "AKIAJB4N7HPKAN35LUZQ",
+  "AWS_SECRET_ACCESS_KEY": "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",
+  "rest_user": "beans_service@yelp.com",
+  "rest_password": "Z8gzkBzq4ArCLa2",
+  "rest_url": "https://elastic.snaplogic.com/api/1/rest/slsched/feed/yelp/projects/Microservices/YelpBeans"
+}
