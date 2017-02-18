@@ -11,7 +11,6 @@ from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.match import generate_meetings
 from yelp_beans.match import get_previous_meetings
-from yelp_beans.match import MEETING_COOLDOWN_WEEKS
 from yelp_beans.match import save_meetings
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
@@ -21,6 +20,9 @@ from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
+
+
+MEETING_COOLDOWN_WEEKS = 10
 
 
 def test_generate_meetings_same_department(minimal_database, subscription):

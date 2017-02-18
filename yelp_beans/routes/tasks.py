@@ -7,7 +7,7 @@ import logging
 
 from flask import Blueprint
 
-from yelp_beans.data_providers.workday import get_json_employee_data
+from yelp_beans.logic.data_ingestion import DataIngestion
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.subscription import get_specs_from_subscription
@@ -43,8 +43,9 @@ def weekly_opt_in():
 
 
 @tasks.route('/populate_employees', methods=['GET'])
-def populate_users_from_s3():
-    sync_employees([employee for employee in get_json_employee_data()])
+def populate_employees():
+    employees = DataIngestion().ingest()
+    sync_employees([employee for employee in employees])
     return "OK"
 
 
@@ -59,7 +60,9 @@ def match_employees():
         users = [
             request.user.get()
             for request
-            in MeetingRequest.query(MeetingRequest.meeting_spec == spec.key).fetch()
+            in MeetingRequest.query(
+                MeetingRequest.meeting_spec == spec.key
+            ).fetch()
         ]
         logging.info('Users: ')
         logging.info([user.get_username() for user in users])
@@ -79,8 +82,12 @@ def send_match_emails():
         matches = []
         meetings = Meeting.query(Meeting.meeting_spec == spec.key).fetch()
         for meeting in meetings:
-            participants = MeetingParticipant.query(MeetingParticipant.meeting == meeting.key).fetch()
-            matches.append((participants[0].user.get(), participants[1].user.get()))
+            participants = MeetingParticipant.query(
+                MeetingParticipant.meeting == meeting.key
+            ).fetch()
+            matches.append(
+                (participants[0].user.get(), participants[1].user.get())
+            )
         logging.info(spec)
         logging.info(matches)
         send_batch_meeting_confirmation_email(matches, spec)

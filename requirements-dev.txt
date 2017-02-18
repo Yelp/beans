@@ -10,5 +10,6 @@ pbr==1.10.0
 pre-commit==0.12.0
 py==1.4.32
 pytest==3.0.5
+requests-mock==1.3.0
 requirements-tools==0.1.0
 virtualenv==15.1.0
