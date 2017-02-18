@@ -8,15 +8,6 @@ import json
 import pytest
 
 from yelp_beans.logic.secret import get_secret
-from yelp_beans.models import Secret
-
-
-def test_get_secret_database(tmpdir, database):
-    with tmpdir.as_cwd():
-        expected = 'password'
-        Secret(id='secret', value=expected).put()
-        actual = get_secret('secret')
-        assert expected == actual
 
 
 def test_get_secret_file(tmpdir, database):
