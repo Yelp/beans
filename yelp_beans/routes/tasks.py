@@ -7,7 +7,7 @@ import logging
 
 from flask import Blueprint
 
-from yelp_beans.data_providers.workday import get_json_employee_data
+from yelp_beans.logic.data_ingestion import DataIngestion
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.subscription import get_specs_from_subscription
@@ -43,8 +43,10 @@ def weekly_opt_in():
 
 
 @tasks.route('/populate_employees', methods=['GET'])
-def populate_users_from_s3():
-    sync_employees([employee for employee in get_json_employee_data()])
+def populate_employees():
+    di = DataIngestion()
+    employees = di.ingest()
+    sync_employees([employee for employee in employees])
     return "OK"
 
 
