@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
+import time
 from collections import namedtuple
 from datetime import datetime
 from google.appengine.ext import ndb
@@ -218,23 +220,14 @@ def _fake_user():
 
 
 def create_dev_data():
-    import os
-    if 'Development' in os.environ.get('SERVER_SOFTWARE', ''):
-        import logging
-        import time
-        from yelp_beans.models import User
-        from tests.conftest import FAKE_USER
-        from tests.conftest import _subscription
-        from tests.conftest import _fake_user
-        logging.info(os.environ['SERVER_SOFTWARE'])
-        email = FAKE_USER[0]['email']
-        user = User.query(User.email == email).get()
-        if not user:
-            _subscription()
-            time.sleep(2)
-            _fake_user()
+    email = FAKE_USER[0]['email']
+    user = User.query(User.email == email).get()
+    if not user:
+        _subscription()
+        time.sleep(2)
+        _fake_user()
 
-            subscription = MeetingSubscription.query().get()
-            week_start, specs = get_specs_from_subscription(subscription)
-            store_specs_from_subscription(subscription.key, week_start, specs)
-            logging.info('generated fake date for dev')
+        subscription = MeetingSubscription.query().get()
+        week_start, specs = get_specs_from_subscription(subscription)
+        store_specs_from_subscription(subscription.key, week_start, specs)
+        logging.info('generated fake date for dev')
