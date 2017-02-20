@@ -12,4 +12,4 @@ def get_secret(id):
         secrets = json.loads(open("client_secrets.json").read())
         return secrets[id]
     else:
-        raise IOError("No secrets file or store in DB.")
+        raise IOError("No secrets file.")

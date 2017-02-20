@@ -14,7 +14,7 @@ Beans is an internal networking tool to help employees connect with each other a
 * [Google App-Engine](https://cloud.google.com/appengine/)
 * [Python2.7](https://www.python.org/download/releases/2.7/)
 * [Flask](http://flask.pocoo.org/)
-* [Google API for emails](https://developers.google.com/gmail/api/)
+* [SendGrid for emails](https://sendgrid.com/)
 * [Ndb data store](https://cloud.google.com/appengine/docs/python/ndb/)
 * [S3 integration](https://aws.amazon.com/s3/)
 * [Blossom algorithm](https://en.wikipedia.org/wiki/Blossom_algorithm)
