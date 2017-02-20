@@ -26,12 +26,6 @@ handlers:
   auth_fail_action: unauthorized
   secure: always
 
-- url: /fake_data
-  script: webapp.app
-  login: admin
-  auth_fail_action: unauthorized
-  secure: always
-
 - url: /preferences/.*
   script: webapp.app
   login: admin
