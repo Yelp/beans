@@ -1,5 +1,6 @@
-# Beans
+![Yelp Beans](yelp-beans.png)
 
+# Beans
 Beans is an internal networking tool to help employees connect with each other at work. Every week Beans helps match and schedule a short 30-minute 1:1 meeting for two employees at the office.
 
 ## System Dependencies
@@ -10,7 +11,6 @@ Beans is an internal networking tool to help employees connect with each other a
 * [GoogleAppEngineLauncher](https://cloud.google.com/appengine/docs/python/download) scroll and click `Or, you can download the original App Engine SDK for Python.`
 
 ## Tech
-=======
 * [Google App-Engine](https://cloud.google.com/appengine/)
 * [Python2.7](https://www.python.org/download/releases/2.7/)
 * [Flask](http://flask.pocoo.org/)
@@ -35,5 +35,5 @@ Beans is an internal networking tool to help employees connect with each other a
      SENDGRID_API_KEY, and SENDGRID_SENDER
  7. make serve
 
-## Google Appengine Setup
- 1. add datastore secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+## LICENSE
+Yelp Beans is licensed under the [MIT license](LICENSE).
