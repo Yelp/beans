@@ -18,8 +18,3 @@ cron:
   url: /tasks/match_employees
   schedule: every wednesday 11:00
   timezone: US/Pacific
-
-- description: weekly match
-  url: /tasks/send_match_email_for_week
-  schedule: every monday 10:00
-  timezone: US/Pacific
