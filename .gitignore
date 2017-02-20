@@ -2,6 +2,7 @@
 *.pyc
 *.swp
 client_secrets.json
+index.yaml
 .idea/
 .cache/
 /lib/
