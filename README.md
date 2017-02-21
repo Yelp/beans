@@ -10,8 +10,23 @@ Beans is an internal networking tool to help employees connect with each other a
 * [Python Component](https://cloud.google.com/sdk/docs/managing-components) `gcloud components install app-engine-python`
 * [GoogleAppEngineLauncher](https://cloud.google.com/appengine/docs/python/download) scroll and click `Or, you can download the original App Engine SDK for Python.`
 
-## Checkout the Wiki!
+## Please take a look at the wiki for more information:
 * [Yelp Beans Wiki](https://github.com/Yelp/beans/wiki)
+
+## Original Contributors
+* Clare Curtis
+* Matt Grounds
+* Alex Levin
+* Xi Li
+* Aaron Loo
+* Bryan Marty
+* Andrew Mason
+* Wolfe Styke
+* Amy Tsai
+* Davis Wang
+* Haotian Wang
+* Stanley Wang
+* Kent Wills
 
 ## LICENSE
 Yelp Beans is licensed under the [MIT license](LICENSE).
