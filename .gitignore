@@ -16,3 +16,4 @@ coverage-html/
 .node-version
 node_modules/
 /coverage
+.ropeproject

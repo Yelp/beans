@@ -1,0 +1,9 @@
+meeting_cooldown_weeks: 10
+data_providers:
+    - id: JSONFileDataProvider
+      path: employees.json
+
+photo_providers:
+  - id: ModelPhotoProvider
+  - id: GoogleProfilePhotoProvider
+  - id: GravatarProfilePhotoProvider
