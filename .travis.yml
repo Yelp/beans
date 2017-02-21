@@ -7,13 +7,8 @@ matrix:
         - env: TOXENV=py36
           python: 3.6
         - env: TOXENV=pypy
-install:
-    - pip install -r requirements-dev.txt
-    - pip install -r requirements.txt 
-script:
-    - coverage run -m py.test tests/
-    - pre-commit run --all-files
-    - check-requirements
+install: pip install tox
+script: tox
 cache:
     directories:
         - $HOME/.cache/pip
