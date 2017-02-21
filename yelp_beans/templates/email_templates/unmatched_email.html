@@ -1,0 +1,13 @@
+{% extends "base_email_template.html" %}
+{% block content %}
+<tr>
+    <td>
+        <p>Hi there {{first_name}}!</p>
+        <p>
+            Sorry we couldn't find a match for you this week. :( This usually happens because there were an odd
+            number of people that signed up for the week. If you have any questions please reach out to
+            rkwills@yelp.com
+        </p>
+    </td>
+</tr>
+{% endblock %}

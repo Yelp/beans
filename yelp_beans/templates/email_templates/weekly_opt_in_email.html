@@ -1,0 +1,17 @@
+{% extends "base_email_template.html" %}
+{% block content %}
+<tr>
+    <td>
+        <p>Hey {{first_name}},</p>
+        <p>
+            Would you like to meet someone new this week? Your meetings are on {{meeting_day}}
+            at {{meeting_time}} in the {{office}} at the {{location}}.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td align="center">
+        <a class="button" href="{{meeting_url}}">Sign Up for a Meeting!</a>
+    </td>
+</tr>
+{% endblock %}
