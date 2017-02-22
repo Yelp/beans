@@ -18,11 +18,20 @@ from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_users_from_spec
 from yelp_beans.models import User
 
-# TODO (rkwills) this belongs in a function
-secrets = json.loads(open("client_secrets.json").read())
-# TODO (rkwills) switch to a yelp sendgrid account
-send_grid_client = SendGridAPIClient(apikey=secrets["SENDGRID_API_KEY"])
-SENDGRID_SENDER = secrets["SENDGRID_SENDER"]
+
+secrets = None
+send_grid_client = None
+SENDGRID_SENDER = None
+
+
+def load_secrets():
+    if secrets is not None:
+        return
+    global secrets, send_grid_client, SENDGRID_SENDER
+    secrets = json.loads(open("client_secrets.json").read())
+    # TODO (rkwills) switch to a yelp sendgrid account
+    send_grid_client = SendGridAPIClient(apikey=secrets["SENDGRID_API_KEY"])
+    SENDGRID_SENDER = secrets["SENDGRID_SENDER"]
 
 
 def send_single_email(email, subject, template, template_arguments):
@@ -35,6 +44,7 @@ def send_single_email(email, subject, template, template_arguments):
         Returns:
             - SendGrid response
     """
+    load_secrets()
     env = Environment(loader=PackageLoader('yelp_beans', 'templates/email_templates'))
     template = env.get_template(template)
     rendered_template = template.render(template_arguments)
