@@ -20,7 +20,7 @@ Beans is an internal networking tool to help employees connect with each other a
 * Xi Li
 * Aaron Loo
 * Bryan Marty
-* Andrew Mason
+* [Andrew Mason](https://github.com/ajm188)
 * Wolfe Styke
 * Amy Tsai
 * Davis Wang
