@@ -1,5 +1,6 @@
-coverage==4.3.4
-mock==2.0.0
-pre-commit==0.12.0
-pytest==3.0.5
-requirements-tools==0.1.0
+coverage
+mock
+pre-commit
+pytest
+requests-mock
+requirements-tools

@@ -11,12 +11,11 @@ from datetime import timedelta
 
 import networkx as nx
 
+from yelp_beans.logic.config import get_config
 from yelp_beans.logic.user import user_preference
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingSpec
-
-MEETING_COOLDOWN_WEEKS = 10
 
 
 def get_disallowed_meetings(users, prev_meeting_tuples, spec):
@@ -53,7 +52,11 @@ def save_meetings(matches, spec):
         ))
 
 
-def get_previous_meetings(cooldown=MEETING_COOLDOWN_WEEKS):
+def get_previous_meetings(cooldown=None):
+
+    if cooldown is None:
+        cooldown = get_config()['meeting_cooldown_weeks']
+
     meetings = defaultdict(list)
 
     # get all meeting specs from x weeks ago til now

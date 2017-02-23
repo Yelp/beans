@@ -7,11 +7,11 @@ import logging
 import time
 from collections import namedtuple
 from datetime import datetime
-from google.appengine.ext import ndb
-from google.appengine.ext import testbed
 
 import mock
 import pytest
+from google.appengine.ext import ndb
+from google.appengine.ext import testbed
 from pytz import timezone
 from pytz import utc
 
@@ -37,6 +37,17 @@ FAKE_USER = [{
     'department': 'Consumer',
     'business_title': 'Engineer',
 }]
+
+
+@pytest.yield_fixture(scope='session', autouse=True)
+def mock_config():
+    with open('tests/test_data/config.yaml') as config_file:
+        data = config_file.read()
+    with mock.patch(
+        'yelp_beans.logic.config.open',
+        mock.mock_open(read_data=data)
+    ):
+        yield
 
 
 @pytest.yield_fixture(scope='session', autouse=True)
@@ -116,6 +127,12 @@ def database_no_specs(minimal_database, subscription):
             subscription.datetime[1].get()
         ]
     )
+
+
+@pytest.fixture
+def employees():
+    with open('tests/test_data/employees.json') as test_file:
+        return test_file.read()
 
 
 @pytest.yield_fixture

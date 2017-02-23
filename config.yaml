@@ -1,0 +1,19 @@
+meeting_cooldown_weeks: 10
+data_providers:
+    # Example 1: A local JSON file
+    - class: yelp_beans.data_providers.json_file_data_provider.JSONFileDataProvider
+      path: employees.json.example
+
+    # Example 2: A web endpoint
+    #- class: yelp_beans.data_providers.restful_json_data_provider.RestfulJSONDataProvider
+    #  url: "http://www.company.com/api/employees"
+    #  username: darwin
+    #  password: password
+    #  timeout: 120.0
+
+    # Example 3: A S3 file:
+    #- class: yelp_beans.data_providers.s3_data_provder.S3DataProvider
+    #  acccess_key_id: fakeid
+    #  secret_access_key: fakekey
+    #  bucket: company_bucket
+    #  key: employees.json
