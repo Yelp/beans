@@ -1,4 +1,4 @@
--   repo: git@github.com:pre-commit/pre-commit-hooks
+-   repo: https://github.com/pre-commit/pre-commit-hooks
     sha: v0.7.0
     hooks:
     -   id: trailing-whitespace
@@ -28,7 +28,7 @@
         language_version: python2.7
     -   id: check-merge-conflict
         language_version: python2.7
--   repo: git@github.com:asottile/reorder_python_imports
+-   repo: https://github.com/asottile/reorder_python_imports
     sha: v0.3.1
     hooks:
     -   id: reorder-python-imports
