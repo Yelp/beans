@@ -2,11 +2,6 @@ language: python
 matrix:
     include:
         - env: TOXENV=py27
-        - env: TOXENV=py35
-          python: 3.5
-        - env: TOXENV=py36
-          python: 3.6
-        - env: TOXENV=pypy
 install: pip install tox
 before_script:
     - curl https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.50.zip > google_appengine.zip
