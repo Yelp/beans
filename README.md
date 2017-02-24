@@ -1,6 +1,9 @@
 ![Yelp Beans](yelp-beans.png)
 
 # Beans
+
+[![Build Status](https://travis-ci.org/Yelp/beans.svg?branch=master)](https://travis-ci.org/Yelp/beans)
+
 Beans is an internal networking tool to help employees connect with each other at work. Every week Beans helps match and schedule a short 30-minute 1:1 meeting for two employees at the office.
 
 ## System Dependencies
@@ -19,7 +22,7 @@ Beans is an internal networking tool to help employees connect with each other a
 * Alex Levin
 * Xi Li
 * Aaron Loo
-* Bryan Marty
+* [Bryan Marty](https://github.com/bxm156)
 * [Andrew Mason](https://github.com/ajm188)
 * Wolfe Styke
 * Amy Tsai
