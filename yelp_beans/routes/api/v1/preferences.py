@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from google.appengine.ext import ndb
 
 from flask import Blueprint
 from flask import request
+from google.appengine.ext import ndb
 
 from yelp_beans.logic.subscription import filter_subscriptions_by_user_data
 from yelp_beans.logic.subscription import merge_subscriptions_with_preferences

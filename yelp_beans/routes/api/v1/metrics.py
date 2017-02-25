@@ -4,9 +4,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-from google.appengine.ext import ndb
 
 from flask import Blueprint
+from google.appengine.ext import ndb
 
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingSubscription

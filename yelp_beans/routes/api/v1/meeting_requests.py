@@ -4,10 +4,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-from google.appengine.ext import ndb
 
 from flask import Blueprint
 from flask import request
+from google.appengine.ext import ndb
 
 from yelp_beans.logic.user import get_user
 from yelp_beans.models import MeetingRequest

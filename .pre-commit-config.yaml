@@ -29,7 +29,7 @@
     -   id: check-merge-conflict
         language_version: python2.7
 -   repo: https://github.com/asottile/reorder_python_imports
-    sha: v0.3.1
+    sha: v0.3.2
     hooks:
     -   id: reorder-python-imports
         args:

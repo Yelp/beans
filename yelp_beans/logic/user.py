@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
+
 from google.appengine.api import users as google_user_api
 from google.appengine.ext import ndb
 

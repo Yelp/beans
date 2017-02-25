@@ -1,13 +1,15 @@
 [run]
 branch = True
-source =
-    .
+source = .
 omit =
+    .tox/*
+    /usr/*
     setup.py
+
     webapp.py
     templates/*
-    testing/*
     venv/*
+    google_appengine/*
 
 [report]
 show_missing = True
