@@ -7,11 +7,11 @@ import logging
 import time
 from collections import namedtuple
 from datetime import datetime
-from google.appengine.ext import ndb
-from google.appengine.ext import testbed
 
 import mock
 import pytest
+from google.appengine.ext import ndb
+from google.appengine.ext import testbed
 from pytz import timezone
 from pytz import utc
 

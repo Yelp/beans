@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 import os
 import os.path
+
 from google.appengine.ext import vendor
 
 # Third-party libraries are stored in "site-packages" in the virtualenv,
