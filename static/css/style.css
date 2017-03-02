@@ -54,3 +54,7 @@ input[type='radio'], input[type='checkbox'] {
 .footer_hr {
     border-top: 2px solid #eee;
 }
+
+.github-img{
+    height: 30px;
+}
