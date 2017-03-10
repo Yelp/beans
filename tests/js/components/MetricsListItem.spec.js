@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import MetricsListItem from '../../../js/components/MetricsListItem';
-import { renderComponent } from '../../test_helper';
+import renderComponent from '../../test_helper';
 
 
 describe('MetricsListItem', () => {
@@ -40,7 +40,6 @@ describe('MetricsListItem', () => {
   describe('with many subscriptions', () => {
     beforeEach(() => {
       const metrics = {
-        // metric: { title: 'weekly', subscribed: 10, meetings: 20 },
         metric: { title: 'monthly', subscribed: 2, meetings: 4 },
       };
       component = renderComponent(MetricsListItem, metrics);

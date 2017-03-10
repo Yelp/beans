@@ -23,7 +23,7 @@ test: development install-hooks
 	pre-commit run --all-files
 	check-requirements
 	npm test
-	node_modules/.bin/eslint js/
+	node_modules/.bin/eslint .
 
 node_modules:
 	npm install
