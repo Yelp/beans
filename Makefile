@@ -6,14 +6,14 @@ all: development
 .PHONY: production
 production: export VIRTUALENV_REQUIREMENTS = requirements.txt
 production: venv node_modules
-	webpack
+	npm run webpack
 
 .PHONY: development
 development: venv install-hooks js
 
 .PHONY: js
 js: node_modules
-	webpack
+	npm run webpack
 
 .PHONY: test
 test: development install-hooks
