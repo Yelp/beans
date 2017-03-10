@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import pytest
+
 from yelp_beans.logic.subscription import filter_subscriptions_by_user_data
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import get_subscription_dates
@@ -40,6 +42,7 @@ def test_merge_subscriptions_with_preferences(database, fake_user):
         'office': 'USA: CA SF New Montgomery Office',
         'timezone': 'US/Pacific',
         'size': 2,
+        'rule_logic': None,
         'datetime': [
             {
                 'active': True,
@@ -55,7 +58,7 @@ def test_merge_subscriptions_with_preferences(database, fake_user):
     }
 
 
-def test_filter_subscriptions_by_user_data(database):
+def test_filter_subscriptions_by_user_data_any(database):
     preference = UserSubscriptionPreferences(
         subscription=database.sub.key,
         preference=database.prefs[0].key
@@ -70,9 +73,10 @@ def test_filter_subscriptions_by_user_data(database):
 
     rule = Rule(name="department", value="a").put()
     database.sub.rules = [rule]
+    database.sub.rule_logic = 'any'
     database.sub.put()
-    merged_preferences = merge_subscriptions_with_preferences(user)
 
+    merged_preferences = merge_subscriptions_with_preferences(user)
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
@@ -84,3 +88,102 @@ def test_filter_subscriptions_by_user_data(database):
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert subscriptions == []
+
+
+def test_filter_subscriptions_by_user_data_all(database):
+    database.sub.rule_logic = 'all'
+    rule1 = Rule(name="department", value="a").put()
+    rule2 = Rule(name="location", value="c").put()
+    database.sub.rules = [rule1, rule2]
+    database.sub.put()
+
+    preference = UserSubscriptionPreferences(
+        subscription=database.sub.key,
+        preference=database.prefs[0].key
+    )
+    preference.put()
+    user = User(
+        email='a@a.com',
+        subscription_preferences=[preference.key]
+    )
+    user.metadata = {"department": "a", "location": "b"}
+    user.put()
+
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert subscriptions == []
+
+    user.metadata = {'department': 'a', 'location': 'c'}
+    user.put()
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert len(subscriptions) == 1
+    assert subscriptions[0]['id'] == database.sub.key.urlsafe()
+
+
+def test_filter_subscriptions_by_user_data_without_rules(database):
+    database.sub.rule_logic = 'all'
+    database.sub.rules = []
+    database.sub.put()
+
+    preference = UserSubscriptionPreferences(
+        subscription=database.sub.key,
+        preference=database.prefs[0].key
+    )
+    preference.put()
+    user = User(
+        email='a@a.com',
+        subscription_preferences=[preference.key]
+    )
+    user.metadata = {"department": "a", "location": "b"}
+    user.put()
+
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    with pytest.raises(AssertionError):
+        filter_subscriptions_by_user_data(merged_preferences, user)
+
+
+def test_filter_subscriptions_by_user_data_none(database):
+    database.sub.put()
+    preference = UserSubscriptionPreferences(
+        subscription=database.sub.key,
+        preference=database.prefs[0].key,
+    )
+    preference.put()
+    user = User(
+        email='a@a.com',
+        subscription_preferences=[preference.key]
+    )
+    user.put()
+
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert len(subscriptions) == 1
+    assert subscriptions[0]['id'] == database.sub.key.urlsafe()
+
+
+def test_filter_subscriptions_by_user_data_none_when_rules_exist(database):
+    rule = Rule(name="department", value="b").put()
+    database.sub.rules = [rule]
+    database.sub.rule_logic = 'none'
+    database.sub.put()
+    preference = UserSubscriptionPreferences(
+        subscription=database.sub.key,
+        preference=database.prefs[0].key,
+    )
+    preference.put()
+    user = User(
+        email='a@a.com',
+        subscription_preferences=[preference.key],
+        metadata={'department': 'a'}
+    )
+    user.put()
+
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert len(subscriptions) == 1
+    assert subscriptions[0]['id'] == database.sub.key.urlsafe()

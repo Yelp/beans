@@ -27,6 +27,7 @@ def test_preferences_api_user_exists(app, database, fake_user):
             'office': 'USA: CA SF New Montgomery Office',
             'timezone': 'US/Pacific',
             'size': 2,
+            'rule_logic': None,
             'datetime': [
                 {
                     'active': True,
