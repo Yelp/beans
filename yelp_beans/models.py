@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from google.appengine.ext import ndb
+from pytz import common_timezones
 
 
 class User(ndb.Model):
@@ -20,6 +21,7 @@ class User(ndb.Model):
     last_name = ndb.StringProperty(indexed=False)
     photo_url = ndb.TextProperty()
     metadata = ndb.JsonProperty()
+    timezone = ndb.StringProperty(default='America/Los_Angeles', choices=common_timezones, required=True)
     terminated = ndb.BooleanProperty(default=False, required=True)
     subscription_preferences = ndb.KeyProperty(
         kind="UserSubscriptionPreferences",

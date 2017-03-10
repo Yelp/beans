@@ -34,6 +34,7 @@ FAKE_USER = [{
         'srv0/yelp_large_assets/3f74899c069c'
         '/assets/img/illustrations/mascots/darwin@2x.png'
     ),
+    'timezone': 'America/Los_Angeles',
     'department': 'Consumer',
     'business_title': 'Engineer',
 }]
@@ -229,6 +230,7 @@ def _fake_user():
                 'office': 'USA: CA SF New Montgomery Office',
                 'company_profile_url': 'https://www.yelp.com/user_details?userid=nkN_do3fJ9xekchVC-v68A',
             },
+            timezone=user['timezone'],
             subscription_preferences=[preferences],
         )
         user_entity.put()
