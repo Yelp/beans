@@ -6,22 +6,22 @@ all: development
 .PHONY: production
 production: export VIRTUALENV_REQUIREMENTS = requirements.txt
 production: venv node_modules
-	webpack
+	npm run webpack
 
 .PHONY: development
 development: venv install-hooks js
 
 .PHONY: js
 js: node_modules
-	webpack
+	npm run webpack
 
 .PHONY: test
 test: development install-hooks
-	coverage run -m py.test tests/
-	coverage report --show-missing
-	coverage html
-	pre-commit run --all-files
-	check-requirements
+	./venv/bin/coverage run -m py.test tests/
+	./venv/bin/coverage report --show-missing
+	./venv/bin/coverage html
+	./venv/bin/pre-commit run --all-files
+	./venv/bin/check-requirements
 	npm test
 	node_modules/.bin/eslint .
 

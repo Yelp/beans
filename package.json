@@ -48,7 +48,7 @@
     "mocha": "^3.2.0",
     "react-addons-test-utils": "^15.4.1",
     "sinon": "^1.17.7",
-    "webpack": "^2.2.0-rc.3",
+    "webpack": "^2.2.1",
     "webpack-dev-server": "^2.2.0-rc.0"
   },
   "babel": {
@@ -61,7 +61,8 @@
   "scripts": {
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 8001",
     "test": "mocha --compilers js:babel-core/register --require ./tests/test_helper.jsx --recursive ./tests --inspect",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "webpack": "webpack"
   },
   "repository": {
     "type": "git",
