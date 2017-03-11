@@ -10,6 +10,7 @@ import urllib
 
 from jinja2 import Environment
 from jinja2 import PackageLoader
+from pytz import timezone
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers import mail
 from sendgrid.helpers.mail import Content
@@ -87,8 +88,12 @@ def send_batch_weekly_opt_in_email(meeting_spec):
 
     for user in users:
         if not user.terminated:
+            if user.timezone:
+                tz = timezone(user.timezone)
+                meeting_localdatetime = meeting_datetime.astimezone(tz)
+
             logging.info(user)
-            logging.info(meeting_datetime)
+            logging.info(meeting_localdatetime)
             send_single_email(
                 user.email,
                 "Want a yelp-beans meeting this week?",
@@ -97,8 +102,8 @@ def send_batch_weekly_opt_in_email(meeting_spec):
                     'first_name': user.first_name,
                     'office': subscription.office,
                     'location': subscription.location,
-                    'meeting_day': meeting_datetime.strftime('%A'),
-                    'meeting_time': meeting_datetime.strftime('%I:%M %p %Z'),
+                    'meeting_day': meeting_localdatetime.strftime('%A'),
+                    'meeting_time': meeting_localdatetime.strftime('%I:%M %p %Z'),
                     'meeting_url': create_url,
                     'link_to_change_pref': 'https://yelp-beans.appspot.com/'
                 }
@@ -130,6 +135,11 @@ def send_match_email(user, participants, meeting_spec):
         meeting_spec - meeting specification
     """
     meeting_datetime = get_meeting_datetime(meeting_spec)
+
+    if user.timezone:
+        tz = timezone(user.timezone)
+        meeting_datetime = meeting_datetime.astimezone(tz)
+
     meeting_datetime_end = meeting_datetime + datetime.timedelta(minutes=30)
     subscription = meeting_spec.meeting_subscription.get()
 
