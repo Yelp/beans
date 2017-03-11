@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { expect } from '../../test_helper';
+import { expect } from 'chai';
 import PrefReducer from '../../../js/reducers/preferences';
 import { FETCH_PREFS } from '../../../js/actions';
 

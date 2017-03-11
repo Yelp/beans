@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { expect } from '../../test_helper';
+import { expect } from 'chai';
 import UserReducer from '../../../js/reducers/user';
 import { FETCH_USER } from '../../../js/actions';
 

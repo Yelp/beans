@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { expect } from '../../test_helper';
+import { expect } from 'chai';
 import MetricsReducer from '../../../js/reducers/metrics';
 import { FETCH_METRICS } from '../../../js/actions';
 

@@ -60,7 +60,7 @@
   },
   "scripts": {
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 8001",
-    "test": "mocha --compilers js:babel-core/register --require ./tests/test_helper.js --recursive ./tests --inspect",
+    "test": "mocha --compilers js:babel-core/register --require ./tests/test_helper.jsx --recursive ./tests --inspect",
     "test:watch": "npm run test -- --watch",
     "webpack": "webpack"
   },
