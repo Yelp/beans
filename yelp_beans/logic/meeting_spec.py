@@ -55,7 +55,14 @@ def get_users_from_spec(meeting_spec):
     return users
 
 
-def get_meeting_datetime(meeting_spec):
+def get_meeting_datetime(meeting_spec, user=None):
+    ''' Get the meeting datetime for user. If user is specified, the timezone will be the user's
+    timezone preference. If not specified, the timezone will be the meeting spec's timezone.
+    '''
+    if user and user.timezone:
+        meeting_timezone = user.timezone
+    else:
+        meeting_timezone = meeting_spec.meeting_subscription.get().timezone
+
     meeting_datetime = meeting_spec.datetime
-    meeting_timezone = meeting_spec.meeting_subscription.get().timezone
     return meeting_datetime.replace(tzinfo=utc).astimezone(timezone(meeting_timezone))

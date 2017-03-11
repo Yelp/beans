@@ -10,7 +10,6 @@ import urllib
 
 from jinja2 import Environment
 from jinja2 import PackageLoader
-from pytz import timezone
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers import mail
 from sendgrid.helpers.mail import Content
@@ -88,10 +87,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
 
     for user in users:
         if not user.terminated:
-            if user.timezone:
-                tz = timezone(user.timezone)
-                meeting_localdatetime = meeting_datetime.astimezone(tz)
-
+            meeting_localdatetime = get_meeting_datetime(meeting_spec, user)
             logging.info(user)
             logging.info(meeting_localdatetime)
             send_single_email(
@@ -134,12 +130,7 @@ def send_match_email(user, participants, meeting_spec):
         participants - other people in the meeting
         meeting_spec - meeting specification
     """
-    meeting_datetime = get_meeting_datetime(meeting_spec)
-
-    if user.timezone:
-        tz = timezone(user.timezone)
-        meeting_datetime = meeting_datetime.astimezone(tz)
-
+    meeting_datetime = get_meeting_datetime(meeting_spec, user)
     meeting_datetime_end = meeting_datetime + datetime.timedelta(minutes=30)
     subscription = meeting_spec.meeting_subscription.get()
 
