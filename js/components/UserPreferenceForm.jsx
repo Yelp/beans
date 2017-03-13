@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -37,7 +36,7 @@ class UserPreferenceForm extends Component {
         [event.target.id]: event.target.checked,
       },
     };
-    this.setState(_.merge({}, this.state, data));
+    this.setState(Object.assign({}, this.state, data));
   }
   renderPreferences(state) {
     if (this.props.preferences.length !== 0) {
