@@ -1,18 +1,19 @@
 VIRTUALENV_REQUIREMENTS = requirements.txt requirements-dev.txt
+WEBPACK_OUTPUTS = \
+    dist/bundle/app.bundle.js dist/bundle/app.bundle.js.map \
+    dist/bundle/vendor.bundle.js dist/bundle/vendor.bundle.js.map
 
 .PHONY: all
 all: development
 
 .PHONY: production
 production: export VIRTUALENV_REQUIREMENTS = requirements.txt
-production: venv node_modules
-	npm run webpack
+production: venv $(WEBPACK_OUTPUTS)
 
 .PHONY: development
-development: venv install-hooks js
+development: venv $(WEBPACK_OUTPUTS) install-hooks
 
-.PHONY: js
-js: node_modules
+$(WEBPACK_OUTPUTS): package.json webpack.config.js .babelrc node_modules
 	npm run webpack
 
 .PHONY: test
