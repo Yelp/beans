@@ -9,11 +9,8 @@ describe('MetricsListItem', () => {
   let component;
 
   describe('without data', () => {
-    beforeEach(() => {
-      component = renderComponent(MetricsListItem);
-    });
-
     it('prints malformatted if no data', () => {
+      component = renderComponent(MetricsListItem);
       expect(component).to.contain('Malformatted');
     });
   });

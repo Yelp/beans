@@ -10,10 +10,10 @@ const MetricsListItem = ({ metric }) => {
       <div className="panel-heading">{metric.title}</div>
       <ul className="list-group">
         <li className="list-group-item">
-                      Total Subscribed: {metric.subscribed}
+          Total Subscribed: {metric.subscribed}
         </li>
         <li className="list-group-item">
-                      Total Meetings: {metric.meetings}
+          Total Meetings: {metric.meetings}
         </li>
       </ul>
     </div>
