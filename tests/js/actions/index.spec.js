@@ -1,7 +1,5 @@
-/* eslint-env mocha */
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { expect } from 'chai';
 
 import {
   FETCH_METRICS,
@@ -15,31 +13,31 @@ import {
 describe('actions', () => {
   let mockAxios;
 
-  before(() => {
+  beforeAll(() => {
     mockAxios = new MockAdapter(axios);
   });
 
-  after(() => {
+  afterAll(() => {
     mockAxios.restore();
   });
 
   it('getMetric has the correct type', () => {
     mockAxios.onGet('/v1/metrics/').reply(200);
     const metrics = getMetrics('v1');
-    expect(metrics.type).to.equal(FETCH_METRICS);
+    expect(metrics.type).toBe(FETCH_METRICS);
   });
 
   describe('getPreferences has the correct type', () => {
     it('email is undefined', () => {
       mockAxios.onGet('/v1/user/preferences/').reply(200);
       const metrics = getPreferences();
-      expect(metrics.type).to.equal(FETCH_PREFS);
+      expect(metrics.type).toBe(FETCH_PREFS);
     });
 
     it('email is defined', () => {
       mockAxios.onGet('/v1/user/preferences/?email=foo@bar.com').reply(200);
       const metrics = getPreferences('foo@bar.com');
-      expect(metrics.type).to.equal(FETCH_PREFS);
+      expect(metrics.type).toBe(FETCH_PREFS);
     });
   });
 
@@ -47,13 +45,13 @@ describe('actions', () => {
     it('email is undefined', () => {
       mockAxios.onGet('/v1/user/').reply(200);
       const metrics = getUser('');
-      expect(metrics.type).to.equal(FETCH_USER);
+      expect(metrics.type).toBe(FETCH_USER);
     });
 
     it('email is defined', () => {
       mockAxios.onGet('/v1/user/?email=foo@bar.com').reply(200);
       const metrics = getUser('foo@bar.com');
-      expect(metrics.type).to.equal(FETCH_USER);
+      expect(metrics.type).toBe(FETCH_USER);
     });
   });
 });
