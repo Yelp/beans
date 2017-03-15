@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-import { expect } from 'chai';
 import MetricsReducer from '../../../js/reducers/metrics';
 import { FETCH_METRICS } from '../../../js/actions';
 
@@ -10,6 +8,6 @@ describe('MetricsReducer', () => {
       type: FETCH_METRICS,
       payload: { data: [{ title: 'metrics' }] },
     };
-    expect(MetricsReducer([], action)[0].title).to.equal('metrics');
+    expect(MetricsReducer([], action)[0].title).toBe('metrics');
   });
 });

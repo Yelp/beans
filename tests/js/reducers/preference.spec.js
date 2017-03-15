@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-import { expect } from 'chai';
 import PrefReducer from '../../../js/reducers/preferences';
 import { FETCH_PREFS } from '../../../js/actions';
 
@@ -10,6 +8,6 @@ describe('PrefReducer', () => {
       type: FETCH_PREFS,
       payload: { data: [{ title: 'metrics' }] },
     };
-    expect(PrefReducer([], action)[0].title).to.equal('metrics');
+    expect(PrefReducer([], action)[0].title).toBe('metrics');
   });
 });

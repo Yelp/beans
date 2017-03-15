@@ -2,10 +2,6 @@
   "name": "yelp-beans",
   "version": "1.0.0",
   "description": "App for meeting people.",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
   "dependencies": {
     "axios": "^0.15.3",
     "moment-timezone": "^0.5.11",
@@ -20,12 +16,11 @@
   "devDependencies": {
     "axios-mock-adapter": "^1.7.1",
     "babel-core": "^6.18.2",
+    "babel-jest": "^19.0.0",
     "babel-loader": "^6.2.7",
     "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-react": "^6.16.0",
-    "chai": "^3.5.0",
-    "chai-jquery": "^2.0.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
     "eslint": "^3.14.1",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-loader": "^1.6.1",
@@ -33,24 +28,21 @@
     "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.9.0",
     "imports-loader": "^0.7.0",
-    "jquery": "^3.1.1",
-    "jsdom": "^9.9.1",
-    "mocha": "^3.2.0",
-    "react-addons-test-utils": "^15.4.1",
-    "sinon": "^1.17.7",
+    "jest": "^19.0.2",
+    "react-test-renderer": "^15.4.2",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.2.0-rc.0"
   },
   "scripts": {
+    "test": "jest --config .jestrc.json",
+    "test:watch": "jest --watch --config .jestrc.json",
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 8001",
-    "test": "mocha --compilers js:babel-core/register --require ./tests/test_helper.jsx --recursive ./tests --inspect",
-    "test:watch": "npm run test -- --watch",
     "webpack": "webpack"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:Yelp/Beans"
   },
-  "author": "",
+  "author": "Yelp",
   "license": "MIT"
 }
