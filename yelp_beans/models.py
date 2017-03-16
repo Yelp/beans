@@ -49,6 +49,7 @@ class MeetingSubscription(ndb.Model):
     timezone = ndb.StringProperty()
     user_list = ndb.KeyProperty(kind="User", repeated=True)
     rules = ndb.KeyProperty(kind="Rule", repeated=True)
+    rule_logic = ndb.StringProperty()
 
 
 class Rule(ndb.Model):

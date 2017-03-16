@@ -18,12 +18,40 @@ def filter_subscriptions_by_user_data(subscriptions, user):
     approved_subscriptions = []
     for subscription in subscriptions:
         subscription_rules = ndb.Key(urlsafe=subscription['id']).get().rules
-        for rule in subscription_rules:
-            rule = rule.get()
-            metadata = user.metadata
-            if metadata.get(rule.name) == rule.value:
-                approved_subscriptions.append(subscription)
+
+        if subscription.get('rule_logic') == 'any':
+            assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+            approved = apply_rules(user, subscription, subscription_rules, any)
+        elif subscription.get('rule_logic') == 'all':
+            assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+            approved = apply_rules(user, subscription, subscription_rules, all)
+        else:
+            approved = subscription
+
+        if approved is not None:
+            approved_subscriptions.append(approved)
     return approved_subscriptions
+
+
+def apply_rules(user, subscription, subscription_rules, rule_logic):
+    """
+    Apply logic to rules set for each subscription.  In a way this authorizes who can
+    see the subscription.  Rules can be applied in two ways:  All rules must apply and
+    some rules must apply.
+
+    user: models.User()
+    subscription: models.MeetingSubscription()
+    subscription_rules: models.Rule()
+    rule_logic: all(), any()
+    """
+    rules = {
+        user.metadata.get(rule.get().name) == rule.get().value
+        for rule in subscription_rules
+    }
+    if rule_logic(rules):
+        return subscription
+
+    return None
 
 
 def merge_subscriptions_with_preferences(user):
@@ -41,6 +69,7 @@ def merge_subscriptions_with_preferences(user):
             'location': subscription.location,
             'size': subscription.size,
             'timezone': subscription.timezone,
+            'rule_logic': subscription.rule_logic,
             'datetime': get_subscription_dates(subscription),
         } for subscription in MeetingSubscription.query().fetch()
     ]
