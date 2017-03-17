@@ -17,12 +17,12 @@ class S3DataProvider(DataProvider):
         self,
         access_key_id=None,
         secret_access_key=None,
-        bucket=None,
+        bucket_name=None,
         key=None
     ):
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
-        self.bucket = bucket
+        self.bucket_name = bucket_name
         self.key = key
 
     def _fetch(self, data):

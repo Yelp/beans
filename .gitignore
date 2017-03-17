@@ -10,6 +10,7 @@
 /coverage
 /lib/
 client_secrets.json
+config.yaml
 coverage-html/
 dist/
 index.yaml
