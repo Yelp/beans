@@ -27,7 +27,7 @@ export function getMetrics(version) {
 }
 
 export function getPreferences(email) {
-  if (email === undefined) {
+  if (email === '') {
     return apiGetRequest('/v1/user/preferences/', FETCH_PREFS);
   }
   return apiGetRequest(`/v1/user/preferences/?email=${email}`, FETCH_PREFS);
