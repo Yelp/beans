@@ -2,5 +2,6 @@
     "email": "darwin@googleapps.com",
     "first_name": "Darwin",
     "last_name": "Stoppelman",
-    "photo_url": "http://s3-media4.fl.yelpcdn.com/assets/srv0/yelp_large_assets/3f74899c069c/assets/img/illustrations/mascots/darwin@2x.png"
+    "photo_url": "http://s3-media4.fl.yelpcdn.com/assets/srv0/yelp_large_assets/3f74899c069c/assets/img/illustrations/mascots/darwin@2x.png",
+    "company_profile_url": "www.yelp.com"
 }]
