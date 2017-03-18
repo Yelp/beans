@@ -18,3 +18,8 @@ cron:
   url: /tasks/match_employees
   schedule: every wednesday 11:00
   timezone: US/Pacific
+
+- description: Initialization (noop when subscriptions)
+  url: /tasks/init
+  schedule: every monday 11:00
+  timezone: US/Pacific

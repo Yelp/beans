@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
+from datetime import datetime
+from datetime import timedelta
 
 from flask import Blueprint
 
@@ -19,6 +21,8 @@ from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSubscription
+from yelp_beans.models import Rule
+from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.send_email import send_batch_meeting_confirmation_email
 from yelp_beans.send_email import send_batch_unmatched_email
 from yelp_beans.send_email import send_batch_weekly_opt_in_email
@@ -91,4 +95,32 @@ def send_match_emails():
         logging.info(spec)
         logging.info(matches)
         send_batch_meeting_confirmation_email(matches, spec)
+    return "OK"
+
+
+@tasks.route('/init', methods=['POST'])
+def init():
+    subscriptions = MeetingSubscription.query().fetch()
+    if not subscriptions:
+        preference_1 = SubscriptionDateTime(
+            datetime=datetime.now()
+        ).put()
+        preference_2 = SubscriptionDateTime(
+            datetime=datetime.now() + timedelta(days=1)
+        ).put()
+        rule = Rule(
+            name='office',
+            value='USA: CA SF New Montgomery Office'
+        ).put()
+
+        MeetingSubscription(
+            title='Yelp Weekly',
+            size=2,
+            location='8th Floor',
+            office='USA: CA SF New Montgomery Office',
+            timezone='US/Pacific',
+            datetime=[preference_1, preference_2],
+            rules=[rule],
+            rule_logic='any'
+        ).put()
     return "OK"

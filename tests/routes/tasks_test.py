@@ -6,9 +6,11 @@ from __future__ import unicode_literals
 from google.appengine.ext import ndb
 
 from yelp_beans.models import MeetingSpec
+from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.routes.tasks import generate_meeting_specs
+from yelp_beans.routes.tasks import init
 from yelp_beans.routes.tasks import weekly_opt_in
 
 
@@ -42,3 +44,13 @@ def test_weekly_opt_in(minimal_database, subscription):
     user1.put()
     response = weekly_opt_in()
     assert response == 'OK'
+
+
+def test_init(minimal_database):
+    assert len(MeetingSubscription.query().fetch()) == 0
+    response = init()
+    assert response == 'OK'
+    assert len(MeetingSubscription.query().fetch()) == 1
+    response = init()
+    assert response == 'OK'
+    assert len(MeetingSubscription.query().fetch()) == 1
