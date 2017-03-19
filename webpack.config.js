@@ -1,9 +1,14 @@
+const webpack = require('webpack');
+
 const VENDOR = [
   'axios',
+  'moment-timezone',
   'react',
-  'react-router',
   'react-dom',
   'redux-form',
+  'react-redux',
+  'react-router',
+  'redux',
   'redux-promise',
 ];
 
@@ -20,7 +25,7 @@ module.exports = {
   module: {
     rules: [
       {
-        loader: 'eslint-loader?{fix: true}',
+        use: 'eslint-loader?{fix: true}',
         test: /\.jsx?$/,
         exclude: /node_modules/,
         enforce: 'pre',
@@ -39,4 +44,10 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
   },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: Infinity,
+    }),
+  ],
 };
