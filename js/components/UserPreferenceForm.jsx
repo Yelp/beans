@@ -46,10 +46,9 @@ class UserPreferenceForm extends Component {
           <h6>{preference.office}, {preference.location} ({preference.size})</h6>
           <form onSubmit={event => this.handleSubmit(preference.id, event)}>
             { this.renderTimes(preference, state) }
-            <button
-              type="submit"
-              className="btn btn-danger left30"
-            >Set Preferences!</button>
+            <button type="submit" className="btn btn-danger left30">
+              Set Preferences!
+            </button>
           </form>
         </div>
       ));

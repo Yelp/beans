@@ -8,17 +8,15 @@ class MeetingRequest extends Component {
   static renderButton(meetingRequest) {
     if (meetingRequest.key === '') {
       return (
-        <button
-          type="submit"
-          className="btn btn-success btn-lg left30"
-        >Ask for a Meeting this week.</button>
+        <button type="submit" className="btn btn-success btn-lg left30">
+          Ask for a Meeting this week.
+        </button>
       );
     }
     return (
-      <button
-        type="submit"
-        className="btn btn-danger btn-lg left30"
-      >Remove request for a Meeting this week.</button>
+      <button type="submit" className="btn btn-danger btn-lg left30">
+        Remove request for a Meeting this week.
+      </button>
     );
   }
   constructor(props) {
