@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const webpackVisualizer = require('webpack-visualizer-plugin');
 
 const VENDOR = [
   'axios',
@@ -47,6 +48,9 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: Infinity,
+    }),
+    new webpackVisualizer({
+      filename: './dist/webpack.stats.html',
     }),
   ],
 };
