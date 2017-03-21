@@ -5,7 +5,6 @@ const VENDOR = [
   'moment-timezone',
   'react',
   'react-dom',
-  'redux-form',
   'react-redux',
   'react-router',
   'redux',

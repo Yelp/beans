@@ -1,6 +1,6 @@
 module.exports = {
     'extends': 'airbnb',
-    'globals': {
-        'document': true
+    'env': {
+        'browser': true
     }
 };

@@ -15,6 +15,7 @@ coverage-html/
 dist/
 index.yaml
 node_modules/
+npm-debug.log
 tests/.cache
 venv
 yelp_beans.egg-info/
