@@ -39,7 +39,8 @@ class MeetingSubscription(ndb.Model):
             - location:         location of the meetings
             - size:             size of the meetings
             - user_list:        users requested/ have access to join subscription
-            - rules:            rules determine how a subscription is going to show up for a person
+            - user_rules:       rules set for allowing people to see a subscription
+            - dept_rules:       rules set for matching people
     """
     title = ndb.StringProperty()
     datetime = ndb.KeyProperty(kind="SubscriptionDateTime", repeated=True)
@@ -48,7 +49,8 @@ class MeetingSubscription(ndb.Model):
     location = ndb.StringProperty()
     timezone = ndb.StringProperty()
     user_list = ndb.KeyProperty(kind="User", repeated=True)
-    rules = ndb.KeyProperty(kind="Rule", repeated=True)
+    user_rules = ndb.KeyProperty(kind="Rule", repeated=True)
+    dept_rules = ndb.KeyProperty(kind="Rule", repeated=True)
     rule_logic = ndb.StringProperty()
 
 
