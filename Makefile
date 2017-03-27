@@ -1,7 +1,5 @@
 VIRTUALENV_REQUIREMENTS = requirements.txt requirements-dev.txt
-WEBPACK_OUTPUTS = \
-    dist/bundle/app.bundle.js dist/bundle/app.bundle.js.map \
-    dist/bundle/vendor.bundle.js dist/bundle/vendor.bundle.js.map
+SOURCES := $(shell find js -name '*.jsx' -o -name '*.js')
 
 .PHONY: all
 all: development
@@ -12,17 +10,20 @@ deploy: production
 
 .PHONY: production
 production: export VIRTUALENV_REQUIREMENTS = requirements.txt
-production: venv $(WEBPACK_OUTPUTS)
+production: export NODE_ENV = "production"
+production: venv touch.webpack.prod
 
 .PHONY: development
-development: venv $(WEBPACK_OUTPUTS) install-hooks
+development: venv touch.webpack.dev install-hooks
 
 .PHONY: install-hooks
 install-hooks: venv
 	./venv/bin/pre-commit install -f --install-hooks
 
-$(WEBPACK_OUTPUTS): package.json webpack.config.js .babelrc node_modules
-	npm run webpack
+touch.webpack.%: export PRODUCTION_FLAG = $(shell [ "$(NODE_ENV)" == "production" ] && echo "-p")
+touch.webpack.%: $(SOURCES) node_modules webpack.config.js .babelrc package.json
+	npm run webpack -- $(PRODUCTION_FLAG)
+	touch "$@"
 
 .PHONY: test
 test: development install-hooks
