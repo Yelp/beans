@@ -34,11 +34,11 @@
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "scripts": {
-    "eslint": "eslint --ext .js --ext .jsx .",
-    "test": "jest --config .jestrc.json",
-    "test:watch": "npm test -- --watch",
     "webpack-dev-server": "webpack-dev-server --port 8001",
-    "webpack": "webpack"
+    "webpack": "webpack --progress --color",
+    "eslint": "eslint --ext .jsx --ext .js .",
+    "test": "jest --config .jestrc.json",
+    "test:watch": "npm test -- --watch"
   },
   "repository": {
     "type": "git",
