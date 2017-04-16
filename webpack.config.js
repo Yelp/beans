@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const webpackVisualizer = require('webpack-visualizer-plugin');
+const WebpackVisualizer = require('webpack-visualizer-plugin');
 
 const VENDOR = [
   'axios',
@@ -49,7 +49,7 @@ module.exports = {
       name: 'vendor',
       minChunks: Infinity,
     }),
-    new webpackVisualizer({
+    new WebpackVisualizer({
       filename: './dist/webpack.stats.html',
     }),
   ],
