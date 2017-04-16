@@ -18,7 +18,7 @@ pyparsing==2.1.10
 python-http-client==2.2.1
 pytz==2016.10
 PyYAML==3.12
-requests==2.13.0
+requests==2.1.0
 rsa==3.4.2
 sendgrid==3.6.3
 setuptools==34.2.0
