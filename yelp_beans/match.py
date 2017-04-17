@@ -30,14 +30,14 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
     id_to_user = {user.key.id(): user for user in users}
     all_pairs = {pair for pair in itertools.combinations(userids, 2)}
 
-    # users aren't matched if they are on the same team
-    pairs = pairs.union({pair for pair in all_pairs if is_same_team(pair, id_to_user)})
-
+    for rule in spec.meeting_subscription.get().dept_rules:
+        rule = rule.get()
+        pairs = pairs.union({pair for pair in all_pairs if is_same(rule.name, pair, id_to_user)})
     return pairs
 
 
-def is_same_team(match, users):
-    return users[match[0]].metadata['department'] == users[match[1]].metadata['department']
+def is_same(field, match, users):
+    return users[match[0]].metadata[field] == users[match[1]].metadata[field]
 
 
 def save_meetings(matches, spec):

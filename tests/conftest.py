@@ -95,7 +95,7 @@ def _subscription():
         office='USA: CA SF New Montgomery Office',
         timezone=zone,
         datetime=[preference_1.key, preference_2.key],
-        rules=[rule]
+        user_rules=[rule]
     )
     subscription.put()
     return subscription

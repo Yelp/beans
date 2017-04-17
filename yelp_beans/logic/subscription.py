@@ -17,7 +17,7 @@ from yelp_beans.models import MeetingSubscription
 def filter_subscriptions_by_user_data(subscriptions, user):
     approved_subscriptions = []
     for subscription in subscriptions:
-        subscription_rules = ndb.Key(urlsafe=subscription['id']).get().rules
+        subscription_rules = ndb.Key(urlsafe=subscription['id']).get().user_rules
 
         if subscription.get('rule_logic') == 'any':
             assert subscription_rules, 'You created logic for rules but don\'t have any rules!'

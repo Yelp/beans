@@ -17,6 +17,7 @@ from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
+from yelp_beans.models import Rule
 from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
@@ -26,6 +27,8 @@ MEETING_COOLDOWN_WEEKS = 10
 
 
 def test_generate_meetings_same_department(minimal_database, subscription):
+    rule = Rule(name='department', value='').put()
+    subscription.dept_rules = [rule]
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription.key).put()
     user1 = User(email='a@yelp.com', metadata={'department': 'dept'}, subscription_preferences=[user_pref])
@@ -41,6 +44,9 @@ def test_generate_meetings_same_department(minimal_database, subscription):
 
 
 def test_generate_meetings_with_history(minimal_database, subscription):
+    rule = Rule(name='department', value='').put()
+    subscription.dept_rules = [rule]
+
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription.key).put()
 

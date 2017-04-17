@@ -72,7 +72,7 @@ def test_filter_subscriptions_by_user_data_any(database):
     user.put()
 
     rule = Rule(name="department", value="a").put()
-    database.sub.rules = [rule]
+    database.sub.user_rules = [rule]
     database.sub.rule_logic = 'any'
     database.sub.put()
 
@@ -94,7 +94,7 @@ def test_filter_subscriptions_by_user_data_all(database):
     database.sub.rule_logic = 'all'
     rule1 = Rule(name="department", value="a").put()
     rule2 = Rule(name="location", value="c").put()
-    database.sub.rules = [rule1, rule2]
+    database.sub.user_rules = [rule1, rule2]
     database.sub.put()
 
     preference = UserSubscriptionPreferences(
@@ -125,7 +125,7 @@ def test_filter_subscriptions_by_user_data_all(database):
 
 def test_filter_subscriptions_by_user_data_without_rules(database):
     database.sub.rule_logic = 'all'
-    database.sub.rules = []
+    database.sub.user_rules = []
     database.sub.put()
 
     preference = UserSubscriptionPreferences(
@@ -167,7 +167,7 @@ def test_filter_subscriptions_by_user_data_none(database):
 
 def test_filter_subscriptions_by_user_data_none_when_rules_exist(database):
     rule = Rule(name="department", value="b").put()
-    database.sub.rules = [rule]
+    database.sub.user_rules = [rule]
     database.sub.rule_logic = 'none'
     database.sub.put()
     preference = UserSubscriptionPreferences(
