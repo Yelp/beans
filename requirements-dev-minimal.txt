@@ -4,3 +4,4 @@ pre-commit
 pytest
 requests-mock
 requirements-tools
+tox
