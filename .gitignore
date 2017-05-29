@@ -6,6 +6,7 @@
 .coverage
 .idea/
 .node-version
+.snap
 .tox
 /coverage
 /lib/
