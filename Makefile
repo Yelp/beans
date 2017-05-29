@@ -27,13 +27,9 @@ touch.webpack.%: $(SOURCES) node_modules webpack.config.js .babelrc package.json
 
 .PHONY: test
 test: development install-hooks
-	./venv/bin/coverage run -m py.test tests/
-	./venv/bin/coverage report --show-missing
-	./venv/bin/coverage html
-	./venv/bin/pre-commit run --all-files
-	./venv/bin/check-requirements
+	tox
+	# npm test
 	npm run eslint
-	npm test
 
 node_modules: package.json
 	npm install
