@@ -16,13 +16,11 @@ exports[`MetricsListItem is rendered with many subscriptions 1`] = `
       className="list-group-item"
     >
       Total Subscribed: 
-      2
     </li>
     <li
       className="list-group-item"
     >
-      Total Meetings: 
-      4
+      Participants this week: 
     </li>
   </ul>
 </div>
@@ -44,20 +42,12 @@ exports[`MetricsListItem is rendered with one subscription 1`] = `
       className="list-group-item"
     >
       Total Subscribed: 
-      10
     </li>
     <li
       className="list-group-item"
     >
-      Total Meetings: 
-      20
+      Participants this week: 
     </li>
   </ul>
-</div>
-`;
-
-exports[`MetricsListItem is rendered without data 1`] = `
-<div>
-  Malformatted
 </div>
 `;

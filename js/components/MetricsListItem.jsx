@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 const MetricsListItem = ({ metric }) => (
@@ -16,7 +17,7 @@ const MetricsListItem = ({ metric }) => (
   );
 
 MetricsListItem.propTypes = {
-  metric: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  metric: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default MetricsListItem;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getMetrics } from '../actions/index';
 
@@ -27,8 +28,8 @@ class MetricsList extends Component {
 }
 
 MetricsList.propTypes = {
-  getMetrics: React.PropTypes.func.isRequired,
-  metrics: React.PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  getMetrics: PropTypes.func.isRequired,
+  metrics: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 function mapStateToProps(state) {

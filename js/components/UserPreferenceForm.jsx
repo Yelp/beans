@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import moment from 'moment-timezone';
 import { postPreference } from '../actions/index';
@@ -87,8 +88,8 @@ class UserPreferenceForm extends Component {
 }
 
 UserPreferenceForm.propTypes = {
-  postPreference: React.PropTypes.func.isRequired,
-  preferences: React.PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  postPreference: PropTypes.func.isRequired,
+  preferences: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 function mapStateToProps(state) {

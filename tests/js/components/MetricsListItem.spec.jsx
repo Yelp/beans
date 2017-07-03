@@ -4,11 +4,6 @@ import MetricsListItem from '../../../js/components/MetricsListItem';
 
 
 describe('MetricsListItem', () => {
-  it('is rendered without data', () => {
-    const component = renderer.create(<MetricsListItem />);
-    expect(component.toJSON()).toMatchSnapshot();
-  });
-
   it('is rendered with one subscription', () => {
     const metric = { title: 'weekly', subscribed: 10, meetings: 20 };
     const component = renderer.create(<MetricsListItem metric={metric} />);

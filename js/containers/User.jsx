@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { getUser } from '../actions/index';
@@ -43,9 +44,9 @@ class User extends Component {
 }
 
 User.propTypes = {
-  getUser: React.PropTypes.func.isRequired,
-  location: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  user: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  getUser: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 function mapStateToProps(state) {

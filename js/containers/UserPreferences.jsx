@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { getPreferences } from '../actions/index';
@@ -19,9 +20,9 @@ class UserPreferences extends Component {
 }
 
 UserPreferences.propTypes = {
-  getPreferences: React.PropTypes.func.isRequired,
-  email: React.PropTypes.string.isRequired, // eslint-disable-line react/forbid-prop-types
-  preferences: React.PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  getPreferences: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired, // eslint-disable-line react/forbid-prop-types
+  preferences: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 function mapStateToProps(state) {

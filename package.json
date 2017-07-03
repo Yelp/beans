@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "moment-timezone": "^0.5.11",
+    "prop-types": "^15.5.10",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-router": "^4.1.1",
