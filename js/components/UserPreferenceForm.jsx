@@ -7,8 +7,8 @@ import { postPreference } from '../actions/index';
 
 
 class UserPreferenceForm extends Component {
-  static isoDateToString(ISODate) {
-    return moment(ISODate).tz('America/Los_Angeles').format('dddd LT z');
+  static isoDateToString(ISODate, timezone) {
+    return moment(ISODate).tz(timezone).format('dddd LT z');
   }
   constructor(props) {
     super(props);
@@ -72,7 +72,7 @@ class UserPreferenceForm extends Component {
             onChange={this.handleChange}
             value={preference.id}
             type="checkbox"
-          />{UserPreferenceForm.isoDateToString(datetime.date)}</label>
+          />{UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}</label>
         );
       });
     }
@@ -93,7 +93,10 @@ UserPreferenceForm.propTypes = {
 };
 
 function mapStateToProps(state) {
-  return { datetime: state.datetime };
+  return {
+    datetime: state.datetime,
+    timezone: state.timezone,
+  };
 }
 
 export default connect(mapStateToProps, { postPreference })(UserPreferenceForm);
