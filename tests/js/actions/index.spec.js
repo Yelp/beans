@@ -13,7 +13,7 @@ import {
 describe('actions', () => {
   let mockAxios;
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockAxios = new MockAdapter(axios);
   });
 

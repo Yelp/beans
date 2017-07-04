@@ -16,11 +16,13 @@ exports[`MetricsListItem is rendered with many subscriptions 1`] = `
       className="list-group-item"
     >
       Total Subscribed: 
+      2
     </li>
     <li
       className="list-group-item"
     >
       Participants this week: 
+      4
     </li>
   </ul>
 </div>
@@ -42,11 +44,13 @@ exports[`MetricsListItem is rendered with one subscription 1`] = `
       className="list-group-item"
     >
       Total Subscribed: 
+      10
     </li>
     <li
       className="list-group-item"
     >
       Participants this week: 
+      20
     </li>
   </ul>
 </div>
