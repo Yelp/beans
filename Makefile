@@ -28,7 +28,7 @@ touch.webpack.%: $(SOURCES) node_modules webpack.config.js .babelrc package.json
 .PHONY: test
 test: development install-hooks
 	tox
-	# npm test
+	npm test
 	npm run eslint
 
 node_modules: package.json
