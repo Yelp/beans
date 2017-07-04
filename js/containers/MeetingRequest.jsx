@@ -1,5 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 import { getMeetingRequest } from '../actions/index';
 
@@ -49,9 +51,9 @@ class MeetingRequest extends Component {
 }
 
 MeetingRequest.propTypes = {
-  getMeetingRequest: React.PropTypes.func.isRequired,
-  location: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  meetingRequest: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  getMeetingRequest: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  meetingRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 function mapStateToProps(state) {
