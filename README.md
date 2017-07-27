@@ -9,9 +9,11 @@ Beans is an internal networking tool to help employees connect with each other a
 ## System Dependencies
 * [Node.js](https://nodejs.org/en/)
 * [Python2.7](https://www.python.org/downloads/)
+* [Virtualenv](https://virtualenv.pypa.io/en/stable/installation/) Typically installed when brew installing python2
 * [Google Cloud SDK](https://cloud.google.com/sdk/docs)
 * [Python Component](https://cloud.google.com/sdk/docs/managing-components) `gcloud components install app-engine-python`
 * [GoogleAppEngineLauncher](https://cloud.google.com/appengine/docs/python/download) scroll and click `Or, you can download the original App Engine SDK for Python.`
+** Make sure to open the application and click to 'Make command symlinks'
 
 ## Please take a look at the wiki for more information:
 * [Yelp Beans Wiki](https://github.com/Yelp/beans/wiki)
