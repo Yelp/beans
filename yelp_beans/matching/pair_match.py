@@ -40,7 +40,7 @@ def is_same(field, match, users):
     return users[match[0]].metadata[field] == users[match[1]].metadata[field]
 
 
-def save_meetings(matches, spec):
+def save_pair_meetings(matches, spec):
     for match in matches:
         meeting_key = Meeting(meeting_spec=spec.key).put()
         MeetingParticipant(meeting=meeting_key, user=match[0].key).put()
@@ -52,7 +52,7 @@ def save_meetings(matches, spec):
         ))
 
 
-def get_previous_meetings(cooldown=None):
+def get_previous_pair_meetings(cooldown=None):
 
     if cooldown is None:
         cooldown = get_config()['meeting_cooldown_weeks']
@@ -104,7 +104,7 @@ def get_previous_meetings(cooldown=None):
     return disallowed_meetings
 
 
-def generate_meetings(users, spec, prev_meeting_tuples=None):
+def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     """
     Returns 2 tuples:
     - meetings: list of dicts of the same type as prev_meetings, to indicate
@@ -112,7 +112,7 @@ def generate_meetings(users, spec, prev_meeting_tuples=None):
     - unmatched_user_ids: users with no matches.
     """
     if prev_meeting_tuples is None:
-        prev_meeting_tuples = get_previous_meetings()
+        prev_meeting_tuples = get_previous_pair_meetings()
 
     uid_to_users = {user.key.id(): user for user in users}
     user_ids = sorted(uid_to_users.keys())
