@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
-from yelp_beans.match import generate_meetings
+from yelp_beans.matching.pair_match import generate_pair_meetings
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.send_email import send_batch_initial_opt_in_email
@@ -63,5 +63,5 @@ def test_send_batch_meeting_confirmation_email(database):
 
 
 def test_send_batch_unmatched_email(database, fake_user):
-    matches, unmatched = generate_meetings([fake_user], database.specs[0])
+    matches, unmatched = generate_pair_meetings([fake_user], database.specs[0])
     send_batch_unmatched_email(unmatched)
