@@ -10,8 +10,6 @@ import networkx as nx
 
 from yelp_beans.logic.user import user_preference
 from yelp_beans.matching.match_utils import get_previous_meetings
-from yelp_beans.models import Meeting
-from yelp_beans.models import MeetingParticipant
 
 
 def get_disallowed_meetings(users, prev_meeting_tuples, spec):
@@ -34,18 +32,6 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
 
 def is_same(field, match, users):
     return users[match[0]].metadata[field] == users[match[1]].metadata[field]
-
-
-def save_pair_meetings(matches, spec):
-    for match in matches:
-        meeting_key = Meeting(meeting_spec=spec.key).put()
-        MeetingParticipant(meeting=meeting_key, user=match[0].key).put()
-        MeetingParticipant(meeting=meeting_key, user=match[1].key).put()
-        logging.info(meeting_key)
-        logging.info('{}, {}'.format(
-            match[0].get_username(),
-            match[1].get_username(),
-        ))
 
 
 def generate_pair_meetings(users, spec, prev_meeting_tuples=None):

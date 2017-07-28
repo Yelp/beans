@@ -13,7 +13,7 @@ from yelp_beans.matching.group_match import get_previous_meetings_counts
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import get_counts_for_pairs
 from yelp_beans.matching.match_utils import get_previous_meetings
-from yelp_beans.matching.pair_match import save_pair_meetings
+from yelp_beans.matching.match_utils import save_meetings
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -163,7 +163,7 @@ def test_generate_save_meetings(minimal_database, subscription):
     MeetingRequest(user=user2, meeting_spec=meeting_spec.key).put()
 
     matches, unmatched = generate_meetings([user1.get(), user2.get()], meeting_spec)
-    save_pair_meetings(matches, meeting_spec)
+    save_meetings(matches, meeting_spec)
 
     assert unmatched == []
 
