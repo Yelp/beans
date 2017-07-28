@@ -33,4 +33,3 @@ ReactDOM.render(
   </Provider>,
   document.querySelector('#container'),
 );
-
