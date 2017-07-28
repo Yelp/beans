@@ -5,18 +5,13 @@ from __future__ import unicode_literals
 
 import itertools
 import logging
-from collections import defaultdict
-from datetime import datetime
-from datetime import timedelta
 
 import networkx as nx
-from google.appengine.ext import ndb
 
-from yelp_beans.logic.config import get_config
 from yelp_beans.logic.user import user_preference
+from yelp_beans.matching.match_utils import get_previous_meetings
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
-from yelp_beans.models import MeetingSpec
 
 
 def get_disallowed_meetings(users, prev_meeting_tuples, spec):
@@ -53,59 +48,6 @@ def save_pair_meetings(matches, spec):
         ))
 
 
-def get_previous_pair_meetings(subscription, cooldown=None):
-
-    if cooldown is None:
-        cooldown = get_config()['meeting_cooldown_weeks']
-
-    meetings = defaultdict(list)
-
-    # get all meeting specs from x weeks ago til now
-    time_threshold_for_meetings = datetime.now() - timedelta(weeks=cooldown)
-
-    meeting_spec_keys = [
-        spec.key for spec in MeetingSpec.query(
-            ndb.AND(MeetingSpec.datetime > time_threshold_for_meetings,
-                    MeetingSpec.meeting_subscription == subscription)
-        ).fetch()
-    ]
-
-    logging.info('Previous Meeting History: ')
-    logging.info([meeting.get().datetime.strftime("%Y-%m-%d %H:%M") for meeting in meeting_spec_keys])
-
-    if meeting_spec_keys == []:
-        return set([])
-
-    # get all meetings from meeting specs
-    meeting_keys = [meeting.key for meeting in Meeting.query().filter(
-        Meeting.meeting_spec.IN(meeting_spec_keys)).fetch()]
-
-    if meeting_keys == []:
-        return set([])
-
-    # get all participants from meetings
-    participants = MeetingParticipant.query().filter(
-        MeetingParticipant.meeting.IN(meeting_keys)
-    ).fetch()
-
-    if participants == []:
-        return set([])
-
-    # group by meeting Id
-    for participant in participants:
-        meetings[participant.meeting.id()].append(participant.user)
-
-    # ids are sorted, all matches should be in increasing order by id for the matching algorithm to work
-    disallowed_meetings = set([tuple(sorted(meeting, key=lambda Key: Key.id())) for meeting in meetings.values()])
-
-    logging.info('Past Meetings')
-    logging.info([tuple([meeting.get().get_username() for meeting in meeting]) for meeting in disallowed_meetings])
-
-    disallowed_meetings = {tuple([meeting.id() for meeting in meeting]) for meeting in disallowed_meetings}
-
-    return disallowed_meetings
-
-
 def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     """
     Returns 2 tuples:
@@ -114,7 +56,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     - unmatched_user_ids: users with no matches.
     """
     if prev_meeting_tuples is None:
-        prev_meeting_tuples = get_previous_pair_meetings(spec.meeting_subscription)
+        prev_meeting_tuples = get_previous_meetings(spec.meeting_subscription)
 
     uid_to_users = {user.key.id(): user for user in users}
     user_ids = sorted(uid_to_users.keys())
