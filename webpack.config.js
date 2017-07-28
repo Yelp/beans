@@ -14,7 +14,7 @@ const VENDOR = [
 
 module.exports = {
   entry: {
-    app: './js/index.jsx',
+    app: './js/index.js',
     vendor: VENDOR,
   },
   output: {
@@ -26,13 +26,13 @@ module.exports = {
     rules: [
       {
         use: 'eslint-loader?{fix: true}',
-        test: /\.jsx?$/,
+        test: /\.js?$/,
         exclude: /node_modules/,
         enforce: 'pre',
       },
       {
         use: 'babel-loader',
-        test: /\.jsx?$/,
+        test: /\.js?$/,
         exclude: /node_modules/,
       },
     ],
@@ -42,7 +42,7 @@ module.exports = {
     contentBase: './',
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js'],
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({

@@ -1,5 +1,5 @@
 VIRTUALENV_REQUIREMENTS = requirements.txt requirements-dev.txt
-SOURCES := $(shell find js -name '*.jsx' -o -name '*.js')
+SOURCES := $(shell find js -name '*.js')
 
 .PHONY: all
 all: development
