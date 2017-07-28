@@ -16,6 +16,18 @@ from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingSpec
 
 
+def save_meetings(matches, spec):
+    for match in matches:
+        # Last element in match is the key for meeting time
+        matched_users = match[:-1]
+        meeting_key = Meeting(meeting_spec=spec.key).put()
+        for user in matched_users:
+            MeetingParticipant(meeting=meeting_key, user=user.key).put()
+        username_list = [user.get_username() for user in matched_users]
+        logging.info(meeting_key)
+        logging.info(', '.join(username_list))
+
+
 def get_counts_for_pairs(pairs):
     counts = {}
     for pair in pairs:
