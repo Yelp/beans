@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
-from yelp_beans.matching.pair_match import generate_pair_meetings
+from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.pair_match import get_previous_pair_meetings
 from yelp_beans.matching.pair_match import save_pair_meetings
 from yelp_beans.models import Meeting
@@ -38,7 +38,7 @@ def test_generate_meetings_same_department(minimal_database, subscription):
     user_list = [user1, user2]
 
     _, specs = get_specs_from_subscription(subscription)
-    matches, unmatched = generate_pair_meetings(user_list, specs[0])
+    matches, unmatched = generate_meetings(user_list, specs[0])
     assert len(unmatched) == 2
     assert len(matches) == 0
 
@@ -63,7 +63,7 @@ def test_generate_meetings_with_history(minimal_database, subscription):
     week_start, specs = get_specs_from_subscription(subscription)
     store_specs_from_subscription(subscription.key, week_start, specs)
 
-    matches, unmatched = generate_pair_meetings(user_list, specs[0])
+    matches, unmatched = generate_meetings(user_list, specs[0])
     assert len(matches) == 2
     assert len(unmatched) == 0
 
@@ -73,7 +73,7 @@ def test_generate_meetings_with_history(minimal_database, subscription):
         (user2.key.id(), user3.key.id()),
         (user1.key.id(), user4.key.id()),
     ])
-    matches, unmatched = generate_pair_meetings(user_list, specs[0], meeting_history)
+    matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 0
     assert len(unmatched) == 4
 
@@ -82,7 +82,7 @@ def test_generate_meetings_with_history(minimal_database, subscription):
         (user3.key.id(), user4.key.id()),
         (user2.key.id(), user3.key.id()),
     ])
-    matches, unmatched = generate_pair_meetings(user_list, specs[0], meeting_history)
+    matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 1
     assert len(unmatched) == 2
 
@@ -98,7 +98,24 @@ def test_get_previous_meetings(minimal_database):
     MeetingParticipant(meeting=meeting, user=user2).put()
     MeetingParticipant(meeting=meeting, user=user1).put()
 
-    assert get_previous_pair_meetings() == set([(user1.id(), user2.id())])
+    assert get_previous_pair_meetings(subscription) == set([(user1.id(), user2.id())])
+
+
+def test_get_previous_meetings_multi_subscription(minimal_database):
+    pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
+    subscription1 = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
+    subscription2 = MeetingSubscription(title='all sales weekly', datetime=[pref_1]).put()
+    user_pref1 = UserSubscriptionPreferences(preference=pref_1, subscription=subscription1).put()
+    user_pref2 = UserSubscriptionPreferences(preference=pref_1, subscription=subscription2).put()
+    user1 = User(email='a@yelp.com', metadata={'department': 'dept'}, subscription_preferences=[user_pref1, user_pref2]).put()
+    user2 = User(email='a@yelp.com', metadata={'department': 'dept2'}, subscription_preferences=[user_pref1, user_pref2]).put()
+    meeting_spec1 = MeetingSpec(meeting_subscription=subscription1, datetime=pref_1.get().datetime).put()
+    meeting = Meeting(meeting_spec=meeting_spec1, cancelled=False).put()
+    MeetingParticipant(meeting=meeting, user=user2).put()
+    MeetingParticipant(meeting=meeting, user=user1).put()
+
+    assert get_previous_pair_meetings(subscription1) == set([(user1.id(), user2.id())])
+    assert get_previous_pair_meetings(subscription2) == set([])
 
 
 def test_get_previous_meetings_no_specs(database_no_specs):
@@ -112,7 +129,7 @@ def test_get_previous_meetings_no_specs(database_no_specs):
     MeetingParticipant(meeting=meeting, user=user2).put()
     MeetingParticipant(meeting=meeting, user=user1).put()
 
-    assert get_previous_pair_meetings() == set([])
+    assert get_previous_pair_meetings(subscription) == set([])
 
 
 def test_generate_save_meetings(minimal_database, subscription):
@@ -126,7 +143,7 @@ def test_generate_save_meetings(minimal_database, subscription):
     MeetingRequest(user=user1, meeting_spec=meeting_spec.key).put()
     MeetingRequest(user=user2, meeting_spec=meeting_spec.key).put()
 
-    matches, unmatched = generate_pair_meetings([user1.get(), user2.get()], meeting_spec)
+    matches, unmatched = generate_meetings([user1.get(), user2.get()], meeting_spec)
     save_pair_meetings(matches, meeting_spec)
 
     assert unmatched == []
@@ -157,6 +174,6 @@ def test_no_re_matches(minimal_database):
 
     previous_meetings = {pair for pair in itertools.combinations([user.key.id() for user in users], 2)}
     previous_meetings = previous_meetings - {(users[0].key.id(), users[1].key.id())}
-    matches, unmatched = generate_pair_meetings(users, meeting_spec, previous_meetings)
+    matches, unmatched = generate_meetings(users, meeting_spec, previous_meetings)
     assert len(unmatched) == num_users - 2
     assert [(match[0].key.id(), match[1].key.id()) for match in matches] == [(users[0].key.id(), users[1].key.id())]
