@@ -26,21 +26,18 @@ module.exports = {
     rules: [
       {
         use: 'eslint-loader?{fix: true}',
-        test: /\.js?$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         enforce: 'pre',
       },
       {
         use: 'babel-loader',
-        test: /\.js?$/,
+        test: /\.js$/,
         exclude: /node_modules/,
       },
     ],
   },
   devtool: 'source-map',
-  devServer: {
-    contentBase: './',
-  },
   resolve: {
     extensions: ['.js'],
   },
