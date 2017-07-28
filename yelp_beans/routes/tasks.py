@@ -13,8 +13,8 @@ from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.logic.user import sync_employees
-from yelp_beans.match import generate_meetings
-from yelp_beans.match import save_meetings
+from yelp_beans.matching.match import generate_meetings
+from yelp_beans.matching.match_utils import save_meetings
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -67,7 +67,7 @@ def match_employees():
         logging.info('Users: ')
         logging.info([user.get_username() for user in users])
 
-        matches, unmatched = generate_meetings(users, spec)
+        matches, unmatched = generate_meetings(users, spec, prev_meeting_tuples=None, group_size=2)
         save_meetings(matches, spec)
 
         send_batch_unmatched_email(unmatched)

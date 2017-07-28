@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
-from yelp_beans.match import generate_meetings
+from yelp_beans.matching.match import generate_meetings
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.send_email import send_batch_initial_opt_in_email

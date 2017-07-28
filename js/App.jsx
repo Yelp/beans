@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -13,7 +14,7 @@ function App(props) {
 }
 
 App.propTypes = {
-  children: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  children: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default App;
