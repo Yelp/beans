@@ -1,9 +1,9 @@
 module.exports = {
-    'extends': 'airbnb',
-    'rules': {
-      'react/jsx-filename-extension': [1, { "extensions": [".js", ".jsx"] }],
+    "extends": "airbnb",
+    "rules": {
+      "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
     },
-    'env': {
-        'browser': true
+    "env": {
+        "browser": true
     },
 };
