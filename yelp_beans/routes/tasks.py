@@ -38,6 +38,7 @@ def generate_meeting_specs():
 @tasks.route('/email_users_for_weekly_opt_in', methods=['GET'])
 def weekly_opt_in():
     for spec in get_specs_for_current_week():
+        logging.info(spec)
         send_batch_weekly_opt_in_email(spec)
     return 'OK'
 
@@ -67,7 +68,8 @@ def match_employees():
         logging.info('Users: ')
         logging.info([user.get_username() for user in users])
 
-        matches, unmatched = generate_meetings(users, spec, prev_meeting_tuples=None, group_size=2)
+        group_size = spec.meeting_subscription.get().size
+        matches, unmatched = generate_meetings(users, spec, prev_meeting_tuples=None, group_size=group_size)
         save_meetings(matches, spec)
 
         send_batch_unmatched_email(unmatched)

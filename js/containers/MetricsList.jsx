@@ -16,7 +16,7 @@ class MetricsList extends Component {
         key={metric.title}
         metric={metric}
       />
-            ));
+    ));
   }
   render() {
     return (
