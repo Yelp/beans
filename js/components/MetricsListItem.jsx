@@ -14,7 +14,7 @@ const MetricsListItem = ({ metric }) => (
       </li>
     </ul>
   </div>
-  );
+);
 
 MetricsListItem.propTypes = {
   metric: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

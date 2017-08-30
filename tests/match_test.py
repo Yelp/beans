@@ -10,8 +10,8 @@ from datetime import timedelta
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.matching.group_match import generate_groups
-from yelp_beans.matching.group_match import get_user_weights
 from yelp_beans.matching.group_match import get_previous_meetings_counts
+from yelp_beans.matching.group_match import get_user_weights
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import get_counts_for_pairs
 from yelp_beans.matching.match_utils import get_previous_meetings

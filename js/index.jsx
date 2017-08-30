@@ -14,5 +14,5 @@ ReactDOM.render(
   <Provider store={store(reducers)}>
     <Router history={browserHistory} routes={routes} />
   </Provider>,
-    document.querySelector('#container'),
+  document.querySelector('#container'),
 );
