@@ -7,31 +7,39 @@ import json
 
 from flask import Blueprint
 
-from yelp_beans.logic.metrics import get_current_week_participation
-from yelp_beans.logic.metrics import get_subscribed_users
+from yelp_beans.logic.metrics import get_meeting_participants
+from yelp_beans.logic.metrics import get_meeting_requests
+from yelp_beans.logic.metrics import get_subscribers
 from yelp_beans.models import MeetingSubscription
 
 
 metrics_blueprint = Blueprint('metrics', __name__)
 
 
-@metrics_blueprint.route('/', methods=['GET'])
-def metrics_api():
+@metrics_blueprint.route('/subscribers', methods=['GET'])
+def meeting_subscribers():
     metrics = []
-    subscribed_users = get_subscribed_users()
-    participation = get_current_week_participation()
+    subscribed_users = get_subscribers()
     subscriptions = MeetingSubscription.query().fetch()
 
     for subscription in subscriptions:
-        metric = {
-            'key': subscription.key.urlsafe(),
-            'title': subscription.title,
-            'subscribed': subscribed_users[subscription.key.urlsafe()],
-            'total_subscribed': len(subscribed_users[subscription.key.urlsafe()]),
-            'week_participants': sum(
-                len(spec) for spec in
-                participation.get(subscription.key.urlsafe(), {}).values()
-            ),
-        }
-        metrics.append(metric)
+        subscribed = set(subscribed_users[subscription.key.urlsafe()])
+
+        for subscriber in subscribed:
+            metrics.append(
+                {
+                    'title': subscription.title,
+                    'subscriber': subscriber,
+                }
+            )
     return json.dumps(metrics)
+
+
+@metrics_blueprint.route('/meetings', methods=['GET'])
+def meeting_participants():
+    return json.dumps(get_meeting_participants())
+
+
+@metrics_blueprint.route('/requests', methods=['GET'])
+def meeting_requests():
+    return json.dumps(get_meeting_requests())
