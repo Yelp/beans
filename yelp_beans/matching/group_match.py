@@ -12,41 +12,63 @@ from yelp_beans.matching.match_utils import get_counts_for_pairs
 from yelp_beans.matching.match_utils import get_previous_meetings
 
 
-def get_previous_meetings_counts(users, subscription):
-    previous_meetings = get_previous_meetings(subscription)
+def get_previous_meetings_counts(users, subscription_key):
+    """
+    Given users for a subscription, return the number of times two people have matched
+    :param users: id of user
+    :param subscription_key: Key referencing the subscription model entity
+    :return: Tuple of user id's matched to count ie. {(4L, 5L): 5}
+    """
+    previous_meetings = get_previous_meetings(subscription_key)
     counts_for_pairs = get_counts_for_pairs(previous_meetings)
-    userids = sorted([user.key.id() for user in users])
-    all_pairs_counts = {pair: 0 for pair in itertools.combinations(userids, 2)}
+    user_ids = sorted([user.key.id() for user in users])
+    all_pairs_counts = {pair: 0 for pair in itertools.combinations(user_ids, 2)}
     for pair in counts_for_pairs:
         all_pairs_counts[pair] = counts_for_pairs[pair]
     return all_pairs_counts
 
 
-def get_adj_matrix(users, previous_meetings_counts, starting_weight, negative_weight):
-    adj_matrix = []
+def get_user_weights(users, previous_meetings_counts, starting_weight, negative_weight):
+    """
+    Given users asking for a match and historical information about the previous people they met,
+    return weights to promote groups where people haven't met each other.
+    :param users: list of user models
+    :param previous_meetings_counts: tuple of user id's matched to count
+    :param starting_weight: initial weight between users
+    :param negative_weight: amount to subtract from initial weight based on previous meetings
+    :return: adjacency matrix from user to user
+    """
+    user_user_weights = []
     for idx1, user1 in enumerate(users):
-        adj_matrix.append([])
+        user_user_weights.append([])
         for idx2, user2 in enumerate(users):
             pair_tuple = tuple(sorted((user1.key.id(), user2.key.id())))
             if pair_tuple not in previous_meetings_counts:
-                adj_matrix[idx1].append(0)
+                user_user_weights[idx1].append(0)
                 continue
             weight = starting_weight - (negative_weight * previous_meetings_counts[pair_tuple])
-            adj_matrix[idx1].append(weight)
-    return adj_matrix
+            user_user_weights[idx1].append(weight)
+    return user_user_weights
 
 
-def chunk(input_list, chunk_size):
-    for i in range(0, len(input_list), chunk_size):
-        yield input_list[i:i + chunk_size if (i + chunk_size) < len(input_list) else len(input_list)]
+def generate_groups(group, partition_size):
+    """
+    Given a group, partition into smaller groups of a specific size.  Zero
+    for group size is invalid. Partitions will never exceed inputted value, but may be smaller.
+    :param group: List of ids
+    :param partition_size: Intended size for group
+    :return: list of groups
+    """
+    for i in range(0, len(group), partition_size):
+        yield group[i:i + partition_size if (i + partition_size) < len(group) else len(group)]
 
 
 def generate_group_meetings(users, spec, group_size, starting_weight, negative_weight):
     population_size = len(users)
     previous_meetings_counts = get_previous_meetings_counts(users, spec.meeting_subscription)
-    adj_matrix = get_adj_matrix(users, previous_meetings_counts, starting_weight, negative_weight)
+    adj_matrix = get_user_weights(users, previous_meetings_counts, starting_weight, negative_weight)
     annealing = Annealing(population_size, group_size, adj_matrix)
-    grouped_ids = chunk(annealing.simulated_annealing(), group_size)
+    grouped_ids = generate_groups(annealing.simulated_annealing(), group_size)
 
     matches = []
     unmatched = []

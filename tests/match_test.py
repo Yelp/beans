@@ -9,7 +9,8 @@ from datetime import timedelta
 
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
-from yelp_beans.matching.group_match import get_adj_matrix
+from yelp_beans.matching.group_match import generate_groups
+from yelp_beans.matching.group_match import get_user_weights
 from yelp_beans.matching.group_match import get_previous_meetings_counts
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import get_counts_for_pairs
@@ -206,7 +207,7 @@ def test_pair_to_counts():
     assert(counts[('user1', 'user2')] == 2)
 
 
-def test_get_previous_meetings_counts():
+def test_get_previous_meetings_counts(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()
@@ -220,7 +221,18 @@ def test_get_previous_meetings_counts():
     assert(get_previous_meetings_counts([user1.get(), user2.get()], subscription) == {(user1.id(), user2.id()): 1})
 
 
-def test_get_adj_matrix():
+def test_generate_groups():
+    result = generate_groups([1, 2, 3, 4, 5], 3)
+    assert [x for x in result] == [[1, 2, 3], [4, 5]]
+
+    result = generate_groups([1, 2, 3, 4], 2)
+    assert [x for x in result] == [[1, 2], [3, 4]]
+
+    result = generate_groups([1, 2, 3], 3)
+    assert [x for x in result] == [[1, 2, 3]]
+
+
+def test_get_user_weights(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()
@@ -232,10 +244,10 @@ def test_get_adj_matrix():
     MeetingParticipant(meeting=meeting, user=user1).put()
     previous_meetings_count = get_previous_meetings_counts([user1.get(), user2.get()], subscription)
 
-    assert(get_adj_matrix([user1.get(), user2.get()], previous_meetings_count, 10, 5) == [[0, 5], [5, 0]])
+    assert(get_user_weights([user1.get(), user2.get()], previous_meetings_count, 10, 5) == [[0, 5], [5, 0]])
 
 
-def test_generate_group_meeting():
+def test_generate_group_meeting(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()
@@ -243,7 +255,7 @@ def test_generate_group_meeting():
     meeting_spec.put()
 
     users = []
-    num_users = 20
+    num_users = 21
     for i in range(0, num_users):
         user = User(email='{}@yelp.com'.format(i), metadata={
                     'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref])
@@ -252,11 +264,14 @@ def test_generate_group_meeting():
         users.append(user)
 
     matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=3)
-    assert(len(matches) == 6)
-    assert (len(unmatched) == 2)
+    assert(len(matches) == 7)
+    assert (len(unmatched) == 0)
+    matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=5)
+    assert(len(matches) == 4)
+    assert (len(unmatched) == 1)
 
 
-def test_previous_meeting_penalty():
+def test_previous_meeting_penalty(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     pref_2 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 2)).put()
     pref_3 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 3)).put()
