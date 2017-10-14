@@ -7,7 +7,6 @@ import itertools
 import logging
 import random
 
-from yelp_beans.logic.user import user_preference
 from yelp_beans.matching.match_utils import get_counts_for_pairs
 from yelp_beans.matching.match_utils import get_previous_meetings
 
@@ -65,6 +64,14 @@ def generate_groups(group, partition_size):
 
 def generate_group_meetings(users, spec, group_size, starting_weight, negative_weight):
     population_size = len(users)
+
+    # For group meetings we must have more than 2 users
+    if population_size == 0:
+        return [], []
+
+    if population_size in (1, 2):
+        return [], users
+
     previous_meetings_counts = get_previous_meetings_counts(users, spec.meeting_subscription)
     adj_matrix = get_user_weights(users, previous_meetings_counts, starting_weight, negative_weight)
     annealing = Annealing(population_size, group_size, adj_matrix)
@@ -73,14 +80,11 @@ def generate_group_meetings(users, spec, group_size, starting_weight, negative_w
     matches = []
     unmatched = []
     for group in grouped_ids:
-        group_users = [users[idx] for idx in group]
-        if len(group) < group_size:
-            unmatched.extend(group_users)
-            continue
-        time = user_preference(users[0], spec)
-        group_users.append(time)
-        users_time_tuple = tuple(group_users)
-        matches.append(users_time_tuple)
+        grouped_users = [users[index] for index in group]
+        if len(grouped_users) < group_size:
+            unmatched.extend(grouped_users)
+        else:
+            matches.append(grouped_users)
     logging.info('{} employees matched'.format(len(matches) * group_size))
     for group in matches:
         username_tuple = tuple([user.get_username() for user in group[:-1]])
