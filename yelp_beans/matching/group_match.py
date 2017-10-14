@@ -65,6 +65,9 @@ def generate_groups(group, partition_size):
 
 def generate_group_meetings(users, spec, group_size, starting_weight, negative_weight):
     population_size = len(users)
+    if population_size == 0:
+        return [], []
+
     previous_meetings_counts = get_previous_meetings_counts(users, spec.meeting_subscription)
     adj_matrix = get_user_weights(users, previous_meetings_counts, starting_weight, negative_weight)
     annealing = Annealing(population_size, group_size, adj_matrix)
