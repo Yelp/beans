@@ -132,6 +132,26 @@ def test_generate_group_meeting(minimal_database):
     assert (len(unmatched) == 1)
 
 
+def test_generate_group_meeting_invalid_number_of_users(minimal_database):
+    pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
+    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
+    user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()
+    meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.get().datetime)
+    meeting_spec.put()
+
+    users = []
+    for i in range(0, 2):
+        user = User(email='{}@yelp.com'.format(i), metadata={
+            'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref])
+        user.put()
+        MeetingRequest(user=user.key, meeting_spec=meeting_spec.key).put()
+        users.append(user)
+
+    matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=3)
+    assert(len(matches) == 0)
+    assert (len(unmatched) == 2)
+
+
 def test_previous_meeting_penalty(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     pref_2 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 2)).put()
