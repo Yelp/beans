@@ -72,7 +72,8 @@ class UserPreferenceForm extends Component {
             onChange={this.handleChange}
             value={preference.id}
             type="checkbox"
-          />{UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}</label>
+          />{UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}
+          </label>
         );
       });
     }
