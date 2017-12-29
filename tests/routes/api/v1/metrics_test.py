@@ -50,22 +50,10 @@ def test_get_meeting_participants(app, database):
     MeetingParticipant(meeting=meeting1, user=user2.key).put()
     with app.test_request_context('/v1/metrics/meeting_participants'):
         participants = json.loads(meeting_participants())
-        assert participants == [
-            {
-                'date': '2017-10-27T23:00:00',
-                'meeting': 'agx0ZXN0YmVkLXRlc3RyDQsSB01lZXRpbmcYCgw',
-                'meeting_title': 'Yelp Weekly',
-                'participant': 'a@yelp.com',
-                'time': '04:00PM'
-            },
-            {
-                'date': '2017-10-27T23:00:00',
-                'meeting': 'agx0ZXN0YmVkLXRlc3RyDQsSB01lZXRpbmcYCgw',
-                'meeting_title': 'Yelp Weekly',
-                'participant': 'b@yelp.com',
-                'time': '04:00PM'
-            }
-        ]
+        assert len(participants) == 2
+        assert set(participants[0].keys()) == set(['date', 'meeting', 'meeting_title', 'participant', 'time'])
+        assert participants[0]['date'] == database.specs[0].datetime.isoformat()
+        assert participants[0]['time'] == database.specs[0].datetime.strftime('%I:%M%p')
 
 
 def test_get_meeting_requests(app, database):

@@ -72,10 +72,10 @@ def subscription():
 
 def _subscription():
     zone = 'US/Pacific'
-    preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 23, 0))
+    preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0))
     preference_1.put()
 
-    preference_2 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 19, 0))
+    preference_2 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 11, 0))
     preference_2.put()
 
     rule = Rule(name='office', value='USA: CA SF New Montgomery Office').put()

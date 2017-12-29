@@ -45,7 +45,7 @@ def test_store_specs_from_subscription(database):
 def test_get_subscription_dates(database):
     dates = get_subscription_dates(database.sub)
     assert len(dates) == 2
-    assert dates[1]['date'] == '2017-01-20T19:00:00+00:00'
+    assert dates[1]['date'] == '2017-01-20T11:00:00+00:00'
 
 
 def test_merge_subscriptions_with_preferences(database, fake_user):
@@ -61,12 +61,12 @@ def test_merge_subscriptions_with_preferences(database, fake_user):
         'datetime': [
             {
                 'active': True,
-                'date': '2017-01-20T23:00:00+00:00',
+                'date': '2017-01-20T13:00:00+00:00',
                 'id': database.sub.datetime[0].urlsafe()
             },
             {
                 'active': False,
-                'date': '2017-01-20T19:00:00+00:00',
+                'date': '2017-01-20T11:00:00+00:00',
                 'id': database.sub.datetime[1].urlsafe()
             }
         ]
