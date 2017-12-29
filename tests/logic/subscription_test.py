@@ -3,22 +3,37 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 import pytest
 
+from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.subscription import filter_subscriptions_by_user_data
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import get_subscription_dates
 from yelp_beans.logic.subscription import merge_subscriptions_with_preferences
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.models import MeetingSpec
+from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
+from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
 
-def test_get_specs_from_subscription(database):
-    week_start, specs = get_specs_from_subscription(database.sub)
-    assert len(specs) == 2
+def test_get_specs_from_subscription_pst(minimal_database):
+    preference = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0)).put()
+    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference]).put()
+    _, specs = get_specs_from_subscription(subscription.get())
+    assert len(specs) == 1
+    assert get_meeting_datetime(specs[0]).hour == 13
+
+
+def test_get_specs_from_subscription_pdt(minimal_database):
+    preference = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0)).put()
+    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference]).put()
+    _, specs = get_specs_from_subscription(subscription.get())
+    assert get_meeting_datetime(specs[0]).hour == 13
 
 
 def test_store_specs_from_subscription(database):

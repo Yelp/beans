@@ -8,7 +8,6 @@ from datetime import datetime
 from datetime import timedelta
 
 from pytz import timezone
-from pytz import utc
 
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import User
@@ -56,6 +55,11 @@ def get_users_from_spec(meeting_spec):
 
 
 def get_meeting_datetime(meeting_spec):
+    """
+    Given a meeting_spec, returns the meeting datetime in the appropriate timezone.
+    :param meeting_spec: models.meeting_spec
+    :return: datetime.datetime in the correct timezone
+    """
     meeting_datetime = meeting_spec.datetime
-    meeting_timezone = meeting_spec.meeting_subscription.get().timezone
-    return meeting_datetime.replace(tzinfo=utc).astimezone(timezone(meeting_timezone))
+    meeting_timezone = timezone(meeting_spec.meeting_subscription.get().timezone)
+    return meeting_timezone.localize(meeting_datetime)
