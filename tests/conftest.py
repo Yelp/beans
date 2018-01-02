@@ -71,7 +71,7 @@ def subscription():
 
 
 def _subscription():
-    zone = 'US/Pacific'
+    zone = 'America/Los_Angeles'
     preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0))
     preference_1.put()
 

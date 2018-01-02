@@ -143,8 +143,8 @@ def send_match_email(user, participants, meeting_spec):
             'location': subscription.office + " " + subscription.location,
             'meeting_start_day': meeting_datetime.strftime('%A'),
             'meeting_start_date': meeting_datetime.strftime('%m/%d/%Y'),
-            'meeting_start_time': meeting_datetime.strftime('%I:%M %p'),
-            'meeting_end_time': meeting_datetime_end.strftime('%I:%M %p'),
+            'meeting_start_time': meeting_datetime.strftime('%I:%M %p %Z'),
+            'meeting_end_time': meeting_datetime_end.strftime('%I:%M %p %Z'),
             'calendar_invite_url': create_google_calendar_invitation_link(
                 participants,
                 subscription.title,

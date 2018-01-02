@@ -8,7 +8,6 @@ from datetime import timedelta
 
 from google.appengine.ext import ndb
 from google.appengine.ext.db import NeedIndexError
-from pytz import utc
 
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
@@ -87,7 +86,7 @@ def get_subscription_dates(subscription):
     return [
         {
             'id': date.urlsafe(),
-            'date': date.get().datetime.replace(tzinfo=utc).isoformat(),
+            'date': date.get().datetime.isoformat(),
             'active': False
         }
         for date in subscription.datetime

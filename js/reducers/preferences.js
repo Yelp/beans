@@ -5,7 +5,7 @@ const defaultValue = [
     id: 'None',
     location: 'Unknown',
     title: 'No Meetings Set Up',
-    timezone: 'US/Pacific',
+    timezone: 'America/Los_Angeles',
     size: 0,
     office: 'None',
     datetime: [],

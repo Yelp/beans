@@ -25,7 +25,7 @@ def test_preferences_api_user_exists(app, database, fake_user):
             'title': 'Yelp Weekly',
             'location': '8th Floor',
             'office': 'USA: CA SF New Montgomery Office',
-            'timezone': 'US/Pacific',
+            'timezone': 'America/Los_Angeles',
             'size': 2,
             'rule_logic': None,
             'datetime': [
