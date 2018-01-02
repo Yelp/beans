@@ -31,12 +31,12 @@ def test_preferences_api_user_exists(app, database, fake_user):
             'datetime': [
                 {
                     'active': True,
-                    'date': '2017-01-20T13:00:00+00:00',
+                    'date': '2017-01-20T13:00:00',
                     'id': database.sub.datetime[0].urlsafe()
                 },
                 {
                     'active': False,
-                    'date': '2017-01-20T11:00:00+00:00',
+                    'date': '2017-01-20T11:00:00',
                     'id': database.sub.datetime[1].urlsafe()
                 }
             ],
