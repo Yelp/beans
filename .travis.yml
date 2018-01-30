@@ -8,7 +8,7 @@ before_script:
     - unzip google_appengine.zip >/dev/null
     - export APPENGINE_PATH=./google_appengine
     - export PATH=$PATH:$APPENGINE_PATH
-script: tox
+script: make test
 cache:
     directories:
         - $HOME/.cache/pip
