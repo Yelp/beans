@@ -3,22 +3,37 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 import pytest
 
+from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.subscription import filter_subscriptions_by_user_data
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import get_subscription_dates
 from yelp_beans.logic.subscription import merge_subscriptions_with_preferences
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.models import MeetingSpec
+from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
+from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
 
-def test_get_specs_from_subscription(database):
-    week_start, specs = get_specs_from_subscription(database.sub)
-    assert len(specs) == 2
+def test_get_specs_from_subscription_pst(minimal_database):
+    preference = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0)).put()
+    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference]).put()
+    _, specs = get_specs_from_subscription(subscription.get())
+    assert len(specs) == 1
+    assert get_meeting_datetime(specs[0]).hour == 13
+
+
+def test_get_specs_from_subscription_pdt(minimal_database):
+    preference = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0)).put()
+    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference]).put()
+    _, specs = get_specs_from_subscription(subscription.get())
+    assert get_meeting_datetime(specs[0]).hour == 13
 
 
 def test_store_specs_from_subscription(database):
@@ -30,7 +45,7 @@ def test_store_specs_from_subscription(database):
 def test_get_subscription_dates(database):
     dates = get_subscription_dates(database.sub)
     assert len(dates) == 2
-    assert dates[1]['date'] == '2017-01-20T19:00:00+00:00'
+    assert dates[1]['date'] == '2017-01-20T11:00:00'
 
 
 def test_merge_subscriptions_with_preferences(database, fake_user):
@@ -40,18 +55,18 @@ def test_merge_subscriptions_with_preferences(database, fake_user):
         'title': 'Yelp Weekly',
         'location': '8th Floor',
         'office': 'USA: CA SF New Montgomery Office',
-        'timezone': 'US/Pacific',
+        'timezone': 'America/Los_Angeles',
         'size': 2,
         'rule_logic': None,
         'datetime': [
             {
                 'active': True,
-                'date': '2017-01-20T23:00:00+00:00',
+                'date': '2017-01-20T13:00:00',
                 'id': database.sub.datetime[0].urlsafe()
             },
             {
                 'active': False,
-                'date': '2017-01-20T19:00:00+00:00',
+                'date': '2017-01-20T11:00:00',
                 'id': database.sub.datetime[1].urlsafe()
             }
         ]

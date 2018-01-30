@@ -25,18 +25,18 @@ def test_preferences_api_user_exists(app, database, fake_user):
             'title': 'Yelp Weekly',
             'location': '8th Floor',
             'office': 'USA: CA SF New Montgomery Office',
-            'timezone': 'US/Pacific',
+            'timezone': 'America/Los_Angeles',
             'size': 2,
             'rule_logic': None,
             'datetime': [
                 {
                     'active': True,
-                    'date': '2017-01-20T23:00:00+00:00',
+                    'date': '2017-01-20T13:00:00',
                     'id': database.sub.datetime[0].urlsafe()
                 },
                 {
                     'active': False,
-                    'date': '2017-01-20T19:00:00+00:00',
+                    'date': '2017-01-20T11:00:00',
                     'id': database.sub.datetime[1].urlsafe()
                 }
             ],

@@ -12,8 +12,6 @@ import mock
 import pytest
 from google.appengine.ext import ndb
 from google.appengine.ext import testbed
-from pytz import timezone
-from pytz import utc
 
 from yelp_beans import send_email
 from yelp_beans.logic.subscription import get_specs_from_subscription
@@ -73,17 +71,11 @@ def subscription():
 
 
 def _subscription():
-    zone = 'US/Pacific'
-    preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 23, 0, tzinfo=utc))
-    # Easier to think/verify in Pacific time since we are based in SF
-    assert preference_1.datetime.astimezone(timezone(zone)).hour == 15
-    preference_1.datetime = preference_1.datetime.replace(tzinfo=None)
+    zone = 'America/Los_Angeles'
+    preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0))
     preference_1.put()
 
-    preference_2 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 19, 0, tzinfo=utc))
-    # Easier to think/verify in Pacific time since we are based in SF
-    assert preference_2.datetime.astimezone(timezone(zone)).hour == 11
-    preference_2.datetime = preference_2.datetime.replace(tzinfo=None)
+    preference_2 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 11, 0))
     preference_2.put()
 
     rule = Rule(name='office', value='USA: CA SF New Montgomery Office').put()
