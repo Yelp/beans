@@ -9,6 +9,7 @@
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "redux-promise": "^0.5.3"
@@ -37,7 +38,7 @@
   "scripts": {
     "webpack-dev-server": "webpack-dev-server --port 8001",
     "webpack": "webpack --progress --color",
-    "eslint": "eslint --ext .jsx --ext .js .",
+    "eslint": "eslint --ext .js .",
     "test": "jest --config .jestrc.json",
     "test:watch": "npm test -- --watch"
   },
