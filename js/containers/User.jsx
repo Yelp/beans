@@ -18,6 +18,35 @@ class User extends Component {
     }
     return email;
   }
+  maybeRenderPhoto() {
+    let user = this.props.user;
+    let metadata = user.metadata;
+    if (metadata && metadata.company_profile_url) {
+      return (
+          <a href={metadata.company_profile_url}>
+            <img alt="User Profile" className="profile-img" src={user.photo_url} />
+          </a>
+      );
+    } else {
+      return;
+    }
+  }
+  department() {
+    let metadata = this.props.metadata;
+    if (metadata && metadata.department) {
+      return <h4>{metadata.department}</h4>
+    } else {
+      return;
+    }
+  }
+  business_title() {
+    let metadata = this.props.metadata;
+    if (metadata && metadata.business_title) {
+      return <h4>{metadata.business_title}</h4>
+    } else {
+      return;
+    }
+  }
   render() {
     const { user } = this.props;
     return (
@@ -26,12 +55,10 @@ class User extends Component {
           <div className="content">
             <div className="bio">
               <div className="about-me">
-                <a href={user.metadata.company_profile_url}>
-                  <img alt="User Profile" className="profile-img" src={user.photo_url} />
-                </a>
+                <maybeRenderPhoto user={user} />
                 <h2>{user.first_name} {user.last_name}</h2>
-                <h4>{user.metadata.department}</h4>
-                <h4>{user.metadata.business_title}</h4>
+                <department metadata={user.metadata} />
+                <business_title metadata={user.metadata} />
                 <br />
               </div>
             </div>
