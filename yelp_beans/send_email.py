@@ -141,6 +141,7 @@ def send_match_email(user, participants, meeting_spec):
             'user': user,
             'participants': participants,
             'location': subscription.office + " " + subscription.location,
+            'meeting_title': subscription.title,
             'meeting_start_day': meeting_datetime.strftime('%A'),
             'meeting_start_date': meeting_datetime.strftime('%m/%d/%Y'),
             'meeting_start_time': meeting_datetime.strftime('%I:%M %p %Z'),
