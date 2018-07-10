@@ -40,3 +40,10 @@
         - --add-import
         - from __future__ import unicode_literals
         language_version: python2.7
+-   repo: https://github.com/Yelp/detect-secrets
+    sha: 0.9.1
+    hooks:
+    -   id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: .*tests/.*|.*yelp/testing/.*|\.pre-commit-config\.yaml
+        language_version: python2.7
