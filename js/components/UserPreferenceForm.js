@@ -37,7 +37,7 @@ class UserPreferenceForm extends Component {
         [event.target.id]: event.target.checked,
       },
     };
-    this.setState(Object.assign({}, this.state, data));
+    this.setState(prevState => Object.assign({}, prevState, data));
   }
   renderPreferences(state) {
     if (this.props.preferences.length !== 0) {
