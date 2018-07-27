@@ -10,6 +10,7 @@ class User extends Component {
   componentWillMount() {
     this.props.getUser(this.getEmail());
   }
+
   getEmail() {
     let email = '';
     const path = this.props.location.pathname.split('/');
@@ -18,6 +19,7 @@ class User extends Component {
     }
     return email;
   }
+
   render() {
     const { user } = this.props;
     return (
@@ -29,9 +31,17 @@ class User extends Component {
                 <a href={user.metadata.company_profile_url}>
                   <img alt="User Profile" className="profile-img" src={user.photo_url} />
                 </a>
-                <h2>{user.first_name} {user.last_name}</h2>
-                <h4>{user.metadata.department}</h4>
-                <h4>{user.metadata.business_title}</h4>
+                <h2>
+                  {user.first_name}
+                  {' '}
+                  {user.last_name}
+                </h2>
+                <h4>
+                  {user.metadata.department}
+                </h4>
+                <h4>
+                  {user.metadata.business_title}
+                </h4>
                 <br />
               </div>
             </div>

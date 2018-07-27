@@ -11,13 +11,16 @@ class MeetingRequest extends Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
   componentWillMount() {
     this.props.getMeetingRequest(this.getMeetingSpecKey());
   }
+
   getMeetingSpecKey() {
     const path = this.props.location.pathname.split('/');
     return path[path.length - 1];
   }
+
   handleSubmit() {
     axios.post(
       '/v1/meeting_request/',

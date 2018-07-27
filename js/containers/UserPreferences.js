@@ -10,6 +10,7 @@ class UserPreferences extends Component {
   componentWillMount() {
     this.props.getPreferences(this.props.email);
   }
+
   render() {
     return (
       <div className="preferences">

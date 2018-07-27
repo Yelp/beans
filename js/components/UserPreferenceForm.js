@@ -10,6 +10,7 @@ class UserPreferenceForm extends Component {
   static isoDateToString(ISODate, timezone) {
     return moment(ISODate).tz(timezone).format('dddd LT z');
   }
+
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
@@ -24,6 +25,7 @@ class UserPreferenceForm extends Component {
       });
     }
   }
+
   handleSubmit(prefId, event) {
     event.preventDefault();
     if (this.state) {
@@ -31,6 +33,7 @@ class UserPreferenceForm extends Component {
       alert('Preference Updated'); // eslint-disable-line
     }
   }
+
   handleChange(event) {
     const data = {
       [event.target.value]: {
@@ -39,12 +42,24 @@ class UserPreferenceForm extends Component {
     };
     this.setState(prevState => Object.assign({}, prevState, data));
   }
+
   renderPreferences(state) {
     if (this.props.preferences.length !== 0) {
       return this.props.preferences.map(preference => (
-        <div key={preference.id} >
-          <h3>{preference.title}</h3>
-          <h6>{preference.office}, {preference.location} ({preference.size})</h6>
+        <div key={preference.id}>
+          <h3>
+            {preference.title}
+          </h3>
+          <h6>
+            {preference.office}
+,
+            {' '}
+            {preference.location}
+            {' '}
+(
+            {preference.size}
+)
+          </h6>
           <form onSubmit={event => this.handleSubmit(preference.id, event)}>
             { this.renderTimes(preference, state) }
             <button type="submit" className="btn btn-danger left30">
@@ -54,8 +69,13 @@ class UserPreferenceForm extends Component {
         </div>
       ));
     }
-    return <div>No Subscription Available.</div>;
+    return (
+      <div>
+No Subscription Available.
+      </div>
+    );
   }
+
   renderTimes(preference, state) {
     if (preference) {
       return preference.datetime.map((datetime) => {
@@ -66,19 +86,26 @@ class UserPreferenceForm extends Component {
           checked = state[`${preference.id}`][`${datetime.active}`];
         }
         return (
-          <label htmlFor={datetime.id} key={datetime.id}><input
-            id={datetime.id}
-            defaultChecked={checked}
-            onChange={this.handleChange}
-            value={preference.id}
-            type="checkbox"
-          />{UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}
+          <label htmlFor={datetime.id} key={datetime.id}>
+            <input
+              id={datetime.id}
+              defaultChecked={checked}
+              onChange={this.handleChange}
+              value={preference.id}
+              type="checkbox"
+            />
+            {UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}
           </label>
         );
       });
     }
-    return (<div>No data.</div>);
+    return (
+      <div>
+No data.
+      </div>
+    );
   }
+
   render() {
     return (
       <div>

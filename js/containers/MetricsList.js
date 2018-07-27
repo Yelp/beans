@@ -10,6 +10,7 @@ class MetricsList extends Component {
   componentWillMount() {
     this.props.getMetrics('v1');
   }
+
   renderMetrics() {
     return this.props.metrics.map(metric => (
       <MetricsListItem
@@ -18,6 +19,7 @@ class MetricsList extends Component {
       />
     ));
   }
+
   render() {
     return (
       <div className="container-fluid">
