@@ -7,7 +7,10 @@ const Header = () => (
       className="logo"
       alt="Beans Logo"
       src="/img/beans-white.svg"
-    /><span className="logo-font">Beans</span>
+    />
+    <span className="logo-font">
+Beans
+    </span>
     <img
       className="yelp_logo"
       alt="Yelp Logo"

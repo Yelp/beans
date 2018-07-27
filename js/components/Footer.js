@@ -7,7 +7,11 @@ const Footer = () => (
     <div className="container">
       <div className="row">
         <div className="col-lg-8 col-lg-offset-2 text-center">
-          <h5><small>Made with ♥ at Yelp.</small></h5>
+          <h5>
+            <small>
+Made with ♥ at Yelp.
+            </small>
+          </h5>
           <a href="https://github.com/Yelp/beans">
             <img
               className="github-img"
