@@ -1,0 +1,6 @@
+dispatch:
+  - url: "*/v1/*"
+    service: api
+
+  - url: "*/tasks/*"
+    service: api

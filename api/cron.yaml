@@ -1,0 +1,24 @@
+cron:
+- description: Syncs employee data from s3
+  url: /tasks/populate_employees
+  schedule: every day 03:00
+  timezone: America/Los_Angeles
+  target: api
+
+- description: weekly meeting spec generation
+  url: /tasks/generate_meeting_specs_for_week
+  schedule: every monday 9:00
+  timezone: America/Los_Angeles
+  target: api
+
+- description: weekly opt-in email
+  url: /tasks/email_users_for_weekly_opt_in
+  schedule: every monday 11:00
+  timezone: America/Los_Angeles
+  target: api
+
+- description: weekly match
+  url: /tasks/match_employees
+  schedule: every wednesday 11:00
+  timezone: America/Los_Angeles
+  target: api

@@ -1,0 +1,37 @@
+runtime: python27
+threadsafe: true
+instance_class: F2
+service: api
+
+handlers:
+- url: /tasks/.*
+  script: webapp.app
+  auth_fail_action: unauthorized
+  secure: always
+
+- url: /preferences/.*
+  script: webapp.app
+  secure: always
+
+- url: /rule
+  script: webapp.app
+  login: admin
+  auth_fail_action: unauthorized
+  secure: always
+
+- url: /.* # Anything not explicitly listed above
+  script: webapp.app
+  secure: always
+
+libraries:
+- name: jinja2
+  version: latest
+- name: ssl
+  version: latest
+
+skip_files:
+- ^(.*/)?#.*#$
+- ^(.*/)?.*~$
+- ^(.*/)?.*\.py[co]$
+- ^(.*/)?.*/RCS/.*$
+- ^(.*/)?\..*$

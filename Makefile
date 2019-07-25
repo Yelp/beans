@@ -1,53 +1,38 @@
-VIRTUALENV_REQUIREMENTS = requirements.txt requirements-dev.txt
-SOURCES := $(shell find js -name '*.js')
+define GetFromPkg
+$(shell node -p "require('./frontend/lib/config.json').$(1)")
+endef
 
-.PHONY: all
-all: development
+PROJECT := $(call GetFromPkg,PROJECT)
+
 
 .PHONY: deploy
-deploy: production
-	gcloud app deploy --project yelp-beans --version 1
-
-.PHONY: production
-production: export VIRTUALENV_REQUIREMENTS = requirements.txt
-production: export NODE_ENV = "production"
-production: venv touch.webpack.prod
+deploy: build deploy_dispatch
+	gcloud app deploy frontend/app.yaml api/app.yaml --project $(PROJECT) --version 1
 
 .PHONY: development
-development: venv touch.webpack.dev install-hooks
+development:
+	make -C frontend/ development
+	make -C api/ development
 
-.PHONY: install-hooks
-install-hooks: venv
-	./venv/bin/pre-commit install -f --install-hooks
-
-touch.webpack.%: export PRODUCTION_FLAG = $(shell [ "$(NODE_ENV)" == "production" ] && echo "-p")
-touch.webpack.%: $(SOURCES) node_modules webpack.config.js .babelrc package.json
-	npm run webpack -- $(PRODUCTION_FLAG)
-	touch "$@"
+.PHONY: build
+build:
+	make -C frontend/
+	make -C api/
 
 .PHONY: test
-test: development install-hooks
-	tox
-	npm test
-	npm run eslint
+test:
+	make -C frontend/ test
+	make -C api/ test
 
-node_modules: package.json
-	npm install
+.PHONY: deploy_dispatch
+deploy_dispatch:
+	gcloud app deploy dispatch.yaml --project $(PROJECT)
 
-venv: $(VIRTUALENV_REQUIREMENTS) bin/venv-update
-	./bin/venv-update \
-	    venv= venv/ --python=python2.7 \
-	    install= $(patsubst %,-r %,$(VIRTUALENV_REQUIREMENTS)) \
-	    bootstrap-deps= -r requirements-bootstrap.txt \
-	    pip-command= pymonkey pip-custom-platform -- pip-faster install --upgrade --prune
-	rm -rf $@/local
-
-.PHONY: serve
-serve: development
-	dev_appserver.py .
+.PHONY: deploy_cron
+deploy_cron:
+	gcloud app deploy cron.yaml --project $(PROJECT)
 
 .PHONY: clean
 clean:
-	rm -rf venv/
-	rm -rf node_modules/
-	rm -rf dist/
+	make -C frontend/ clean
+	make -C api/ clean
