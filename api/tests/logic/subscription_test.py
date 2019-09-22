@@ -110,6 +110,38 @@ def test_filter_subscriptions_by_user_data_any(database):
     assert subscriptions == []
 
 
+def test_filter_subscriptions_by_user_data_list(database):
+    preference = UserSubscriptionPreferences(
+        subscription=database.sub.key,
+        preference=database.prefs[0].key
+    )
+    preference.put()
+    user = User(
+        email='a@a.com',
+        subscription_preferences=[preference.key]
+    )
+    user.metadata = {"role": ["pushmaster", "technical_lead"]}
+    user.put()
+
+    rule = Rule(name="role", value="pushmaster").put()
+    database.sub.user_rules = [rule]
+    database.sub.rule_logic = 'any'
+    database.sub.put()
+
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert len(subscriptions) == 1
+    assert subscriptions[0]['id'] == database.sub.key.urlsafe()
+
+    user.metadata = {"role": "infra"}
+    user.put()
+    merged_preferences = merge_subscriptions_with_preferences(user)
+    subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
+
+    assert len(subscriptions) == 0
+
+
 def test_filter_subscriptions_by_user_data_all(database):
     database.sub.rule_logic = 'all'
     rule1 = Rule(name="department", value="a").put()

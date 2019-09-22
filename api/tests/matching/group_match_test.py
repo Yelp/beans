@@ -36,7 +36,7 @@ def test_generate_groups():
     assert [x for x in result] == [[1, 2], [3, 4]]
 
 
-def test_generate_group_meetings_invalid_number_of_users():
+def test_generate_group_meetings_invalid_number_of_users(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()
@@ -60,7 +60,7 @@ def test_generate_group_meetings_invalid_number_of_users():
     assert set(user.key for user in unmatched) == {user1, user2}
 
 
-def test_generate_group_meetings():
+def test_generate_group_meetings(minimal_database):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1)).put()
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1]).put()
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription).put()

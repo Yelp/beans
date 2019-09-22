@@ -43,10 +43,14 @@ def apply_rules(user, subscription, subscription_rules, rule_logic):
     subscription_rules: models.Rule()
     rule_logic: all(), any()
     """
-    rules = {
-        user.metadata.get(rule.get().name) == rule.get().value
-        for rule in subscription_rules
-    }
+    rules = set()
+    for rule in subscription_rules:
+        user_rule = user.metadata.get(rule.get().name)
+        subscription_rule = rule.get().value
+        if type(user_rule) is list:
+            rules.add(subscription_rule in user_rule)
+        else:
+            rules.add(user_rule == subscription_rule)
     if rule_logic(rules):
         return subscription
 
