@@ -1,0 +1,23 @@
+runtime: nodejs10
+instance_class: F2
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /bootstrap
+  static_dir: bootstrap
+
+- url: /static
+  static_dir: static/
+  http_headers:
+    Access-Control-Allow-Origin: "*"
+
+- url: /js
+  static_dir: dist/bundle
+
+- url: /.*
+  secure: always
+  script: auto
+  redirect_http_response_code: 301

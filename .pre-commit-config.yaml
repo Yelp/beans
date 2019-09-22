@@ -1,13 +1,12 @@
+repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: v0.7.0
+    rev: v2.3.0
     hooks:
     -   id: trailing-whitespace
         exclude: assets/vendor/*
         language_version: python2.7
     -   id: end-of-file-fixer
         exclude: assets/vendor/*
-        language_version: python2.7
-    -   id: autopep8-wrapper
         language_version: python2.7
     -   id: check-json
         files: \.(jshintrc|json)$
@@ -28,8 +27,12 @@
         language_version: python2.7
     -   id: check-merge-conflict
         language_version: python2.7
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.4
+    hooks:
+    -   id: autopep8
 -   repo: https://github.com/asottile/reorder_python_imports
-    sha: v0.3.2
+    rev: v1.7.0
     hooks:
     -   id: reorder-python-imports
         args:
@@ -41,7 +44,7 @@
         - from __future__ import unicode_literals
         language_version: python2.7
 -   repo: https://github.com/Yelp/detect-secrets
-    sha: 0.9.1
+    rev: v0.12.6
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']

@@ -1,16 +1,27 @@
-language: python
 matrix:
     include:
-        - env: TOXENV=py27
-install: pip install tox
-before_script:
-    - curl https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.50.zip > google_appengine.zip
-    - unzip google_appengine.zip >/dev/null
-    - export APPENGINE_PATH=./google_appengine
-    - export PATH=$PATH:$APPENGINE_PATH
-script: make test
-cache:
-    directories:
-        - $HOME/.cache/pip
-        - $HOME/.pre-commit
-        - node_modules
+        - language: python
+          python: 2.7
+          env: TOXENV=py27
+          install: pip install tox
+          before_script:
+            - cd api/
+            - ls tests/
+            - curl https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.50.zip > google_appengine.zip
+            - unzip google_appengine.zip >/dev/null
+            - export APPENGINE_PATH=./google_appengine
+            - export PATH=$PATH:$APPENGINE_PATH
+          script: make test
+          cache:
+            directories:
+                - $HOME/.cache/pip
+                - $HOME/.cache/pre-commit
+
+        - language: node_js
+          node_js: 8
+          before_script:
+            - cd frontend/
+          script: make test
+          cache:
+            directories:
+                - $HOME/node_modules
