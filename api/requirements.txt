@@ -11,7 +11,7 @@ networkx==2.2
 python-http-client==3.2.1
 pytz==2019.2
 PyYAML==5.1.2
-requests==2.1.0
+requests==2.20.0
 sendgrid==3.6.3
 setuptools==41.2.0
 urllib3==1.2
