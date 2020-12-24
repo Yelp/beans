@@ -29,13 +29,14 @@ test: development install-hooks
 
 venv: $(VIRTUALENV_REQUIREMENTS) bin/venv-update
 	./bin/venv-update \
-	    venv= venv/ --python=python2.7 \
+	    venv= venv/ --python=python3.6 \
 	    install= $(patsubst %,-r %,$(VIRTUALENV_REQUIREMENTS)) \
 	    bootstrap-deps= -r requirements-bootstrap.txt \
 
 .PHONY: serve
 serve: development
-	dev_appserver.py .
+	export FLASK_APP=webapp.py
+	flask run
 
 .PHONY: clean
 clean:

@@ -18,10 +18,10 @@ metrics_blueprint = Blueprint('metrics', __name__)
 def meeting_subscribers():
     metrics = []
     subscribed_users = get_subscribers()
-    subscriptions = MeetingSubscription.query().fetch()
+    subscriptions = MeetingSubscription.query.all()
 
     for subscription in subscriptions:
-        subscribed = set(subscribed_users[subscription.key.urlsafe()])
+        subscribed = set(subscribed_users[subscription.id])
 
         for subscriber in subscribed:
             metrics.append(

@@ -5,8 +5,7 @@ from __future__ import unicode_literals
 
 import json
 
-from boto import connect_s3
-from boto.s3.key import Key
+import boto3
 from yelp_beans.data_providers.data_provider import DataProvider
 
 
@@ -28,14 +27,16 @@ class S3DataProvider(DataProvider):
         bucket = self._obtain_s3_connection(
             self.access_key_id,
             self.secret_access_key,
-        ).get_bucket(
+        ).Object(
             self.bucket_name,
+            self.key
         )
-        contents = Key(bucket, self.key).get_contents_as_string()
+        contents = bucket.get()['Body'].read().decode('utf-8')
         return json.loads(contents)
 
     def _obtain_s3_connection(self, access_key_id, secret_access_key):
-        return connect_s3(
+        return boto3.resource(
+            's3',
             aws_access_key_id=access_key_id,
             aws_secret_access_key=secret_access_key,
         )

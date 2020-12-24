@@ -3,10 +3,10 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from google.appengine.ext import ndb
+from database import db
 
 
-class User(ndb.Model):
+class User(db.Model):
     """ Models a Yelp employee.
         Schema:
         - email:            gmail email
@@ -14,23 +14,24 @@ class User(ndb.Model):
         - last_name:        self-explanatory
         - photo_url:        url to user photo
         - terminated:       TRUE when user has left the company
+
+    Unfortunately, metadata is an attribute already used by sqlalchemy so we use meta_data in
+    the table. Note, however, that the json from the frontend uses metadata for the same column.
     """
-    email = ndb.StringProperty()
-    first_name = ndb.StringProperty(indexed=False)
-    last_name = ndb.StringProperty(indexed=False)
-    photo_url = ndb.TextProperty()
-    metadata = ndb.JsonProperty()
-    terminated = ndb.BooleanProperty(default=False, required=True)
-    subscription_preferences = ndb.KeyProperty(
-        kind="UserSubscriptionPreferences",
-        repeated=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String, index=True)
+    first_name = db.Column(db.String())
+    last_name = db.Column(db.String())
+    photo_url = db.Column(db.Text)
+    meta_data = db.Column(db.JSON)
+    terminated = db.Column(db.Boolean, nullable=False, default=False)
+    subscription_preferences = db.relationship('UserSubscriptionPreferences')
 
     def get_username(self):
         return self.email.split('@')[0]
 
 
-class MeetingSubscription(ndb.Model):
+class MeetingSubscription(db.Model):
     """ The base template for a meeting type, it is comprised of
         weekly Meeting days and times that are recurring
         Schema:
@@ -42,55 +43,70 @@ class MeetingSubscription(ndb.Model):
             - user_rules:       rules set for allowing people to see a subscription
             - dept_rules:       rules set for matching people
     """
-    title = ndb.StringProperty()
-    datetime = ndb.KeyProperty(kind="SubscriptionDateTime", repeated=True)
-    size = ndb.IntegerProperty()
-    office = ndb.StringProperty()
-    location = ndb.StringProperty()
-    timezone = ndb.StringProperty()
-    user_list = ndb.KeyProperty(kind="User", repeated=True)
-    user_rules = ndb.KeyProperty(kind="Rule", repeated=True)
-    dept_rules = ndb.KeyProperty(kind="Rule", repeated=True)
-    rule_logic = ndb.StringProperty()
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String())
+    datetime = db.relationship('SubscriptionDateTime', backref='meeting_subscription')
+    size = db.Column(db.Integer)
+    office = db.Column(db.String())
+    location = db.Column(db.String())
+    timezone = db.Column(db.String())
+    rule_logic = db.Column(db.String())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_list = db.relationship('User')
+    user_rules = db.relationship('Rule', foreign_keys="Rule.user_subscription_id")
+    dept_rules = db.relationship('Rule', foreign_keys="Rule.dept_subscription_id")
 
 
-class Rule(ndb.Model):
+class Rule(db.Model):
     """
     Define dynamic rules in which we want to filter who belongs to what subscription list
     """
-    name = ndb.StringProperty()
-    value = ndb.StringProperty()
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    value = db.Column(db.String())
+    user_subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
+    dept_subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
 
 
-class UserSubscriptionPreferences(ndb.Model):
+class UserSubscriptionPreferences(db.Model):
     """ User's time preferences for a given meeting subscription.
         Schema:
             - subscription:               subscription the employee is subscribed to
             - preference:                 time the employee prefers to meet
     """
-    subscription = ndb.KeyProperty(kind="MeetingSubscription")
-    preference = ndb.KeyProperty(kind="SubscriptionDateTime")
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
+    subscription = db.relationship('MeetingSubscription',
+                                   backref=db.backref("user_subscription_preferences", uselist=False))
+    preference_id = db.Column(db.Integer, db.ForeignKey('subscription_date_time.id'))
+    preference = db.relationship('SubscriptionDateTime',
+                                 backref='user_subscription_preferences')
 
 
-class SubscriptionDateTime(ndb.Model):
+class SubscriptionDateTime(db.Model):
     """ A datetime object used to normalize datetimes in different entities
         Schema:
             - datetime:                 shared time value
     """
-    datetime = ndb.DateTimeProperty()
+    id = db.Column(db.Integer, primary_key=True)
+    datetime = db.Column(db.DateTime)
+    meeting_subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
 
 
-class MeetingSpec(ndb.Model):
+class MeetingSpec(db.Model):
     """ A instance of a meeting for a specific week.
         Schema:
             - datetime:                 the time that the meeting will take place
             - meeting_subscription:     the meeting subscription the spec is attached to
     """
-    datetime = ndb.DateTimeProperty()
-    meeting_subscription = ndb.KeyProperty(kind="MeetingSubscription")
+    id = db.Column(db.Integer, primary_key=True)
+    datetime = db.Column(db.DateTime)
+    meeting_subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
+    meeting_subscription = db.relationship('MeetingSubscription')
 
 
-class MeetingRequest(ndb.Model):
+class MeetingRequest(db.Model):
     """ Represents a user's meeting intent, essentially:
         User: "I want to meet with someone this week."
         Schema:
@@ -98,26 +114,34 @@ class MeetingRequest(ndb.Model):
             - meeting_spec:     References a MeetingSpec item, a grouping that
                                 represents all users who want to meet together.
     """
-    user = ndb.KeyProperty(kind="User")
-    meeting_spec = ndb.KeyProperty(kind="MeetingSpec")
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')
+    meeting_spec_id = db.Column(db.Integer, db.ForeignKey('meeting_spec.id'))
+    meeting_spec = db.relationship('MeetingSpec')
 
 
-class Meeting(ndb.Model):
+class Meeting(db.Model):
     """ Models a single meeting.
         Schema:
             - cancelled:    TRUE if meeting is cancelled
             - meeting_spec: meta data representing a
                 grouping of meetings
     """
-    meeting_spec = ndb.KeyProperty(kind="MeetingSpec")
-    cancelled = ndb.BooleanProperty(default=False)
+    id = db.Column(db.Integer, primary_key=True)
+    meeting_spec_id = db.Column(db.Integer, db.ForeignKey('meeting_spec.id'))
+    meeting_spec = db.relationship('MeetingSpec')
+    cancelled = db.Column(db.Boolean, nullable=False, default=False)
 
 
-class MeetingParticipant(ndb.Model):
+class MeetingParticipant(db.Model):
     """ Records a tuple of (Meeting, User).
         Schema:
             - meeting:              References a Meeting item.
             - user:                 References a User item.
     """
-    meeting = ndb.KeyProperty(kind="Meeting")
-    user = ndb.KeyProperty(kind="User")
+    id = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), nullable=False)
+    meeting = db.relationship('Meeting')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User')

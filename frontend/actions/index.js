@@ -7,6 +7,7 @@ export const GET_REQ = 'GET_REQ';
 export const FETCH_USER = 'FETCH_USER';
 export const FETCH_EMAIL = 'FETCH_EMAIL';
 
+
 function apiGetRequest(url, type) {
   const request = axios.get(url);
   return {

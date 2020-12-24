@@ -20,7 +20,7 @@ def get_previous_meetings_counts(users, subscription_key):
     """
     previous_meetings = get_previous_meetings(subscription_key)
     counts_for_pairs = get_counts_for_pairs(previous_meetings)
-    user_ids = sorted([user.key.id() for user in users])
+    user_ids = sorted([user.id for user in users])
     all_pairs_counts = {pair: 0 for pair in itertools.combinations(user_ids, 2)}
     for pair in counts_for_pairs:
         all_pairs_counts[pair] = counts_for_pairs[pair]
@@ -41,7 +41,7 @@ def get_user_weights(users, previous_meetings_counts, starting_weight, negative_
     for idx1, user1 in enumerate(users):
         user_user_weights.append([])
         for idx2, user2 in enumerate(users):
-            pair_tuple = tuple(sorted((user1.key.id(), user2.key.id())))
+            pair_tuple = tuple(sorted((user1.id, user2.id)))
             if pair_tuple not in previous_meetings_counts:
                 user_user_weights[idx1].append(0)
                 continue

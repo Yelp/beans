@@ -6,6 +6,7 @@
 .coverage
 .idea/
 .node-version
+.pylintrc
 .tox
 /coverage
 /lib/

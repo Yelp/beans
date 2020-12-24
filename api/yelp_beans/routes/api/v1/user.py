@@ -24,7 +24,7 @@ def user_api():
         'first_name': user.first_name,
         'last_name': user.last_name,
         'photo_url': user.photo_url,
-        'metadata': user.metadata
+        'metadata': user.meta_data
     })
     resp.status_code = 200
     return resp

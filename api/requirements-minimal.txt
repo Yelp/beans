@@ -1,8 +1,10 @@
-boto
+boto3
 Flask
 flask-api-utils
+Flask-SQLAlchemy
 httplib2
 networkx
+psycopg2-binary
 pytz
 pyyaml
 requests

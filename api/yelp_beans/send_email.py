@@ -24,9 +24,10 @@ SENDGRID_SENDER = None
 
 
 def load_secrets():
+    global secrets, send_grid_client, SENDGRID_SENDER
     if secrets is not None:
         return
-    global secrets, send_grid_client, SENDGRID_SENDER
+
     secrets = json.loads(open("client_secrets.json").read())
     # TODO (rkwills) switch to a yelp sendgrid account
     send_grid_client = SendGridAPIClient(apikey=secrets["SENDGRID_API_KEY"])
@@ -123,10 +124,10 @@ def send_batch_meeting_confirmation_email(matches, spec):
         spec - meeting spec
     """
     for match in matches:
-        participants = {participant.key for participant in match if isinstance(participant, User)}
+        participants = {participant for participant in match if isinstance(participant, User)}
         for participant in participants:
             others = participants - {participant}
-            send_match_email(participant.get(), [participant.get() for participant in others], spec)
+            send_match_email(participant, [participant for participant in others], spec)
 
 
 def send_match_email(user, participants, meeting_spec):
@@ -138,7 +139,7 @@ def send_match_email(user, participants, meeting_spec):
     """
     meeting_datetime = get_meeting_datetime(meeting_spec)
     meeting_datetime_end = meeting_datetime + datetime.timedelta(minutes=30)
-    subscription = meeting_spec.meeting_subscription.get()
+    subscription = meeting_spec.meeting_subscription
 
     send_single_email(
         user.email,
@@ -184,7 +185,7 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
         # ToDo (xili|20161110) Fix the location if one of the users is remote
         'location': office + " " + location,
     }
-    invite_url += urllib.urlencode(url_params)
+    invite_url += urllib.parse.urlencode(url_params)
     return invite_url
 
 

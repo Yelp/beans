@@ -8,7 +8,6 @@ import logging
 from flask import Blueprint
 from flask import jsonify
 from flask import request
-from google.appengine.ext import ndb
 from yelp_beans.logic.subscription import filter_subscriptions_by_user_data
 from yelp_beans.logic.subscription import merge_subscriptions_with_preferences
 from yelp_beans.logic.user import add_preferences
@@ -35,23 +34,23 @@ def preferences_api():
 
 
 @preferences_blueprint.route('/subscription/<subscription>', methods=["POST"])
-def preferences_api_post(subscription):
+def preferences_api_post(subscription_id):
     data = request.json
     user = get_user(data.get('email'))
     del data['email']
     if not user:
         return '400'
 
-    subscription_key = ndb.Key(urlsafe=subscription)
     form_selection = {}
     for key, value in data.items():
-        form_selection[ndb.Key(urlsafe=key)] = value
+        # Convert key (a table id) to an int
+        form_selection[int(key)] = value
 
-    removed = remove_preferences(user, form_selection, subscription_key)
+    removed = remove_preferences(user, form_selection, subscription_id)
     logging.info('Removed')
     logging.info(removed)
 
-    added = add_preferences(user, form_selection, subscription_key)
+    added = add_preferences(user, form_selection, subscription_id)
     logging.info('Added')
     logging.info(added)
 

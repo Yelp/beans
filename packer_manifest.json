@@ -1,0 +1,284 @@
+{
+  "builds": [
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606287067,
+      "files": null,
+      "artifact_id": "us-west-2:ami-07f9cb1d42f5ad7e8",
+      "packer_run_uuid": "d8406f42-2c2b-0e13-f9b2-e9040f3184d8",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606328413,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0e5674dd77757ac2f",
+      "packer_run_uuid": "31c183d7-bd44-3d13-4d34-d0c03ac54853",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606338815,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0e605de953da11e5d",
+      "packer_run_uuid": "29407a04-8df8-9bb0-9b6a-65eb059dd47a",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606342387,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0423d0d1ceb3f491a",
+      "packer_run_uuid": "d40ae8d2-98b2-9d53-72a4-7dbf74f69bc8",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606364822,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0db208586297eef46",
+      "packer_run_uuid": "05f8b13b-8108-c7d4-94e0-cc3dcca4cc2d",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606377077,
+      "files": null,
+      "artifact_id": "us-west-2:ami-038ac3ae1df0b0337",
+      "packer_run_uuid": "759db50f-cde6-dc28-f19b-f9b010d34c8b",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606384976,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0fa9603860a6f6945",
+      "packer_run_uuid": "3c05acbf-1493-7507-3253-290f249cbeeb",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606418647,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0f7fe1b10e93e9dca",
+      "packer_run_uuid": "a178cb71-1f21-6960-f6cc-17b9ebb1d3ab",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606783305,
+      "files": null,
+      "artifact_id": "us-west-2:ami-051d304bb8606ccf9",
+      "packer_run_uuid": "7c2f1835-60c6-9e3c-5801-be0ce1d6354c",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606855901,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0f717ac81433e4be2",
+      "packer_run_uuid": "62734f30-b536-b3b9-6622-f56dd98b1dec",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606877288,
+      "files": null,
+      "artifact_id": "us-west-2:ami-00b091076deed8090",
+      "packer_run_uuid": "7abbc299-9a8a-ee9b-faa9-35b14faffb21",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606933228,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0f776d053644279bd",
+      "packer_run_uuid": "d682f617-c302-fa53-06c9-8ac1fd1c4105",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606935602,
+      "files": null,
+      "artifact_id": "us-west-2:ami-00fc9e33775588d77",
+      "packer_run_uuid": "5ac6b5b9-7ba0-e1e5-1820-83e609d4eabe",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1606939828,
+      "files": null,
+      "artifact_id": "us-west-2:ami-063a85d85d0622f2c",
+      "packer_run_uuid": "fe072934-bceb-32e8-4b43-0f7414c0b6a9",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607381010,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0aa838b0d5c738ea1",
+      "packer_run_uuid": "a1d7186b-8156-7ecb-13d6-0def0c92366c",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607444007,
+      "files": null,
+      "artifact_id": "us-west-2:ami-07567017c55b65155",
+      "packer_run_uuid": "614b4e29-0ae2-c6ad-c693-fe5e406ae50a",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607448898,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0c32aaf9c2ca3af8c",
+      "packer_run_uuid": "e55f2c96-e218-48bc-1394-8d179caf8d93",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607449834,
+      "files": null,
+      "artifact_id": "us-west-2:ami-05a29b6ac15bfd035",
+      "packer_run_uuid": "7ef197a3-114e-2e2d-7f54-8af2a3398e6c",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607451054,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0bcbbecd986073cfa",
+      "packer_run_uuid": "9e5e9c04-1838-615f-06fa-a19463ac52c9",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607454931,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0b57de8ba4a564c0f",
+      "packer_run_uuid": "4e0a15d1-380a-8a05-b743-b8d9e8c02374",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607456777,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0e65eae43cec3eaf5",
+      "packer_run_uuid": "678ff82d-14fd-66dd-e6a9-26c52bacdcfb",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607457973,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0c4ef6d2b3604620a",
+      "packer_run_uuid": "90d0c82c-cc5c-dadb-aff3-f40a087655ee",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607459101,
+      "files": null,
+      "artifact_id": "us-west-2:ami-00dcc84b8b5af7edc",
+      "packer_run_uuid": "cccd0e65-6273-2b66-f386-87730652568e",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607460837,
+      "files": null,
+      "artifact_id": "us-west-2:ami-06b79b65f25257613",
+      "packer_run_uuid": "9fe552e5-ce65-3c89-be22-2f2eade64986",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607530994,
+      "files": null,
+      "artifact_id": "us-west-2:ami-01433692a31f5148a",
+      "packer_run_uuid": "f6250664-1736-056f-279f-c2abd9347855",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607536457,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0e05bf654de4e3282",
+      "packer_run_uuid": "2a030926-8143-125d-b016-06105e101d1c",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607540346,
+      "files": null,
+      "artifact_id": "us-west-2:ami-019465ec5748b8ea5",
+      "packer_run_uuid": "df9baee4-ffe4-d496-3388-2a61fd1d02c6",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607541957,
+      "files": null,
+      "artifact_id": "us-west-2:ami-0916db82d6b76afd9",
+      "packer_run_uuid": "2493f8b9-54f0-6973-058a-f34d96c469b3",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607543337,
+      "files": null,
+      "artifact_id": "us-west-2:ami-029059a85d45f4dc5",
+      "packer_run_uuid": "e8d4b4e9-902b-84e3-0af4-57fe7c2f17d1",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607544899,
+      "files": null,
+      "artifact_id": "us-west-2:ami-09187308f6dd7cd17",
+      "packer_run_uuid": "d4521665-1b98-7c84-e830-2c38f4148994",
+      "custom_data": null
+    },
+    {
+      "name": "amazon-ebs",
+      "builder_type": "amazon-ebs",
+      "build_time": 1607546286,
+      "files": null,
+      "artifact_id": "us-west-2:ami-00618d92c95a66f17",
+      "packer_run_uuid": "61c31976-da3f-b922-41de-c1fb078a8f46",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "61c31976-da3f-b922-41de-c1fb078a8f46"
+}
