@@ -11,4 +11,4 @@ from google.appengine.ext import vendor
 # Third-party libraries are stored in "site-packages" in the virtualenv,
 # vendoring will makes sure that they are importable by the application.
 virtualenv = os.environ.get('VIRTUAL_ENV', 'venv')
-vendor.add(os.path.join(virtualenv, 'lib', 'python2.7', 'site-packages'))
+vendor.add(os.path.join(virtualenv, 'lib', 'python3.8', 'site-packages'))

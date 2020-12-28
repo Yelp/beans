@@ -29,7 +29,7 @@ test: development install-hooks
 
 venv: $(VIRTUALENV_REQUIREMENTS) bin/venv-update
 	./bin/venv-update \
-	    venv= venv/ --python=python3.6 \
+	    venv= venv/ --python=python3.8 \
 	    install= $(patsubst %,-r %,$(VIRTUALENV_REQUIREMENTS)) \
 	    bootstrap-deps= -r requirements-bootstrap.txt \
 

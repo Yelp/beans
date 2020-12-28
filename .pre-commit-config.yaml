@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v3.4.0
     hooks:
     -   id: trailing-whitespace
         exclude: assets/vendor/
@@ -10,29 +10,30 @@ repos:
         language_version: python3.8
     -   id: check-json
         files: \.(jshintrc|json)$
-        language_version: python2.7
+        language_version: python3.8
     -   id: check-yaml
-        language_version: python2.7
+        language_version: python3.8
     -   id: debug-statements
-        language_version: python2.7
+        language_version: python3.8
     -   id: name-tests-test
-        language_version: python2.7
-    -   id: flake8
-        language_version: python2.7
+        language_version: python3.8
     -   id: requirements-txt-fixer
-        language_version: python2.7
+        language_version: python3.8
     -   id: fix-encoding-pragma
-        language_version: python2.7
+        language_version: python3.8
     -   id: check-byte-order-marker
-        language_version: python2.7
+        language_version: python3.8
     -   id: check-merge-conflict
-        language_version: python2.7
--   repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.4.4
+        language_version: python3.8
+    -   id: fix-byte-order-marker
+        language_version: python3.8
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
     hooks:
-    -   id: autopep8
+    -   id: flake8
+        args: [--max-line-length=131]
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v1.7.0
+    rev: v2.3.6
     hooks:
     -   id: reorder-python-imports
         language_version: python3.8
@@ -45,7 +46,7 @@ repos:
         - from __future__ import unicode_literals
         language_version: python3.8
 -   repo: https://github.com/Yelp/detect-secrets
-    rev: v0.12.6
+    rev: v0.14.3
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
