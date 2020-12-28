@@ -51,10 +51,6 @@ For example:
 
 Please send issues to: https://github.com/yelp/venv-update
 '''
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os
 from os.path import exists
 from os.path import join

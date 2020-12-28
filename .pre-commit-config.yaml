@@ -3,11 +3,11 @@ repos:
     rev: v2.3.0
     hooks:
     -   id: trailing-whitespace
-        exclude: assets/vendor/*
-        language_version: python2.7
+        exclude: assets/vendor/
+        language_version: python3.8
     -   id: end-of-file-fixer
-        exclude: assets/vendor/*
-        language_version: python2.7
+        exclude: assets/vendor/
+        language_version: python3.8
     -   id: check-json
         files: \.(jshintrc|json)$
         language_version: python2.7
@@ -35,18 +35,19 @@ repos:
     rev: v1.7.0
     hooks:
     -   id: reorder-python-imports
+        language_version: python3.8
         args:
-        - --add-import
+        - --remove-import
         - from __future__ import absolute_import
-        - --add-import
+        - --remove-import
         - from __future__ import print_function
-        - --add-import
+        - --remove-import
         - from __future__ import unicode_literals
-        language_version: python2.7
+        language_version: python3.8
 -   repo: https://github.com/Yelp/detect-secrets
     rev: v0.12.6
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-        exclude: .*tests/.*|.*yelp/testing/.*|\.pre-commit-config\.yaml
-        language_version: python2.7
+        exclude: .*tests/.*|.*yelp/testing/.*|\.pre-commit-config\.yaml|package-lock\.json|.*.html
+        language_version: python3.8

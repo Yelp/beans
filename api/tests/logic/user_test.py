@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import pytest
 from yelp_beans.logic.user import add_preferences
 from yelp_beans.logic.user import create_new_employees_from_list

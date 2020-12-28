@@ -4,10 +4,6 @@
 starts a new instance of your application. This runs before any
 WSGI applications specified in app.yaml are loaded.
 """
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os.path
 
 from google.appengine.ext import vendor
