@@ -6,7 +6,7 @@ repos:
         exclude: assets/vendor/
         language_version: python3.8
     -   id: end-of-file-fixer
-        exclude: assets/vendor/
+        exclude: assets/vendor/|api/bin/
         language_version: python3.8
     -   id: check-json
         files: \.(jshintrc|json)$
@@ -31,12 +31,13 @@ repos:
     rev: 3.8.4
     hooks:
     -   id: flake8
+        exclude: api/bin
         args: [--max-line-length=131]
 -   repo: https://github.com/asottile/reorder_python_imports
     rev: v2.3.6
     hooks:
     -   id: reorder-python-imports
-        language_version: python3.8
+        exclude: api/bin
         args:
         - --remove-import
         - from __future__ import absolute_import
