@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import logging
 import os
 import time
@@ -42,7 +37,7 @@ FAKE_USER = [{
 }]
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def mock_config():
     with open('tests/test_data/config.yaml') as config_file:
         data = config_file.read()
@@ -53,7 +48,7 @@ def mock_config():
         yield
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def sendgrid_mock():
     """This is active to prevent from sending a emails when testing"""
     with mock.patch.object(send_email, 'send_single_email'):
@@ -111,7 +106,7 @@ def session(db, request):
     return session
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def subscription(session):
     yield _subscription(session)
 
@@ -181,7 +176,7 @@ def employees():
         return test_file.read()
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def data_source():
     yield [
         {
@@ -213,7 +208,7 @@ def data_source():
     ]
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def data_source_by_key():
     yield {
         'samsmith@yelp.com': {

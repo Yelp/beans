@@ -6,7 +6,7 @@ omit =
     /usr/*
     setup.py
 
-    webapp.py
+    main.py
     templates/*
     venv/*
     google_appengine/*

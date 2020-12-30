@@ -1,18 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-import os
-
 from database import db
 from flask import Flask
+from yelp_beans.logic.config import get_config
 
 
 def create_app():
     app = Flask(__name__, template_folder='yelp_beans/templates')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = get_config().get('DATABASE_URL_PROD', "sqlite://")
     db.init_app(app)
 
     from yelp_beans.routes.api.v1.meeting_requests import meeting_requests

@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -65,7 +60,7 @@ def test_get_meeting_participants(app, database, session):
             'meeting': meeting1.id,
             'meeting_title': database.specs[0].meeting_subscription.title,
             'participant': user1.email,
-            'time': '04:00PM',
+            'time': '03:00PM',
         }
 
 

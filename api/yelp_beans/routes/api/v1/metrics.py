@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from flask import Blueprint
 from flask import jsonify
 from yelp_beans.logic.metrics import get_meeting_participants

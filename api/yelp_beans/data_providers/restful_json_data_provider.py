@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import requests
 from requests.auth import HTTPBasicAuth
 from yelp_beans.data_providers.data_provider import DataProvider
