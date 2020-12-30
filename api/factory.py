@@ -6,7 +6,7 @@ from yelp_beans.logic.config import get_config
 def create_app():
     app = Flask(__name__, template_folder='yelp_beans/templates')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = get_config()['DATABASE_URL_PROD']
+    app.config['SQLALCHEMY_DATABASE_URI'] = get_config().get('DATABASE_URL_PROD', "sqlite://")
     db.init_app(app)
 
     from yelp_beans.routes.api.v1.meeting_requests import meeting_requests
