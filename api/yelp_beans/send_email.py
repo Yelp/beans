@@ -190,7 +190,6 @@ def send_batch_unmatched_email(unmatched):
     """Sends an email to a person that couldn't be matched for the week"""
     load_secrets()
     for user in unmatched:
-        user = User.query.filter(User.id == user.id).one()
         send_single_email(
             user.email,
             'Your Beans meeting this week',

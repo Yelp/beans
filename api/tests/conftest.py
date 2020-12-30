@@ -1,5 +1,4 @@
 import logging
-import os
 import time
 from collections import namedtuple
 from datetime import datetime
@@ -19,9 +18,6 @@ from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
-
-TESTDB = 'test_beans'
-TEST_DATABASE_URI = 'postgresql:///' + TESTDB
 
 FAKE_USER = [{
     'first_name': 'Darwin',
@@ -56,7 +52,6 @@ def sendgrid_mock():
 
 
 @pytest.fixture(scope='session')
-@mock.patch.dict(os.environ, {"DATABASE_URL": TEST_DATABASE_URI})
 def app(request):
     """Session-wide test `Flask` application writing to test database."""
     app = create_app()
