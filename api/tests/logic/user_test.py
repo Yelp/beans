@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from yelp_beans.logic.user import add_preferences
 from yelp_beans.logic.user import create_new_employees_from_list

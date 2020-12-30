@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from pydoc import locate
 
 from yelp_beans.logic.config import get_config

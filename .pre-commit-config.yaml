@@ -20,6 +20,8 @@ repos:
     -   id: requirements-txt-fixer
         language_version: python3.8
     -   id: fix-encoding-pragma
+        args:
+          - --remove
         language_version: python3.8
     -   id: check-byte-order-marker
         language_version: python3.8

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from yelp_beans.routes.api.v1.user import user_api
 
 

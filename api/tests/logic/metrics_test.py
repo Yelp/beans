@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from yelp_beans.logic.metrics import get_subscribers
 from yelp_beans.models import MeetingSubscription
 

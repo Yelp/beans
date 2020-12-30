@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import mock
 import pytest
 from yelp_beans.data_providers import json_file_data_provider

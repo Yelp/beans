@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import requests
 from requests.auth import HTTPBasicAuth
 from yelp_beans.data_providers.data_provider import DataProvider

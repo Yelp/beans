@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.matching.match import generate_meetings

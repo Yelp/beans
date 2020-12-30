@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 
 from yelp_beans.routes.api.v1 import preferences

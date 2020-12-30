@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_users_from_spec

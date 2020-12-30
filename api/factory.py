@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from database import db
 from flask import Flask
 from yelp_beans.logic.config import get_config

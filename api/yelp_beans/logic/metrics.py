@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from collections import defaultdict
 
 from yelp_beans.logic.meeting_spec import get_meeting_datetime

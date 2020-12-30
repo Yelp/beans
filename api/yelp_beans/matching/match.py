@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from yelp_beans.matching.group_match import generate_group_meetings
 from yelp_beans.matching.pair_match import generate_pair_meetings
 

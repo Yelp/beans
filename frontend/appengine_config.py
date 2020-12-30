@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 `appengine_config.py` is automatically loaded when Google App Engine
 starts a new instance of your application. This runs before any

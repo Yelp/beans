@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from yelp_beans.logic.data_ingestion import DataIngestion
 
 
