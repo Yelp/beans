@@ -60,7 +60,7 @@ def test_get_meeting_participants(app, database, session):
             'meeting': meeting1.id,
             'meeting_title': database.specs[0].meeting_subscription.title,
             'participant': user1.email,
-            'time': '04:00PM',
+            'time': '03:00PM',
         }
 
 
