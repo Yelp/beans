@@ -1,19 +1,11 @@
 matrix:
     include:
         - language: python
-          python: 3.6
-          env: TOXENV=py36
+          python: 3.8
+          env: TOXENV=py38
           install: pip install tox
-          services:
-            - postgresql
           before_script:
-            - psql -c 'create database test_beans;' -U postgres
             - cd api/
-            - ls tests/
-            - curl https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.50.zip > google_appengine.zip
-            - unzip google_appengine.zip >/dev/null
-            - export APPENGINE_PATH=./google_appengine
-            - export PATH=$PATH:$APPENGINE_PATH
           script: make test
           cache:
             directories:
@@ -21,7 +13,7 @@ matrix:
                 - $HOME/.cache/pre-commit
 
         - language: node_js
-          node_js: 12
+          node_js: 14
           before_script:
             - cd frontend/
           script: make test
