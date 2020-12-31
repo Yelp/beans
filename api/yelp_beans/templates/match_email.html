@@ -19,10 +19,10 @@
                         <img style="border-radius:50%;width:80px" src={{participant.photo_url}}>
                     </td>
                     <td width="30px">
-                        <p><a href="{{participant.metadata.get('company_profile_url')}}">{{participant.first_name}} {{participant.last_name}}</a>
+                        <p><a href="{{participant.meta_data['company_profile_url']}}">{{participant.first_name}} {{participant.last_name}}</a>
                         </p>
-                        <p>{{participant.metadata.get('department')}}</p>
-                        <p>{{participant.metadata.get('business_title')}}</p>
+                        <p>{{participant.meta_data['department']}}</p>
+                        <p>{{participant.meta_data['business_title']}}</p>
                     </td>
                     {% endfor %}
                 </tr>

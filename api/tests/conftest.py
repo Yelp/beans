@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import logging
 import time
 from collections import namedtuple
@@ -10,8 +5,8 @@ from datetime import datetime
 
 import mock
 import pytest
-from google.appengine.ext import ndb
-from google.appengine.ext import testbed
+from database import db as _db
+from factory import create_app
 from pytz import timezone
 from pytz import utc
 from yelp_beans import send_email
@@ -38,7 +33,7 @@ FAKE_USER = [{
 }]
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def mock_config():
     with open('tests/test_data/config.yaml') as config_file:
         data = config_file.read()
@@ -49,43 +44,84 @@ def mock_config():
         yield
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def sendgrid_mock():
     """This is active to prevent from sending a emails when testing"""
     with mock.patch.object(send_email, 'send_single_email'):
         yield
 
 
+@pytest.fixture(scope='session')
+def app(request):
+    """Session-wide test `Flask` application writing to test database."""
+    app = create_app()
+    app.testing = True
+
+    # Establish an application context before running the tests.
+    ctx = app.app_context()
+    ctx.push()
+
+    def teardown():
+        ctx.pop()
+
+    request.addfinalizer(teardown)
+    return app
+
+@pytest.fixture(scope='session')
+def db(app, request):
+    """Session-wide test database."""
+
+    def teardown():
+        _db.drop_all()
+
+    _db.app = app
+    _db.create_all()
+
+    request.addfinalizer(teardown)
+    return _db
+
+
+@pytest.fixture(scope='function')
+def session(db, request):
+    """Creates a new database session for a test."""
+    connection = db.engine.connect()
+    transaction = connection.begin()
+
+    options = dict(bind=connection, binds={})
+    session = db.create_scoped_session(options=options)
+
+    db.session = session
+
+    def teardown():
+        transaction.rollback()
+        connection.close()
+        session.remove()
+
+    request.addfinalizer(teardown)
+    return session
+
+
 @pytest.fixture
-def minimal_database():
-    my_testbed = testbed.Testbed()
-    my_testbed.activate()
-    my_testbed.init_datastore_v3_stub()
-    my_testbed.init_memcache_stub()
-    # Clear ndb's in-context cache between tests.
-    ndb.get_context().clear_cache()
+def subscription(session):
+    yield _subscription(session)
 
 
-@pytest.yield_fixture
-def subscription():
-    yield _subscription()
-
-
-def _subscription():
+def _subscription(session):
     zone = 'America/Los_Angeles'
     preference_1 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 23, 0, tzinfo=utc))
     # Easier to think/verify in Pacific time since we are based in SF
     assert preference_1.datetime.astimezone(timezone(zone)).hour == 15
     preference_1.datetime = preference_1.datetime.replace(tzinfo=None)
-    preference_1.put()
+    session.add(preference_1)
 
     preference_2 = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 19, 0, tzinfo=utc))
     # Easier to think/verify in Pacific time since we are based in SF
     assert preference_2.datetime.astimezone(timezone(zone)).hour == 11
     preference_2.datetime = preference_2.datetime.replace(tzinfo=None)
-    preference_2.put()
+    session.add(preference_2)
 
-    rule = Rule(name='office', value='USA: CA SF New Montgomery Office').put()
+    rule = Rule(name='office', value='USA: CA SF New Montgomery Office')
+    session.add(rule)
 
     subscription = MeetingSubscription(
         title='Yelp Weekly',
@@ -93,37 +129,38 @@ def _subscription():
         location='8th Floor',
         office='USA: CA SF New Montgomery Office',
         timezone=zone,
-        datetime=[preference_1.key, preference_2.key],
+        datetime=[preference_1, preference_2],
         user_rules=[rule]
     )
-    subscription.put()
+    session.add(subscription)
+    session.commit()
     return subscription
 
 
 @pytest.fixture
-def database(minimal_database, subscription):
+def database(session, subscription):
     MeetingInfo = namedtuple('MeetingInfo', ['sub', 'specs', 'prefs'])
     week_start, specs = get_specs_from_subscription(subscription)
-    store_specs_from_subscription(subscription.key, week_start, specs)
+    store_specs_from_subscription(subscription, week_start, specs)
     return MeetingInfo(
         subscription,
         specs,
         [
-            subscription.datetime[0].get(),
-            subscription.datetime[1].get()
+            subscription.datetime[0],
+            subscription.datetime[1]
         ]
     )
 
 
 @pytest.fixture
-def database_no_specs(minimal_database, subscription):
+def database_no_specs(session, subscription):
     MeetingInfo = namedtuple('MeetingInfo', ['sub', 'specs', 'prefs'])
     return MeetingInfo(
         subscription,
         [],
         [
-            subscription.datetime[0].get(),
-            subscription.datetime[1].get()
+            subscription.datetime[0],
+            subscription.datetime[1]
         ]
     )
 
@@ -134,7 +171,7 @@ def employees():
         return test_file.read()
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def data_source():
     yield [
         {
@@ -166,7 +203,7 @@ def data_source():
     ]
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def data_source_by_key():
     yield {
         'samsmith@yelp.com': {
@@ -199,51 +236,46 @@ def data_source_by_key():
 
 
 @pytest.fixture
-def app():
-    from webapp import app
-    app.testing = True
-    return app
+def fake_user(session):
+    yield _fake_user(session)
 
 
-@pytest.fixture
-def fake_user():
-    yield _fake_user()
-
-
-def _fake_user():
+def _fake_user(session):
     user_list = []
-    subscription = MeetingSubscription.query().get()
+    subscription = MeetingSubscription.query.first()
     for user in FAKE_USER:
         preferences = UserSubscriptionPreferences(
             preference=subscription.datetime[0],
-            subscription=subscription.key,
-        ).put()
+            subscription=subscription,
+        )
+        session.add(preferences)
         user_entity = User(
             first_name=user['first_name'],
             last_name=user['last_name'],
             email=user['email'],
             photo_url=user['photo_url'],
-            metadata={
+            meta_data={
                 'department': user['department'],
                 'office': 'USA: CA SF New Montgomery Office',
                 'company_profile_url': 'https://www.yelp.com/user_details?userid=nkN_do3fJ9xekchVC-v68A',
             },
             subscription_preferences=[preferences],
         )
-        user_entity.put()
+        session.add(user_entity)
         user_list.append(user_entity)
+    session.commit()
     return user_list[0]
 
 
-def create_dev_data():
+def create_dev_data(session):
     email = FAKE_USER[0]['email']
-    user = User.query(User.email == email).get()
+    user = User.query.filter(User.email == email).first()
     if not user:
-        _subscription()
+        _subscription(session)
         time.sleep(2)
-        _fake_user()
+        _fake_user(session)
 
-        subscription = MeetingSubscription.query().get()
+        subscription = MeetingSubscription.query.first()
         week_start, specs = get_specs_from_subscription(subscription)
-        store_specs_from_subscription(subscription.key, week_start, specs)
+        store_specs_from_subscription(subscription.id, week_start, specs)
         logging.info('generated fake date for dev')

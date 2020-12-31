@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import itertools
 import logging
 
@@ -19,18 +14,17 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
     # don't match users with previous meetings
     pairs = prev_meeting_tuples
 
-    userids = sorted([user.key.id() for user in users])
-    id_to_user = {user.key.id(): user for user in users}
+    userids = sorted([user.id for user in users])
+    id_to_user = {user.id: user for user in users}
     all_pairs = {pair for pair in itertools.combinations(userids, 2)}
 
-    for rule in spec.meeting_subscription.get().dept_rules:
-        rule = rule.get()
+    for rule in spec.meeting_subscription.dept_rules:
         pairs = pairs.union({pair for pair in all_pairs if is_same(rule.name, pair, id_to_user)})
     return pairs
 
 
 def is_same(field, match, users):
-    return users[match[0]].metadata[field] == users[match[1]].metadata[field]
+    return users[match[0]].meta_data[field] == users[match[1]].meta_data[field]
 
 
 def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
@@ -43,7 +37,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     if prev_meeting_tuples is None:
         prev_meeting_tuples = get_previous_meetings(spec.meeting_subscription)
 
-    uid_to_users = {user.key.id(): user for user in users}
+    uid_to_users = {user.id: user for user in users}
     user_ids = sorted(uid_to_users.keys())
 
     # Determine matches that should not happen
@@ -68,8 +62,8 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     unmatched = [
         uid_to_users[user]
         for user in user_ids
-        if user not in graph_matches.keys()
-        if user not in graph_matches.values()
+        if user not in list(graph_matches.keys())
+        if user not in list(graph_matches.values())
     ]
 
     logging.info('{} employees unmatched'.format(len(unmatched)))

@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import datetime
 import json
 import logging
@@ -11,8 +6,10 @@ import urllib
 from jinja2 import Environment
 from jinja2 import PackageLoader
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers import mail
 from sendgrid.helpers.mail import Content
+from sendgrid.helpers.mail import Email
+from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import To
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_users_from_spec
 from yelp_beans.models import User
@@ -24,12 +21,13 @@ SENDGRID_SENDER = None
 
 
 def load_secrets():
+    global secrets, send_grid_client, SENDGRID_SENDER
     if secrets is not None:
         return
-    global secrets, send_grid_client, SENDGRID_SENDER
+
     secrets = json.loads(open("client_secrets.json").read())
     # TODO (rkwills) switch to a yelp sendgrid account
-    send_grid_client = SendGridAPIClient(apikey=secrets["SENDGRID_API_KEY"])
+    send_grid_client = SendGridAPIClient(api_key=secrets["SENDGRID_API_KEY"])
     SENDGRID_SENDER = secrets["SENDGRID_SENDER"]
 
 
@@ -48,11 +46,11 @@ def send_single_email(email, subject, template, template_arguments):
     template = env.get_template(template)
     rendered_template = template.render(template_arguments)
 
-    message = mail.Mail(
-        from_email=mail.Email(SENDGRID_SENDER),
-        subject=subject,
-        to_email=mail.Email(email),
-        content=Content("text/html", rendered_template)
+    message = Mail(
+        Email(SENDGRID_SENDER),
+        To(email),
+        subject,
+        Content("text/html", rendered_template)
     )
 
     return send_grid_client.client.mail.send.post(request_body=message.get())
@@ -78,7 +76,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
     load_secrets()
     create_url = 'https://{}.appspot.com/meeting_request/{}'.format(
         secrets["PROJECT"],
-        meeting_spec.key.urlsafe()
+        meeting_spec.id
     )
     logging.info('created url ' + create_url)
 
@@ -88,7 +86,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
     logging.info(len(users))
     logging.info(meeting_spec)
     meeting_datetime = get_meeting_datetime(meeting_spec)
-    subscription = meeting_spec.meeting_subscription.get()
+    subscription = meeting_spec.meeting_subscription
     logging.info(meeting_datetime.strftime('%I:%M %p %Z'))
 
     for user in users:
@@ -123,10 +121,10 @@ def send_batch_meeting_confirmation_email(matches, spec):
         spec - meeting spec
     """
     for match in matches:
-        participants = {participant.key for participant in match if isinstance(participant, User)}
+        participants = {participant for participant in match if isinstance(participant, User)}
         for participant in participants:
             others = participants - {participant}
-            send_match_email(participant.get(), [participant.get() for participant in others], spec)
+            send_match_email(participant, [participant for participant in others], spec)
 
 
 def send_match_email(user, participants, meeting_spec):
@@ -138,7 +136,7 @@ def send_match_email(user, participants, meeting_spec):
     """
     meeting_datetime = get_meeting_datetime(meeting_spec)
     meeting_datetime_end = meeting_datetime + datetime.timedelta(minutes=30)
-    subscription = meeting_spec.meeting_subscription.get()
+    subscription = meeting_spec.meeting_subscription
 
     send_single_email(
         user.email,
@@ -184,7 +182,7 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
         # ToDo (xili|20161110) Fix the location if one of the users is remote
         'location': office + " " + location,
     }
-    invite_url += urllib.urlencode(url_params)
+    invite_url += urllib.parse.urlencode(url_params)
     return invite_url
 
 
@@ -192,7 +190,6 @@ def send_batch_unmatched_email(unmatched):
     """Sends an email to a person that couldn't be matched for the week"""
     load_secrets()
     for user in unmatched:
-        user = user.key.get()
         send_single_email(
             user.email,
             'Your Beans meeting this week',

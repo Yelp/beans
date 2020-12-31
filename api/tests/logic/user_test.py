@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import pytest
 from yelp_beans.logic.user import add_preferences
 from yelp_beans.logic.user import create_new_employees_from_list
@@ -24,7 +19,7 @@ def test_sync_creates_new_employee(database, data_source):
     we must create a new user in our database.
     """
     sync_employees(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.first_name == 'Sam'
 
 
@@ -36,11 +31,11 @@ def test_sync_marks_employee_as_terminated(database, data_source):
     mark the employee as terminated
     """
     sync_employees(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert not user.terminated
 
     sync_employees({})
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.terminated
 
 
@@ -51,18 +46,18 @@ def test_sync_updates_current_employee(database, data_source):
     Returns
     """
     sync_employees(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.first_name == 'Sam'
-    assert user.metadata['department'] == 'Engineering'
+    assert user.meta_data['department'] == 'Engineering'
 
     data = data_source[0]
     data['first_name'] = 'John'
     data['department'] = 'Design'
     data['metadata']['department'] = 'Design'
     sync_employees(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.first_name == 'John'
-    assert user.metadata['department'] == 'Design'
+    assert user.meta_data['department'] == 'Design'
 
 
 def test_hash_employee_data(data_source, data_source_by_key):
@@ -70,7 +65,7 @@ def test_hash_employee_data(data_source, data_source_by_key):
     Given a json object, return a dictionary by email of users.
     """
     employees = hash_employee_data(data_source)
-    assert len(employees.keys()) == 2
+    assert len(list(employees.keys())) == 2
     assert set(employees.keys()) == {'samsmith@yelp.com', 'derrickjohnson@yelp.com'}
     assert employees['samsmith@yelp.com']['last_name'] == 'Smith'
 
@@ -107,15 +102,15 @@ def test_validate_employee_data(data_source):
 
 def test_mark_terminated_employees(database, fake_user):
     mark_termed_employees([fake_user])
-    user = User.query().get()
+    user = User.query.one()
     assert user.terminated
 
 
-def test_create_new_employees_from_list(minimal_database, data_source):
+def test_create_new_employees_from_list(session, data_source):
     create_new_employees_from_list(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.email == 'samsmith@yelp.com'
-    assert user.metadata == {
+    assert user.meta_data == {
         'department': 'Engineering',
         'title': 'Engineer',
         'floor': '10',
@@ -124,11 +119,11 @@ def test_create_new_employees_from_list(minimal_database, data_source):
     }
 
 
-def test_update_current_employees(minimal_database, data_source):
+def test_update_current_employees(session, data_source):
     create_new_employees_from_list(data_source)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.photo_url == 'www.cdn.com/SamSmith.png'
-    assert user.metadata == {
+    assert user.meta_data == {
         'department': 'Engineering',
         'title': 'Engineer',
         'floor': '10',
@@ -136,7 +131,7 @@ def test_update_current_employees(minimal_database, data_source):
         'manager': 'Bo Demillo'
     }
 
-    local_data_employee = {user.email: user for user in User.query().fetch()}
+    local_data_employee = {user.email: user for user in User.query.all()}
     remote_data_employee = hash_employee_data(data_source)
 
     remote_data_employee['samsmith@yelp.com']['photo_url'] = 'new'
@@ -144,10 +139,10 @@ def test_update_current_employees(minimal_database, data_source):
     remote_data_employee['samsmith@yelp.com']['metadata']['department'] = 'Sales'
 
     update_current_employees(local_data_employee, remote_data_employee)
-    user = User.query(User.email == 'samsmith@yelp.com').get()
+    user = User.query.filter(User.email == 'samsmith@yelp.com').one()
     assert user.photo_url == 'new'
-    assert user.metadata['department'] == 'Sales'
-    assert user.metadata == {
+    assert user.meta_data['department'] == 'Sales'
+    assert user.meta_data == {
         'department': 'Sales',
         'title': 'Engineer',
         'floor': '10',
@@ -156,106 +151,119 @@ def test_update_current_employees(minimal_database, data_source):
     }
 
 
-def test_user_preference(minimal_database, subscription):
+def test_user_preference(session, subscription):
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(
         preference=preference,
-        subscription=subscription.key,
-    ).put()
-    user = User(email='a@yelp.com', metadata={'department': 'dept'}, subscription_preferences=[user_pref])
-    user.put()
-    meeting_spec = MeetingSpec(meeting_subscription=subscription.key, datetime=subscription.datetime[0].get().datetime)
-    meeting_spec.put()
+        subscription=subscription,
+    )
+    session.add(user_pref)
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    session.add(user)
+    meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=subscription.datetime[0].datetime)
+    session.add(meeting_spec)
+    session.commit()
 
     assert user_pref == user_preference(user, meeting_spec)
 
 
-def test_remove_preferences_removes_on_opt_out(minimal_database, subscription):
+def test_remove_preferences_removes_on_opt_out(session, subscription):
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(
         preference=preference,
-        subscription=subscription.key,
-    ).put()
-    user = User(email='a@yelp.com', metadata={'department': 'dept'}, subscription_preferences=[user_pref])
-    user.put()
+        subscription=subscription,
+    )
+    session.add(user_pref)
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    session.add(user)
+    session.commit()
 
     assert user.subscription_preferences == [user_pref]
-    updated_preferences = {preference: False}
-    removed = remove_preferences(user, updated_preferences, subscription.key)
-    assert removed == {user_pref}
-    user = user.key.get()
+    updated_preferences = {preference.id: False}
+    removed = remove_preferences(user, updated_preferences, subscription.id)
+    assert removed == {user_pref.preference_id}
+    user = User.query.filter(User.id == user.id).one()
     assert user.subscription_preferences == []
-    assert UserSubscriptionPreferences.query().fetch() == []
+    assert UserSubscriptionPreferences.query.all() == []
 
 
-def test_remove_preferences_does_not_remove_on_opt_in(minimal_database, subscription):
+def test_remove_preferences_does_not_remove_on_opt_in(session, subscription):
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(
         preference=preference,
-        subscription=subscription.key,
-    ).put()
-    user = User(email='a@yelp.com', metadata={'department': 'dept'}, subscription_preferences=[user_pref])
-    user.put()
+        subscription=subscription,
+    )
+    session.add(user_pref)
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    session.add(user)
+    session.commit()
 
     assert user.subscription_preferences == [user_pref]
-    updated_preferences = {preference: True}
-    removed = remove_preferences(user, updated_preferences, subscription.key)
+    updated_preferences = {preference.id: True}
+    removed = remove_preferences(user, updated_preferences, subscription)
     assert removed == set()
-    user = user.key.get()
+    user = User.query.filter(User.id == user.id).one()
     assert user.subscription_preferences == [user_pref]
-    assert len(UserSubscriptionPreferences.query().fetch()) == 1
+    assert len(UserSubscriptionPreferences.query.all()) == 1
 
 
-def test_remove_preferences_multiple_remove_on_opt_in(minimal_database, subscription):
+def test_remove_preferences_multiple_remove_on_opt_in(session, subscription):
     preference_1 = subscription.datetime[0]
     preference_2 = subscription.datetime[1]
     user_pref_1 = UserSubscriptionPreferences(
         preference=preference_1,
-        subscription=subscription.key,
-    ).put()
+        subscription=subscription,
+    )
     user_pref_2 = UserSubscriptionPreferences(
         preference=preference_2,
-        subscription=subscription.key,
-    ).put()
+        subscription=subscription,
+    )
+    session.add(user_pref_1)
+    session.add(user_pref_2)
     user = User(
         email='a@yelp.com',
-        metadata={'department': 'dept'},
+        meta_data={'department': 'dept'},
         subscription_preferences=[user_pref_1, user_pref_2]
     )
-    user.put()
+    session.add(user)
+    session.commit()
 
     assert user.subscription_preferences == [user_pref_1, user_pref_2]
-    updated_preferences = {preference_1: False, preference_2: False}
-    removed = remove_preferences(user, updated_preferences, subscription.key)
-    assert removed == {user_pref_1, user_pref_2}
-    user = user.key.get()
+    updated_preferences = {preference_1.id: False, preference_2.id: False}
+    removed = remove_preferences(user, updated_preferences, subscription.id)
+    assert removed == {user_pref_1.preference_id, user_pref_2.preference_id}
+    user = user = User.query.filter(User.id == user.id).one()
     assert user.subscription_preferences == []
-    assert UserSubscriptionPreferences.query().fetch() == []
+    assert UserSubscriptionPreferences.query.all() == []
 
 
-def test_add_preferences_adds_on_opt_in(minimal_database, subscription):
+def test_add_preferences_adds_on_opt_in(session, subscription):
     preference = subscription.datetime[0]
-    user = User(email='a@yelp.com', metadata={'department': 'dept'})
-    user.put()
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'})
+    session.add(user)
+    session.commit()
 
-    updated_preferences = {preference: True}
+    updated_preferences = {preference.id: True}
     assert len(user.subscription_preferences) == 0
-    added = add_preferences(user, updated_preferences, subscription.key)
-    assert added.pop() == preference
-    assert user.key.get().subscription_preferences[0].get().preference == preference
+    added = add_preferences(user, updated_preferences, subscription.id)
+    assert added.pop() == preference.id
+    user = User.query.filter(User.id == user.id).one()
+    assert user.subscription_preferences[0].preference == preference
 
 
-def test_add_preferences_adds_multiple_on_opt_in(minimal_database, subscription):
+def test_add_preferences_adds_multiple_on_opt_in(session, subscription):
     preference_1 = subscription.datetime[0]
     preference_2 = subscription.datetime[1]
-    user = User(email='a@yelp.com', metadata={'department': 'dept'})
-    user.put()
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'})
+    session.add(user)
+    session.commit()
 
-    updated_preferences = {preference_1: True, preference_2: True}
+    updated_preferences = {preference_1.id: True, preference_2.id: True}
     assert len(user.subscription_preferences) == 0
-    added = add_preferences(user, updated_preferences, subscription.key)
-    assert preference_1 in added
-    assert preference_2 in added
+    added = add_preferences(user, updated_preferences, subscription.id)
+    assert preference_1.id in added
+    assert preference_2.id in added
     assert len(user.subscription_preferences) == 2
-    assert user.key.get().subscription_preferences[0].get().preference in (preference_1, preference_2)
-    assert user.key.get().subscription_preferences[1].get().preference in (preference_1, preference_2)
+    user = User.query.filter(User.id == user.id).one()
+    assert user.subscription_preferences[0].preference in (preference_1, preference_2)
+    assert user.subscription_preferences[1].preference in (preference_1, preference_2)

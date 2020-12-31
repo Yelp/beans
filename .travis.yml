@@ -1,16 +1,11 @@
 matrix:
     include:
         - language: python
-          python: 2.7
-          env: TOXENV=py27
+          python: 3.8
+          env: TOXENV=py38
           install: pip install tox
           before_script:
             - cd api/
-            - ls tests/
-            - curl https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.50.zip > google_appengine.zip
-            - unzip google_appengine.zip >/dev/null
-            - export APPENGINE_PATH=./google_appengine
-            - export PATH=$PATH:$APPENGINE_PATH
           script: make test
           cache:
             directories:
@@ -18,7 +13,7 @@ matrix:
                 - $HOME/.cache/pre-commit
 
         - language: node_js
-          node_js: 12
+          node_js: 14
           before_script:
             - cd frontend/
           script: make test

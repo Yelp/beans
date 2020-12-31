@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import logging
 
 from flask import Blueprint
@@ -27,10 +22,10 @@ tasks = Blueprint('tasks', __name__)
 
 @tasks.route('/generate_meeting_specs_for_week', methods=['GET'])
 def generate_meeting_specs():
-    for subscription in MeetingSubscription.query().fetch():
+    for subscription in MeetingSubscription.query.all():
         logging.info(subscription)
         week_start, specs = get_specs_from_subscription(subscription)
-        store_specs_from_subscription(subscription.key, week_start, specs)
+        store_specs_from_subscription(subscription, week_start, specs)
     return 'OK'
 
 
@@ -58,16 +53,16 @@ def match_employees():
         logging.info(get_meeting_datetime(spec).strftime("%Y-%m-%d %H:%M"))
 
         users = [
-            request.user.get()
+            request.user
             for request
-            in MeetingRequest.query(
-                MeetingRequest.meeting_spec == spec.key
-            ).fetch()
+            in MeetingRequest.query.filter(
+                MeetingRequest.meeting_spec_id == spec.id
+            ).all()
         ]
         logging.info('Users: ')
         logging.info([user.get_username() for user in users])
 
-        group_size = spec.meeting_subscription.get().size
+        group_size = spec.meeting_subscription.size
         matches, unmatched = generate_meetings(users, spec, prev_meeting_tuples=None, group_size=group_size)
         save_meetings(matches, spec)
 
@@ -81,13 +76,13 @@ def send_match_emails():
     specs = get_specs_for_current_week()
     for spec in specs:
         matches = []
-        meetings = Meeting.query(Meeting.meeting_spec == spec.key).fetch()
+        meetings = Meeting.query.filter(Meeting.meeting_spec_id == spec.id).all()
         for meeting in meetings:
-            participants = MeetingParticipant.query(
-                MeetingParticipant.meeting == meeting.key
-            ).fetch()
+            participants = MeetingParticipant.query.filter(
+                MeetingParticipant.meeting_id == meeting.id
+            ).all()
             matches.append(
-                (participants[0].user.get(), participants[1].user.get())
+                (participants[0].user, participants[1].user)
             )
         logging.info(spec)
         logging.info(matches)

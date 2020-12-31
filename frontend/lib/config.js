@@ -27,6 +27,7 @@ nconf
     OAUTH2_CLIENT_SECRET: '',
     PORT: 8080,
     SECRET: '',
+    PROXY: 'http://localhost:5000',
   });
 
 checkConfig('PROJECT');

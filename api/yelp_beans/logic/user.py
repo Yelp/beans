@@ -1,22 +1,17 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import logging
 
-from google.appengine.api import users as google_user_api
-from google.appengine.ext import ndb
+from database import db
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
 
-def get_user(email=None):
-    if email is None:
-        current_user = google_user_api.get_current_user()
-        email = current_user.email()
+def get_user(email):
+    return User.query.filter(User.email == email).first()
 
-    return User.query(User.email == email).get()
+
+def bulk_insert(data):
+    db.session.add_all(data)
+    db.session.commit()
 
 
 def sync_employees(employee_data):
@@ -43,7 +38,7 @@ def sync_employees(employee_data):
     # get data from local database
     local_employee_data = {
         employee.email: employee
-        for employee in User.query().fetch()
+        for employee in User.query.all()
     }
 
     local_employees = set(local_employee_data.keys())
@@ -61,9 +56,9 @@ def sync_employees(employee_data):
     termed_employees = local_employees - remote_employees
     if termed_employees:
         logging.info('Marking termed employees')
-        termed_employees_ndb = [local_employee_data[employee]
-                                for employee in termed_employees]
-        mark_termed_employees(termed_employees_ndb)
+        termed_employees_db = [local_employee_data[employee]
+                               for employee in termed_employees]
+        mark_termed_employees(termed_employees_db)
         logging.info('{} employees marked as termed'.format(
             len(termed_employees)))
         logging.info(termed_employees)
@@ -122,11 +117,11 @@ def create_new_employees_from_list(new_employees):
             first_name=new_employee['first_name'],
             last_name=new_employee['last_name'],
             photo_url=new_employee['photo_url'],
-            metadata=new_employee['metadata'],
+            meta_data=new_employee['metadata'],
             subscription_preferences=[],
         )
         user_list.append(user)
-    ndb.put_multi(user_list)
+    bulk_insert(user_list)
 
 
 def update_current_employees(local_data_employee, remote_data_employee):
@@ -138,24 +133,24 @@ def update_current_employees(local_data_employee, remote_data_employee):
         local_employee.first_name = remote_employee['first_name']
         local_employee.last_name = remote_employee['last_name']
         local_employee.photo_url = remote_employee['photo_url']
-        local_employee.metadata = remote_employee['metadata']
+        local_employee.meta_data = remote_employee['metadata']
         local_employee.terminated = False
 
-    ndb.put_multi(local_data_employee.values())
+    db.session.commit()
 
 
 def mark_termed_employees(termed_employees):
     for employee in termed_employees:
         employee.terminated = True
 
-    ndb.put_multi(termed_employees)
+    db.session.commit()
 
 
 def user_preference(user, meeting_spec):
     preference_for_spec = [
         user_sub_pref
         for user_sub_pref in user.subscription_preferences
-        if meeting_spec.meeting_subscription == user_sub_pref.get().subscription
+        if meeting_spec.meeting_subscription_id == user_sub_pref.subscription_id
     ]
     if preference_for_spec:
         return preference_for_spec[0]
@@ -167,54 +162,53 @@ def same_user_preference(user_a, user_b, spec):
     return user_preference(user_a, spec) == user_preference(user_b, spec)
 
 
-def remove_preferences(user, updated_preferences, subscription_key):
+def remove_preferences(user, updated_preferences, subscription_id):
     """
     Parameters
     ----------
-    user - ndb.User
-    preferences - {SubscriptionDateTime.key:Boolean}
-    subscription_key - ndb.Key
+    user - db.User
+    preferences - {SubscriptionDateTime.id:Boolean}
+    subscription_id - int
 
     Returns
     -------
-    set(SubscriptionDateTime.Key)
+    set(SubscriptionDateTime.id)
 
     """
     removed = set()
-    for preference in ndb.get_multi(user.subscription_preferences):
-        if preference.subscription == subscription_key:
-            if not updated_preferences.get(preference.preference, True):
-                index = user.subscription_preferences.index(preference.key)
-                removed.add(user.subscription_preferences[index])
-                del user.subscription_preferences[index]
-                user.put()
+    for preference in user.subscription_preferences:
+        if preference.subscription.id == subscription_id:
+            if not updated_preferences.get(preference.preference_id, True):
+                removed.add(preference.preference_id)
+                db.session.delete(preference)
 
-    for record in removed:
-        record.delete()
+    db.session.commit()
 
     return removed
 
 
-def add_preferences(user, updated_preferences, subscription_key):
+def add_preferences(user, updated_preferences, subscription_id):
     """
     Parameters
     ----------
-    user - ndb.User
-    preferences - {SubscriptionDateTime.key.urlsafe():Boolean}
-    subscription_key - ndb.Key
+    user - db.User
+    preferences - {SubscriptionDateTime.id:Boolean}
+    subscription_id - int
 
     Returns
     -------
-    set(SubscriptionDateTime.Key)
+    set(SubscriptionDateTime.id)
     """
     added = set()
-    for datetime_key, active in updated_preferences.items():
+    for datetime_id, active in updated_preferences.items():
         if active:
             preference = UserSubscriptionPreferences(
-                subscription=subscription_key,
-                preference=datetime_key,
-            ).put()
+                subscription_id=subscription_id,
+                preference_id=datetime_id,
+            )
+            db.session.add(preference)
             user.subscription_preferences.append(preference)
-            user.put()
-            added.add(datetime_key)
+            db.session.add(user)
+            added.add(datetime_id)
+    db.session.commit()
     return added

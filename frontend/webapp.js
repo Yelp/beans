@@ -2,15 +2,14 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const passport = require('passport');
-// const { Datastore } = require('@google-cloud/datastore');
 const authRoutes = require('./routes/authRoutes');
+const apiRoutes = require('./routes/api');
 const config = require('./lib/config');
-// const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 
 const app = express();
 
 const corsOptions = {
-  origin: `${config.get('PROJECT')}.appspot.com`,
+  origin: [`${config.get('PROJECT')}.appspot.com`, 'localhost:5000'],
   allowedHeaders: ['Content-Type'],
   optionsSuccessStatus: 200,
 };
@@ -63,6 +62,8 @@ app.get('/meeting_request/:id', (req, res) => {
 app.get('/email', (req, res) => {
   res.send({ email: req.user });
 });
+
+apiRoutes(app);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

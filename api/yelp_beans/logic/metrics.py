@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from collections import defaultdict
 
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.meeting_spec import get_users_from_spec
+from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSubscription
@@ -15,18 +11,18 @@ from yelp_beans.models import User
 
 
 def get_subscribers():
-    users = User.query().fetch()
-    subscriptions = MeetingSubscription.query().fetch()
+    users = User.query.all()
+    subscriptions = MeetingSubscription.query.all()
 
     metrics = defaultdict(set)
     # creates metrics keys for all subscriptions including ones without users
     for subscription in subscriptions:
-        metrics[subscription.key.urlsafe()] = []
+        metrics[subscription.id] = []
 
     # creates metrics keys for all subscriptions that have users with user data
     for user in users:
         for preference in user.subscription_preferences:
-            metrics[preference.get().subscription.urlsafe()].append(user.email)
+            metrics[preference.subscription_id].append(user.email)
 
     return metrics
 
@@ -35,8 +31,8 @@ def get_current_week_participation():
     participation = defaultdict(dict)
 
     for spec in get_specs_for_current_week():
-        participation[spec.meeting_subscription.urlsafe()][spec.key.urlsafe()] = [
-            user.get_username() for user in filter(None, get_users_from_spec(spec))
+        participation[spec.subscription_id][spec.id] = [
+            user.get_username() for user in [_f for _f in get_users_from_spec(spec) if _f]
         ]
 
     return participation
@@ -44,25 +40,25 @@ def get_current_week_participation():
 
 def get_meeting_participants():
     meetings = defaultdict(list)
-    participants = MeetingParticipant.query().fetch()
+    participants = MeetingParticipant.query.all()
     for participant in participants:
         try:
-            email = participant.user.get().email
-            meeting = participant.meeting
-            meetings[meeting].append(email)
+            email = participant.user.email
+            meeting_id = participant.meeting_id
+            meetings[meeting_id].append(email)
         except AttributeError:
             pass
 
     metrics = []
-    for meeting_key in meetings.keys():
-        meeting_spec = meeting_key.get().meeting_spec.get()
-        meeting_title = meeting_spec.meeting_subscription.get().title
-        participants = meetings[meeting_key]
+    for meeting_id in meetings.keys():
+        meeting_spec = Meeting.query.filter(Meeting.id == meeting_id).one().meeting_spec
+        meeting_title = meeting_spec.meeting_subscription.title
+        participants = meetings[meeting_id]
         for participant in participants:
             metrics.append(
                 {
                     'participant': participant,
-                    'meeting': meeting_key.urlsafe(),
+                    'meeting': meeting_id,
                     'meeting_title': meeting_title,
                     'date': meeting_spec.datetime.isoformat(),
                     'time': get_meeting_datetime(meeting_spec).strftime('%I:%M%p'),
@@ -75,16 +71,16 @@ def get_meeting_requests():
     requests = []
     for spec in get_specs_for_current_week():
         users = [
-            request.user.get().email
+            request.user.email
             for request
-            in MeetingRequest.query(
-                MeetingRequest.meeting_spec == spec.key
-            ).fetch()
+            in MeetingRequest.query.filter(
+                MeetingRequest.meeting_spec_id == spec.id
+            ).all()
         ]
         for user in users:
             requests.append(
                 {
-                    'title': spec.meeting_subscription.get().title,
+                    'title': spec.meeting_subscription.title,
                     'user': user,
                 }
             )

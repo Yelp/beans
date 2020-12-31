@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 '''\
 usage: venv-update [-hV] [options]
 
@@ -463,3 +462,4 @@ def main():
 
 if __name__ == '__main__':
     exit(main())
+
