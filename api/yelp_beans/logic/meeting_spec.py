@@ -41,7 +41,7 @@ def get_users_from_spec(meeting_spec):
                     preference_dt.weekday() == meeting_spec.datetime.weekday():
 
                 user = User.query.filter(
-                    User.id == user_preference.user_id).one()
+                    User.id == user_preference.user_id).first()
                 logging.info('user added: ')
                 logging.info(user)
                 users.append(user)
