@@ -28,7 +28,7 @@ def preferences_api():
     return resp
 
 
-@preferences_blueprint.route('/subscription/<subscription>', methods=["POST"])
+@preferences_blueprint.route('/subscription/<subscription_id>', methods=["POST"])
 def preferences_api_post(subscription_id):
     data = request.json
     user = get_user(data.get('email'))
