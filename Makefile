@@ -6,8 +6,7 @@ PROJECT := $(call GetFromPkg,PROJECT)
 
 
 .PHONY: deploy
-deploy: build deploy_dispatch
-	gcloud app deploy frontend/app.yaml api/app.yaml --project $(PROJECT) --version 1
+deploy: deploy_services deploy_dispatch
 
 .PHONY: development
 development:
@@ -24,13 +23,18 @@ test:
 	make -C frontend/ test
 	make -C api/ test
 
+
+.PHONY: deploy_services
+deploy_services: build
+	gcloud app deploy frontend/app.yaml api/app.yaml --project $(PROJECT) --version 1
+
 .PHONY: deploy_dispatch
 deploy_dispatch:
 	gcloud app deploy dispatch.yaml --project $(PROJECT)
 
 .PHONY: deploy_cron
 deploy_cron:
-	gcloud app deploy cron.yaml --project $(PROJECT)
+	gcloud app deploy api/cron.yaml --project $(PROJECT)
 
 .PHONY: clean
 clean:
