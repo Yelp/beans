@@ -71,6 +71,7 @@ class UserSubscriptionPreferences(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')
     subscription_id = db.Column(db.Integer, db.ForeignKey('meeting_subscription.id'))
     subscription = db.relationship('MeetingSubscription',
                                    backref=db.backref("user_subscription_preferences", uselist=False))

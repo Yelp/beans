@@ -10,22 +10,19 @@ from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
-from yelp_beans.models import User
+from yelp_beans.models import UserSubscriptionPreferences
 
 
 def get_subscribers():
-    users = User.query.all()
+    sub_prefs = UserSubscriptionPreferences.query.options(joinedload(UserSubscriptionPreferences.user)).all()
     subscriptions = MeetingSubscription.query.all()
 
-    metrics = defaultdict(set)
     # creates metrics keys for all subscriptions including ones without users
-    for subscription in subscriptions:
-        metrics[subscription.id] = []
+    metrics = {subscription.id: [] for subscription in subscriptions}
 
     # creates metrics keys for all subscriptions that have users with user data
-    for user in users:
-        for preference in user.subscription_preferences:
-            metrics[preference.subscription_id].append(user.email)
+    for preference in sub_prefs:
+        metrics[preference.subscription_id].append(preference.user.email)
 
     return metrics
 
