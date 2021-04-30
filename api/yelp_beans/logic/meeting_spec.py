@@ -9,10 +9,14 @@ from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
 
-def get_specs_for_current_week():
+def get_specs_for_current_week_query():
     week_start = datetime.now() - timedelta(days=datetime.now().weekday())
     week_start.replace(hour=0, minute=0, second=0, microsecond=0)
-    return MeetingSpec.query.filter(MeetingSpec.datetime > week_start).all()
+    return MeetingSpec.query.filter(MeetingSpec.datetime > week_start)
+
+
+def get_specs_for_current_week():
+    return get_specs_for_current_week_query().all()
 
 
 def get_users_from_spec(meeting_spec):

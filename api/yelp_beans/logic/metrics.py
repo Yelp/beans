@@ -1,11 +1,14 @@
 from collections import defaultdict
 
+from sqlalchemy.orm import joinedload
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
+from yelp_beans.logic.meeting_spec import get_specs_for_current_week_query
 from yelp_beans.logic.meeting_spec import get_users_from_spec
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
+from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import User
 
@@ -69,19 +72,26 @@ def get_meeting_participants():
 
 def get_meeting_requests():
     requests = []
-    for spec in get_specs_for_current_week():
-        users = [
-            request.user.email
-            for request
-            in MeetingRequest.query.filter(
-                MeetingRequest.meeting_spec_id == spec.id
-            ).all()
-        ]
-        for user in users:
-            requests.append(
-                {
-                    'title': spec.meeting_subscription.title,
-                    'user': user,
-                }
-            )
+    specs = get_specs_for_current_week_query().options(
+        joinedload(MeetingSpec.meeting_subscription)
+    ).all()
+    spec_id_to_title = {
+        spec.id: spec.meeting_subscription.title
+        for spec in specs
+    }
+
+    meeting_requests = MeetingRequest.query.options(
+        joinedload(MeetingRequest.user)
+    ).filter(
+        MeetingRequest.meeting_spec_id.in_([spec.id for spec in specs])
+    ).all()
+
+    for request in meeting_requests:
+        request_title = spec_id_to_title[request.meeting_spec_id]
+        requests.append(
+            {
+                'title': request_title,
+                'user': request.user.email,
+            }
+        )
     return requests
