@@ -39,31 +39,36 @@ def get_current_week_participation():
 
 
 def get_meeting_participants():
-    meetings = defaultdict(list)
-    participants = MeetingParticipant.query.all()
-    for participant in participants:
-        try:
-            email = participant.user.email
-            meeting_id = participant.meeting_id
-            meetings[meeting_id].append(email)
-        except AttributeError:
-            pass
+    # We are looking at all meetings and every subscription is likely to have a
+    # meeting, so we should need all subscription information. We could load this
+    # through a db join, but that makes the query more expensive and returns a lot
+    # duplicate data since there should always be more meetings then subscriptions.
+    # Doing the join in python allows us to get the data only once and shouldn't
+    # require us getting more data than needed
+    subscription_id_to_subscription = {
+        meet_sub.id: meet_sub
+        for meet_sub in MeetingSubscription.query.all()
+    }
+
+    participants = MeetingParticipant.query.options(
+        joinedload(MeetingParticipant.user),
+        joinedload(MeetingParticipant.meeting).joinedload(Meeting.meeting_spec),
+    ).all()
 
     metrics = []
-    for meeting_id in meetings.keys():
-        meeting_spec = Meeting.query.filter(Meeting.id == meeting_id).one().meeting_spec
-        meeting_title = meeting_spec.meeting_subscription.title
-        participants = meetings[meeting_id]
-        for participant in participants:
-            metrics.append(
-                {
-                    'participant': participant,
-                    'meeting': meeting_id,
-                    'meeting_title': meeting_title,
-                    'date': meeting_spec.datetime.isoformat(),
-                    'time': get_meeting_datetime(meeting_spec).strftime('%I:%M%p'),
-                }
-            )
+    for participant in participants:
+        meeting_spec = participant.meeting.meeting_spec
+        meeting_subscription = subscription_id_to_subscription[meeting_spec.meeting_subscription_id]
+        meeting_title = meeting_subscription.title
+        metrics.append(
+            {
+                'participant': participant.user.email,
+                'meeting': participant.meeting.id,
+                'meeting_title': meeting_title,
+                'date': meeting_spec.datetime.isoformat(),
+                'time': get_meeting_datetime(meeting_spec, meeting_subscription.timezone).strftime('%I:%M%p'),
+            }
+        )
     return metrics
 
 

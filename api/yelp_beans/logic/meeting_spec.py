@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from datetime import timedelta
+from typing import Optional
 
 from pytz import timezone
 from pytz import utc
@@ -55,7 +56,7 @@ def get_users_from_spec(meeting_spec):
     return users
 
 
-def get_meeting_datetime(meeting_spec):
+def get_meeting_datetime(meeting_spec: MeetingSpec, subscription_timezone: Optional[str] = None) -> datetime:
     """
     Given a meeting_spec, returns the meeting datetime in the appropriate timezone.
     :param meeting_spec: models.meeting_spec
@@ -63,5 +64,8 @@ def get_meeting_datetime(meeting_spec):
     """
     meeting_datetime = meeting_spec.datetime
 
-    meeting_timezone = meeting_spec.meeting_subscription.timezone
+    if subscription_timezone is None:
+        meeting_timezone = meeting_spec.meeting_subscription.timezone
+    else:
+        meeting_timezone = subscription_timezone
     return meeting_datetime.replace(tzinfo=utc).astimezone(timezone(meeting_timezone))
