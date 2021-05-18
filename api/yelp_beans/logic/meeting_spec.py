@@ -60,6 +60,8 @@ def get_meeting_datetime(meeting_spec: MeetingSpec, subscription_timezone: Optio
     """
     Given a meeting_spec, returns the meeting datetime in the appropriate timezone.
     :param meeting_spec: models.meeting_spec
+    :param subscription_timezone: Optional[str] - Timezone of the subscription. Falls back to getting
+        timezone from the meeting_spec subscription reference
     :return: datetime.datetime in the correct timezone
     """
     meeting_datetime = meeting_spec.datetime
