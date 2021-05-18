@@ -14,7 +14,11 @@ from yelp_beans.models import UserSubscriptionPreferences
 
 
 def get_subscribers():
-    sub_prefs = UserSubscriptionPreferences.query.options(joinedload(UserSubscriptionPreferences.user)).all()
+    sub_prefs = UserSubscriptionPreferences.query.options(
+        joinedload(UserSubscriptionPreferences.user),
+    ).filter(
+        UserSubscriptionPreferences.subscription_id.isnot(None),
+    ).all()
     subscriptions = MeetingSubscription.query.all()
 
     # creates metrics keys for all subscriptions including ones without users
