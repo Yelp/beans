@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from database import db
+from pytz import timezone
 from pytz import utc
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
@@ -95,23 +96,21 @@ def get_subscription_dates(subscription):
 def get_specs_from_subscription(subscription):
     specs = []
     for subscription_datetime in subscription.datetime:
-
-        week_start = datetime.now() - timedelta(days=datetime.now().weekday())
+        subscription_tz = timezone(subscription.timezone)
+        week_start = datetime.now(subscription_tz) - timedelta(days=datetime.now(subscription_tz).weekday())
         week_start = week_start.replace(
             hour=0, minute=0, second=0, microsecond=0)
 
-        subscription_dt = subscription_datetime.datetime
+        subscription_dt = subscription_datetime.datetime.replace(tzinfo=utc).astimezone(subscription_tz)
         week_iter = week_start
         while week_iter.weekday() != subscription_dt.weekday():
             week_iter += timedelta(days=1)
 
-        specs.append(
-            MeetingSpec(
-                meeting_subscription=subscription,
-                datetime=week_iter.replace(
-                    hour=subscription_dt.hour, minute=subscription_dt.minute)
-            )
-        )
+        meeting_datetime = week_iter.replace(
+            hour=subscription_dt.hour, minute=subscription_dt.minute
+        ).astimezone(utc)
+
+        specs.append(MeetingSpec(meeting_subscription=subscription, datetime=meeting_datetime))
     return week_start, specs
 
 
