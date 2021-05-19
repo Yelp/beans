@@ -1,11 +1,14 @@
 import logging
 
 from flask import Blueprint
+from sqlalchemy.orm import joinedload
 from yelp_beans.logic.data_ingestion import DataIngestion
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
+from yelp_beans.logic.user import delete_user_subscription_preference
+from yelp_beans.logic.user import is_valid_user_subscription_preference
 from yelp_beans.logic.user import sync_employees
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import save_meetings
@@ -13,6 +16,7 @@ from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSubscription
+from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.send_email import send_batch_meeting_confirmation_email
 from yelp_beans.send_email import send_batch_unmatched_email
 from yelp_beans.send_email import send_batch_weekly_opt_in_email
@@ -88,3 +92,24 @@ def send_match_emails():
         logging.info(matches)
         send_batch_meeting_confirmation_email(matches, spec)
     return "OK"
+
+
+@tasks.route('/clean_user_subscriptions', methods=['GET'])
+def clean_user_subscriptions():
+    subscriptions = MeetingSubscription.query.options(
+        joinedload(MeetingSubscription.user_rules),
+    ).all()
+    subscription_id_to_subscription = {subscription.id: subscription for subscription in subscriptions}
+
+    sub_prefs = UserSubscriptionPreferences.query.options(
+        joinedload(UserSubscriptionPreferences.user),
+    ).all()
+
+    for preference in sub_prefs:
+        subscription = subscription_id_to_subscription.get(preference.subscription_id)
+        is_valid = is_valid_user_subscription_preference(preference, subscription)
+        if not is_valid:
+            delete_user_subscription_preference(preference)
+            logging.info(f'Deleted UserSubscriptionPreference<{preference.id}>')
+
+    return 'OK'

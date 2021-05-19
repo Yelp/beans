@@ -14,31 +14,36 @@ def filter_subscriptions_by_user_data(subscriptions, user):
         subscription_rules = MeetingSubscription.query.filter(
             MeetingSubscription.id == subscription['id']).one().user_rules
 
-        if subscription.get('rule_logic') == 'any':
-            assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
-            approved = apply_rules(user, subscription, subscription_rules, any)
-        elif subscription.get('rule_logic') == 'all':
-            assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
-            approved = apply_rules(user, subscription, subscription_rules, all)
-        else:
-            approved = subscription
-
+        approved = apply_rules(user, subscription, subscription_rules)
         if approved is not None:
             approved_subscriptions.append(approved)
     return approved_subscriptions
 
 
-def apply_rules(user, subscription, subscription_rules, rule_logic):
+def apply_rules(user, subscription, subscription_rules):
     """
     Apply logic to rules set for each subscription.  In a way this authorizes who can
     see the subscription.  Rules can be applied in two ways:  All rules must apply and
     some rules must apply.
 
     user: models.User()
-    subscription: models.MeetingSubscription()
+    subscription: Union[models.MeetingSubscription(), Dict[str, Any]]
     subscription_rules: models.Rule()
-    rule_logic: all(), any()
     """
+    if isinstance(subscription, dict):
+        rule_logic_str = subscription.get('rule_logic')
+    else:
+        rule_logic_str = subscription.rule_logic
+
+    if rule_logic_str == 'any':
+        assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+        rule_logic = any
+    elif rule_logic_str == 'all':
+        assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+        rule_logic = all
+    else:
+        return subscription
+
     rules = set()
     for rule in subscription_rules:
         user_rule = user.meta_data[rule.name]
@@ -47,6 +52,7 @@ def apply_rules(user, subscription, subscription_rules, rule_logic):
             rules.add(subscription_rule in user_rule)
         else:
             rules.add(user_rule == subscription_rule)
+
     if rule_logic(rules):
         return subscription
 
