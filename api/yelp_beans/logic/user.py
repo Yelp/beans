@@ -1,6 +1,9 @@
 import logging
+from typing import Optional
 
 from database import db
+from yelp_beans.logic.subscription import apply_rules
+from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
@@ -212,3 +215,22 @@ def add_preferences(user, updated_preferences, subscription_id):
             added.add(datetime_id)
     db.session.commit()
     return added
+
+
+def is_valid_user_subscription_preference(
+    preference: UserSubscriptionPreferences,
+    subscription: Optional[MeetingSubscription],
+) -> bool:
+    if preference.subscription_id is None:
+        return False
+
+    if preference.user.terminated:
+        return False
+
+    approved = apply_rules(preference.user, subscription, subscription.user_rules)
+    return approved is not None
+
+
+def delete_user_subscription_preference(preference: UserSubscriptionPreferences) -> bool:
+    db.session.delete(preference)
+    db.session.commit()

@@ -5,6 +5,12 @@ cron:
   timezone: America/Los_Angeles
   target: api
 
+- description: clean user subscriptions
+  url: /tasks/clean_user_subscriptions
+  schedule: every day 4:00
+  timezone: America/Los_Angeles
+  target: api
+
 - description: weekly meeting spec generation
   url: /tasks/generate_meeting_specs_for_week
   schedule: every monday 6:00

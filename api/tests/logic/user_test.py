@@ -2,6 +2,7 @@ import pytest
 from yelp_beans.logic.user import add_preferences
 from yelp_beans.logic.user import create_new_employees_from_list
 from yelp_beans.logic.user import hash_employee_data
+from yelp_beans.logic.user import is_valid_user_subscription_preference
 from yelp_beans.logic.user import mark_termed_employees
 from yelp_beans.logic.user import remove_preferences
 from yelp_beans.logic.user import sync_employees
@@ -9,6 +10,7 @@ from yelp_beans.logic.user import update_current_employees
 from yelp_beans.logic.user import user_preference
 from yelp_beans.logic.user import validate_employee_data
 from yelp_beans.models import MeetingSpec
+from yelp_beans.models import Rule
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
@@ -267,3 +269,46 @@ def test_add_preferences_adds_multiple_on_opt_in(session, subscription):
     user = User.query.filter(User.id == user.id).one()
     assert user.subscription_preferences[0].preference in (preference_1, preference_2)
     assert user.subscription_preferences[1].preference in (preference_1, preference_2)
+
+
+def test_is_valid_user_subscription_preference_no_subscription(subscription):
+    preference = subscription.datetime[0]
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'})
+    user_sub = UserSubscriptionPreferences(preference=preference, subscription_id=None, user=user)
+    subscription.user_rules = [Rule(name='department', value='dept')]
+    subscription.rule_logic = 'all'
+
+    result = is_valid_user_subscription_preference(user_sub, None)
+    assert not result
+
+
+def test_is_valid_user_subscription_preference_user_terminated(subscription):
+    preference = subscription.datetime[0]
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'}, terminated=True)
+    user_sub = UserSubscriptionPreferences(preference=preference, subscription_id=subscription.id, user=user)
+    subscription.user_rules = [Rule(name='department', value='dept')]
+    subscription.rule_logic = 'all'
+
+    result = is_valid_user_subscription_preference(user_sub, subscription)
+    assert not result
+
+def test_is_valid_user_subscription_preference_fails_rules(subscription):
+    preference = subscription.datetime[0]
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'})
+    user_sub = UserSubscriptionPreferences(preference=preference, subscription_id=subscription.id, user=user)
+    subscription.user_rules = [Rule(name='department', value='other dept')]
+    subscription.rule_logic = 'all'
+
+    result = is_valid_user_subscription_preference(user_sub, subscription)
+    assert not result
+
+
+def test_is_valid_user_subscription_preference_valid(subscription):
+    preference = subscription.datetime[0]
+    user = User(email='a@yelp.com', meta_data={'department': 'dept'})
+    user_sub = UserSubscriptionPreferences(preference=preference, subscription_id=subscription.id, user=user)
+    subscription.user_rules = [Rule(name='department', value='dept')]
+    subscription.rule_logic = 'all'
+
+    result = is_valid_user_subscription_preference(user_sub, subscription)
+    assert result
