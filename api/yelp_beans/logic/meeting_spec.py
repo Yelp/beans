@@ -42,9 +42,10 @@ def get_users_from_spec(meeting_spec):
 
                 user = User.query.filter(
                     User.id == user_preference.user_id).first()
-                logging.info('user added: ')
-                logging.info(user)
-                users.append(user)
+                if user is not None:
+                    logging.info('user added: ')
+                    logging.info(user)
+                    users.append(user)
 
     return users
 
