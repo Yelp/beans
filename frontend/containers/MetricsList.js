@@ -1,18 +1,23 @@
+import axios from 'axios';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { getMetrics } from '../actions/index';
 
 import MetricsListItem from '../components/MetricsListItem';
 
-
 class MetricsList extends Component {
-  componentWillMount() {
-    this.props.getMetrics('v1');
+  constructor(props) {
+    super(props);
+    this.state = { metrics: [{ subscribed: 0, title: 'No Subscriptions', meetings: 0 }] };
+  }
+
+  componentDidMount() {
+    axios.get('/v1/metrics/').then(
+      (res) => { this.setState({ metrics: res.data }); },
+    );
   }
 
   renderMetrics() {
-    return this.props.metrics.map((metric) => (
+    const { metrics } = this.state;
+    return metrics.map((metric) => (
       <MetricsListItem
         key={metric.title}
         metric={metric}
@@ -29,13 +34,4 @@ class MetricsList extends Component {
   }
 }
 
-MetricsList.propTypes = {
-  getMetrics: PropTypes.func.isRequired,
-  metrics: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
-function mapStateToProps(state) {
-  return { metrics: state.metrics };
-}
-
-export default connect(mapStateToProps, { getMetrics })(MetricsList);
+export default MetricsList;

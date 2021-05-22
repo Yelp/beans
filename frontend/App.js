@@ -4,10 +4,11 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 function App(props) {
+  const { children } = props;
   return (
     <div>
       <Header />
-      {props.children}
+      {children}
       <Footer />
     </div>
   );

@@ -1,9 +1,8 @@
+import axios from 'axios';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import moment from 'moment-timezone';
-import { postPreference } from '../actions/index';
 
 
 class UserPreferenceForm extends Component {
@@ -17,9 +16,10 @@ class UserPreferenceForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.renderPreferences = this.renderPreferences.bind(this);
     this.renderTimes = this.renderTimes.bind(this);
+    const { preferences } = this.props;
 
-    if (this.props.preferences.length !== 0) {
-      this.state = this.props.preferences.reduce((preference) => {
+    if (preferences.length !== 0) {
+      this.state = preferences.reduce((preference) => {
         const dates = preference.datetime.reduce(
           (datetime) => ({ [datetime.id]: datetime.active }),
         );
@@ -31,8 +31,12 @@ class UserPreferenceForm extends Component {
   handleSubmit(prefId, event) {
     event.preventDefault();
     if (this.state) {
-      this.props.postPreference(this.state[prefId], prefId);
-      alert('Preference Updated'); // eslint-disable-line
+      axios.post(
+        `/v1/user/preferences/subscription/${prefId}`,
+        { ...this.state[prefId], email: this.props.email },
+      ).then(() => {
+        alert('Preference Updated'); // eslint-disable-line
+      });
     }
   }
 
@@ -46,8 +50,9 @@ class UserPreferenceForm extends Component {
   }
 
   renderPreferences(state) {
-    if (this.props.preferences.length !== 0) {
-      return this.props.preferences.map((preference) => (
+    const { preferences } = this.props;
+    if (preferences.length !== 0) {
+      return preferences.map((preference) => (
         <div key={preference.id}>
           <h3>
             {preference.title}
@@ -62,12 +67,12 @@ class UserPreferenceForm extends Component {
             {preference.size}
 )
           </h6>
-          <form onSubmit={(event) => this.handleSubmit(preference.id, event)}>
+          <div>
             { this.renderTimes(preference, state) }
-            <button type="submit" className="btn btn-danger left30">
+            <button type="button" onClick={(event) => this.handleSubmit(preference.id, event)} className="btn btn-danger left30">
               Set Preferences!
             </button>
-          </form>
+          </div>
         </div>
       ));
     }
@@ -118,15 +123,8 @@ No data.
 }
 
 UserPreferenceForm.propTypes = {
-  postPreference: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
   preferences: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-function mapStateToProps(state) {
-  return {
-    datetime: state.datetime,
-    timezone: state.timezone,
-  };
-}
-
-export default connect(mapStateToProps, { postPreference })(UserPreferenceForm);
+export default UserPreferenceForm;
