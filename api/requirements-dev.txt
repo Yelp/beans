@@ -12,7 +12,6 @@ packaging==20.8
 pluggy==0.13.1
 pre-commit==2.9.3
 py==1.10.0
-pyparsing==2.4.7
 pytest==6.2.1
 requests-mock==1.8.0
 requirements-tools==1.2.4
