@@ -16,6 +16,8 @@ cron:
   schedule: every monday 6:00
   timezone: America/Los_Angeles
   target: api
+  retry_parameters:
+    min_backoff_seconds: 30
 
 - description: weekly opt-in email
   url: /tasks/email_users_for_weekly_opt_in
