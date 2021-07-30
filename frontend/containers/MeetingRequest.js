@@ -1,72 +1,69 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
-import { connect } from 'react-redux';
-import { getMeetingRequest } from '../actions/index';
-
 
 class MeetingRequest extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { key: '', email: '' };
   }
 
-  componentWillMount() {
-    this.props.getMeetingRequest(this.getMeetingSpecKey());
+  componentDidMount() {
+    axios.get('/email').then((res) => {
+      axios.get(
+        `/v1/meeting_request/${MeetingRequest.getMeetingSpecKey()}?email=${res.data.email}`,
+      ).then((res2) => {
+        this.setState({ key: res2.data.key, email: res.data.email });
+      });
+    });
   }
 
-  getMeetingSpecKey() {
-    const path = this.props.location.pathname.split('/');
+  static getMeetingSpecKey() {
+    const path = window.location.href.split('/');
+    // Remove any get parameters
+    if (path[path.length - 1].indexOf('?') > -1) {
+      return path[path.length - 1].substring(0, path[path.length - 1].indexOf('?'));
+    }
     return path[path.length - 1];
   }
 
   handleSubmit() {
-    axios.get('/email').then((res) => {
-      axios.post(
-        '/v1/meeting_request/',
-        {
-          meeting_spec_key: this.getMeetingSpecKey(),
-          meeting_request_key: this.props.meetingRequest.key,
-          email: res.data.email,
-        },
-      );
+    const { key, email } = this.state;
+    axios.post(
+      '/v1/meeting_request/',
+      {
+        meeting_spec_key: MeetingRequest.getMeetingSpecKey(),
+        meeting_request_key: key,
+        email,
+      },
+    ).then((res) => {
+      this.setState({ key: res.data.key, email });
     });
   }
 
-  static renderButton(meetingRequest) {
-    if (meetingRequest.key === '') {
+  renderButton() {
+    const { key } = this.state;
+    if (key === '') {
       return (
-        <button type="submit" className="btn btn-success btn-lg left30">
+        <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-lg left30">
           Ask for a Meeting this week.
         </button>
       );
     }
     return (
-      <button type="submit" className="btn btn-danger btn-lg left30">
+      <button type="button" onClick={this.handleSubmit} className="btn btn-danger btn-lg left30">
         Remove request for a Meeting this week.
       </button>
     );
   }
 
-
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        {MeetingRequest.renderButton(this.props.meetingRequest)}
-      </form>
+      <div>
+        {this.renderButton()}
+      </div>
     );
   }
 }
 
-MeetingRequest.propTypes = {
-  getMeetingRequest: PropTypes.func.isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  meetingRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
-function mapStateToProps(state) {
-  return { meetingRequest: state.meetingRequest };
-}
-
-export default connect(mapStateToProps, { getMeetingRequest })(MeetingRequest);
+export default MeetingRequest;

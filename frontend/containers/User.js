@@ -1,27 +1,35 @@
+import axios from 'axios';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
-import { getUser } from '../actions/index';
 import UserPreferences from './UserPreferences';
 
-
 class User extends Component {
-  componentWillMount() {
-    this.props.getUser(this.getEmail());
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {
+        photo_url: 'https://s3-media4.fl.yelpcdn.com/assets/srv0/yelp_large_assets/3f74899c069c/assets/img/illustrations/mascots/darwin@2x.png',
+        first_name: 'Darwin',
+        last_name: 'Yelp',
+        email: 'darwin@yelp.com',
+        metadata: {
+          department: 'Consumer',
+          company_profile_url: 'https://www.yelp.com/user_details?userid=nkN_do3fJ9xekchVC-v68A',
+        },
+      },
+    };
   }
 
-  getEmail() {
-    let email = '';
-    const path = this.props.location.pathname.split('/');
-    if (path.indexOf('user') !== -1) {
-      email = path[path.indexOf('user') + 1];
-    }
-    return email;
+  componentDidMount() {
+    axios.get('/email').then((res) => {
+      axios.get(`/v1/user/?email=${res.data.email}`).then((res2) => {
+        this.setState({ user: res2.data });
+      });
+    });
   }
 
   render() {
-    const { user } = this.props;
+    const { user } = this.state;
     return (
       <div>
         <div className="container-fluid">
@@ -46,21 +54,11 @@ class User extends Component {
               </div>
             </div>
           </div>
-          <UserPreferences email={this.getEmail()} />
+          <UserPreferences />
         </div>
       </div>
     );
   }
 }
 
-User.propTypes = {
-  getUser: PropTypes.func.isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
-function mapStateToProps(state) {
-  return { user: state.user };
-}
-
-export default connect(mapStateToProps, { getUser })(User);
+export default User;

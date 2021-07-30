@@ -25,14 +25,14 @@ def test_preferences_api_user_exists(app, database, fake_user):
             'rule_logic': None,
             'datetime': [
                 {
-                    'active': True,
-                    'date': '2017-01-20T23:00:00+00:00',
-                    'id': database.sub.datetime[0].id
-                },
-                {
                     'active': False,
                     'date': '2017-01-20T19:00:00+00:00',
                     'id': database.sub.datetime[1].id
+                },
+                {
+                    'active': True,
+                    'date': '2017-01-20T23:00:00+00:00',
+                    'id': database.sub.datetime[0].id
                 }
             ],
         }

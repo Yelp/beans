@@ -8,12 +8,13 @@ from yelp_beans.logic.config import get_config
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingSpec
+from yelp_beans.models import User
 
 
 def save_meetings(matches, spec):
     for match in matches:
-        # Last element in match is the key for meeting time
-        matched_users = match[:-1]
+        # Last element in match may be the key for meeting time
+        matched_users = [user for user in match if isinstance(user, User)]
         meeting_key = Meeting(meeting_spec=spec)
         db.session.add(meeting_key)
         for user in matched_users:
