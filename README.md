@@ -2,7 +2,7 @@
 
 # Beans
 
-[![Build Status](https://travis-ci.org/Yelp/beans.svg?branch=master)](https://travis-ci.org/Yelp/beans)
+![Build Status](https://github.com/Yelp/beans/actions/workflows/tests.yaml/badge.svg?branch=master)
 
 Beans is an internal networking tool to help employees connect with each other at work. Every week Beans helps match and schedule a short 30-minute 1:1 meeting for two employees at the office.
 
