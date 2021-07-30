@@ -181,6 +181,7 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
         'details': "Yelp Beans Coffee time!",
         # ToDo (xili|20161110) Fix the location if one of the users is remote
         'location': office + " " + location,
+        'add': ','.join([user.email for user in user_list])
     }
     invite_url += urllib.parse.urlencode(url_params)
     return invite_url
