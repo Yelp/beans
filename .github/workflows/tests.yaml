@@ -1,0 +1,40 @@
+---
+name: Run Tests
+
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  api_tests:
+    name: Api Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install tox
+        run: pip3 install tox
+      - name: Run tests
+        run: make test
+  frontend_tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Run tests
+        run: make test
