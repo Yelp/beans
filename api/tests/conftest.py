@@ -277,5 +277,5 @@ def create_dev_data(session):
 
         subscription = MeetingSubscription.query.first()
         week_start, specs = get_specs_from_subscription(subscription)
-        store_specs_from_subscription(subscription.id, week_start, specs)
+        store_specs_from_subscription(subscription, week_start, specs)
         logging.info('generated fake date for dev')
