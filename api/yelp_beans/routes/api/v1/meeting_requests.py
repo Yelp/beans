@@ -31,6 +31,7 @@ def create_delete_meeting_request():
             return 400
         meeting_request = query_meeting_request(meeting_spec, user)
 
+        # if a meeting_request doesn't already exist, then create one in the database
         if not meeting_request:
             meeting_request = MeetingRequest(meeting_spec=meeting_spec, user=user)
             db.session.add(meeting_request)

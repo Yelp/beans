@@ -19,6 +19,14 @@ cron:
   retry_parameters:
     min_backoff_seconds: 30
 
+- description: weekly meeting spec generation
+  url: /tasks/generate_meeting_requests_for_users_who_auto_renew
+  schedule: every monday 6:30
+  timezone: America/Los_Angeles
+  target: api
+  retry_parameters:
+    min_backoff_seconds: 30
+
 - description: weekly opt-in email
   url: /tasks/email_users_for_weekly_opt_in
   schedule: every monday 9:00

@@ -21,6 +21,8 @@ from yelp_beans.send_email import send_batch_meeting_confirmation_email
 from yelp_beans.send_email import send_batch_unmatched_email
 from yelp_beans.send_email import send_batch_weekly_opt_in_email
 
+from api.yelp_beans.matching.match_utils import store_meeting_request
+
 tasks = Blueprint('tasks', __name__)
 
 
@@ -30,6 +32,17 @@ def generate_meeting_specs():
         logging.info(subscription)
         week_start, specs = get_specs_from_subscription(subscription)
         store_specs_from_subscription(subscription, week_start, specs)
+    return 'OK'
+
+@tasks.route('/generate_meeting_requests_for_users_who_auto_renew', methods=['GET'])
+def generate_meeting_requests():
+    current_specs = get_specs_for_current_week()
+    for preference in UserSubscriptionPreferences.query.all():
+        logging.info(preference)
+        if preference.auto_renew is True:
+            meeting_spec = filter(lambda spec: spec.meeting_subscription_id == preference.subscription_id, current_specs)[0]
+            meeting_request = MeetingRequest(meeting_spec=meeting_spec, user=preference.user)
+            store_meeting_request(meeting_request)
     return 'OK'
 
 

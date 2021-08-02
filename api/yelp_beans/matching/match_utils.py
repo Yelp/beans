@@ -88,3 +88,7 @@ def get_previous_meetings(subscription, cooldown=None):
     disallowed_meetings = {tuple([meeting.id for meeting in meeting]) for meeting in disallowed_meetings}
 
     return disallowed_meetings
+
+def store_meeting_request(meeting_request):
+    db.session.add(meeting_request)
+    db.session.commit()
