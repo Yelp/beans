@@ -3,15 +3,18 @@ from argparse import ArgumentParser
 from argparse import Namespace
 from datetime import datetime
 from textwrap import indent
+from typing import Tuple
 
 import arrow
 from sqlalchemy import create_engine
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from yelp_beans.logic.config import get_config
 from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
 from yelp_beans.models import SubscriptionDateTime
+from yelp_beans.models import UserSubscriptionPreferences
 
 DAY_STR_TO_WEEKDAY_NUMBER = {
     'Monday': 0,
@@ -39,12 +42,15 @@ def create_session() -> Session:
     return session_cls()
 
 
-def parse_meeting_time(day: str, time_str: str, timezone_str: str) -> datetime:
+def get_weekday_number(day: str) -> int:
     weekday = DAY_STR_TO_WEEKDAY_NUMBER.get(day)
     if weekday is None:
         valid_days = ', '.join(DAY_STR_TO_WEEKDAY_NUMBER.keys())
         sys.exit(f'Invalid day of the "{day}". Possible values are {valid_days}.')
+    return weekday
 
+
+def get_hour_minute(time_str: str) -> Tuple[int, int]:
     if ':' in time_str:
         hour_str, minute_str = time_str.split(':', maxsplit=1)
         hour = int(hour_str)
@@ -52,6 +58,13 @@ def parse_meeting_time(day: str, time_str: str, timezone_str: str) -> datetime:
     else:
         hour = int(time_str)
         minute = 0
+
+    return hour, minute
+
+
+def parse_meeting_time(day: str, time_str: str, timezone_str: str) -> datetime:
+    weekday = get_weekday_number(day)
+    hour, minute = get_hour_minute(time_str)
 
     cur_time = arrow.now(timezone_str)
     result_time = cur_time.replace(hour=hour, minute=minute, second=0, microsecond=0)
@@ -103,6 +116,28 @@ def create_subscription_entrypoint(args: Namespace) -> None:
         print('Not creating subscription')
 
 
+def remove_meet_time_entrypoint(args: Namespace) -> None:
+    session = create_session()
+    meet_sub = session.query(MeetingSubscription).options(
+        joinedload(MeetingSubscription.datetime)
+    ).filter(MeetingSubscription.title == args.name).one()
+    weekday, time_str = args.time
+    weekday_number = get_weekday_number(weekday)
+    hour, minute = get_hour_minute(time_str)
+
+    for meet_datetime in meet_sub.datetime:
+        if all((
+            meet_datetime.datetime.weekday() == weekday_number,
+            meet_datetime.datetime.hour == hour,
+            meet_datetime.datetime.minute == minute,
+        )):
+            session.query(UserSubscriptionPreferences).filter(
+                UserSubscriptionPreferences.preference_id == meet_datetime.id
+            ).delete()
+            session.delete(meet_datetime)
+
+    session.commit()
+
 def add_create_arguments(parser: ArgumentParser) -> None:
     parser.add_argument('name', help='Name of the meeting subscription')
     parser.add_argument('-l', '--location', default='Online', help='Where in the office will the meeting will be held')
@@ -140,11 +175,29 @@ def add_create_arguments(parser: ArgumentParser) -> None:
     parser.set_defaults(func=create_subscription_entrypoint)
 
 
+def add_remove_meet_time_parser_arguments(parser: ArgumentParser) -> None:
+    parser.add_argument('name', help='Name of the meeting subscription')
+    parser.add_argument(
+        '-t',
+        '--time',
+        metavar=('Weekday', 'Time'),
+        nargs=2,
+        required=True,
+        help='What meeting time to remove. Example: -t Friday 2PM',
+    )
+    parser.set_defaults(func=remove_meet_time_entrypoint)
+
+
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
+
     create_parser = subparsers.add_parser('create')
     add_create_arguments(create_parser)
+
+    remove_meet_time_parser = subparsers.add_parser('remove_meeting_time')
+    add_remove_meet_time_parser_arguments(remove_meet_time_parser)
+
     return parser
 
 
