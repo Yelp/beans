@@ -203,11 +203,12 @@ def add_preferences(user, updated_preferences, subscription_id):
     set(SubscriptionDateTime.id)
     """
     added = set()
-    for datetime_id, active in updated_preferences.items():
-        if active:
+    for datetime_id, status in updated_preferences.items():
+        if status.enabled:
             preference = UserSubscriptionPreferences(
                 subscription_id=subscription_id,
                 preference_id=datetime_id,
+                auto_renew=status.auto_renew
             )
             db.session.add(preference)
             user.subscription_preferences.append(preference)
