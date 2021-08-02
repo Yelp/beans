@@ -62,6 +62,27 @@ def get_hour_minute(time_str: str) -> Tuple[int, int]:
     return hour, minute
 
 
+def format_meeting_subscription(meet_sub: MeetingSubscription) -> str:
+    datetimes_str = ', '.join((sub_datetime.datetime.isoformat() for sub_datetime in meet_sub.datetime))
+    if meet_sub.user_rules:
+        rules_str = ', '.join((f'{rule.name}="{rule.value}"' for rule in meet_sub.user_rules))
+    else:
+        rules_str = '(no rules)'
+
+    values = (
+        ('title', meet_sub.title),
+        ('size', meet_sub.size),
+        ('office', meet_sub.office),
+        ('location', meet_sub.location),
+        ('timezone', meet_sub.timezone),
+        ('times', datetimes_str),
+        ('rule logic', meet_sub.rule_logic),
+        ('rules', rules_str),
+    )
+    values_str = indent('\n'.join((f'{field}: {value}' for field, value in values)), ' ' * 4)
+    return f'Subscription:\n{values_str}'
+
+
 def parse_meeting_time(day: str, time_str: str, timezone_str: str) -> datetime:
     weekday = get_weekday_number(day)
     hour, minute = get_hour_minute(time_str)
@@ -91,21 +112,7 @@ def create_subscription_entrypoint(args: Namespace) -> None:
         rule_logic=args.rule_logic if rules else None,
         user_rules=rules,
     )
-
-    datetimes_str = ', '.join((sub_datetime.datetime.isoformat() for sub_datetime in sub_datetimes))
-    rules_str = ', '.join((f'{rule.name}={rule.value}' for rule in rules)) if rules else '(no rules)'
-    values = (
-        ('title', subscription.title),
-        ('size', subscription.size),
-        ('office', subscription.office),
-        ('location', subscription.location),
-        ('timezone', subscription.timezone),
-        ('times', datetimes_str),
-        ('rule logic', subscription.rule_logic),
-        ('rules', rules_str),
-    )
-    values_str = indent('\n'.join((f'{field}: {value}' for field, value in values)), ' ' * 4)
-    print(f'Subscription:\n{values_str}')
+    print(format_meeting_subscription(subscription))
 
     resp = input('Create subscription (y/N): ')
     if resp == 'y':
@@ -114,6 +121,15 @@ def create_subscription_entrypoint(args: Namespace) -> None:
         session.commit()
     else:
         print('Not creating subscription')
+
+
+def get_entrypoint(args: Namespace) -> None:
+    session = create_session()
+    meet_sub = session.query(MeetingSubscription).options(
+        joinedload(MeetingSubscription.datetime),
+        joinedload(MeetingSubscription.user_rules),
+    ).filter(MeetingSubscription.title == args.name).one()
+    print(format_meeting_subscription(meet_sub))
 
 
 def remove_meet_time_entrypoint(args: Namespace) -> None:
@@ -175,6 +191,11 @@ def add_create_arguments(parser: ArgumentParser) -> None:
     parser.set_defaults(func=create_subscription_entrypoint)
 
 
+def add_get_parser_arguments(parser: ArgumentParser) -> None:
+    parser.add_argument('name', help='Name of the meeting subscription')
+    parser.set_defaults(func=get_entrypoint)
+
+
 def add_remove_meet_time_parser_arguments(parser: ArgumentParser) -> None:
     parser.add_argument('name', help='Name of the meeting subscription')
     parser.add_argument(
@@ -194,6 +215,9 @@ def create_parser() -> ArgumentParser:
 
     create_parser = subparsers.add_parser('create')
     add_create_arguments(create_parser)
+
+    get_parser = subparsers.add_parser('get')
+    add_get_parser_arguments(get_parser)
 
     remove_meet_time_parser = subparsers.add_parser('remove_meeting_time')
     add_remove_meet_time_parser_arguments(remove_meet_time_parser)
