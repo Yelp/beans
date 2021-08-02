@@ -43,10 +43,19 @@ class UserPreferenceForm extends Component {
   handleChange(event) {
     const data = {
       [event.target.value]: {
-        [event.target.id]: event.target.checked,
+        [event.target.id]: {enabled: event.target.checked}
       },
     };
-    this.setState((prevState) => ({ ...prevState, ...data }));
+    this.setState(data);
+  }
+
+  handleAutorenewalChange(event) {
+    const data = {
+      [event.target.value]: {
+        [event.target.id]: {auto_renew: event.target.checked}
+      },
+    };
+    this.setState(data);
   }
 
   renderPreferences(state) {
@@ -87,6 +96,7 @@ No Subscription Available.
     if (preference) {
       return preference.datetime.map((datetime) => {
         let checked = datetime.active;
+        let auto_renew = datetime.auto_renew;
         if (state === null) {
             // eslint-disable-line
         } else if (`${preference.id}` in state) {
@@ -98,6 +108,13 @@ No Subscription Available.
               id={datetime.id}
               defaultChecked={checked}
               onChange={this.handleChange}
+              value={preference.id}
+              type="checkbox"
+            />
+            <input
+              id={datetime.id}
+              defaultChecked={auto_renew}
+              onChange={this.handleAutorenewalChange}
               value={preference.id}
               type="checkbox"
             />

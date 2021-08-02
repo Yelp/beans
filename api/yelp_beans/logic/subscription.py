@@ -63,7 +63,8 @@ def merge_subscriptions_with_preferences(user):
     user_preferences = [
         {
             'subscription_id': user_subscription.subscription_id,
-            'datetime_id': user_subscription.preference_id
+            'datetime_id': user_subscription.preference_id,
+            'auto_renew': user_subscription.auto_renew
         } for user_subscription in user.subscription_preferences
     ]
     subscriptions = [
@@ -84,6 +85,7 @@ def merge_subscriptions_with_preferences(user):
                 for date in subscription['datetime']:
                     if date['id'] == user_preference['datetime_id']:
                         date['active'] = True
+                        date['auto_renew'] = user_preference['auto_renew']
 
     return subscriptions
 
