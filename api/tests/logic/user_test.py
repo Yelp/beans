@@ -260,7 +260,10 @@ def test_add_preferences_adds_multiple_on_opt_in(session, subscription):
     session.add(user)
     session.commit()
 
-    updated_preferences = {preference_1.id: True, preference_2.id: True}
+    updated_preferences = {
+        preference_1.id: {'enabled': True, 'autoRenew': False},
+        preference_2.id: {'enabled': True, 'autoRenew': False}
+    }
     assert len(user.subscription_preferences) == 0
     added = add_preferences(user, updated_preferences, subscription.id)
     assert preference_1.id in added
