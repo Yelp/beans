@@ -245,7 +245,7 @@ def test_add_preferences_adds_on_opt_in(session, subscription):
     session.add(user)
     session.commit()
 
-    updated_preferences = {preference.id: True}
+    updated_preferences = {preference.id: {'enabled': True, 'autoRenew': False}}
     assert len(user.subscription_preferences) == 0
     added = add_preferences(user, updated_preferences, subscription.id)
     assert added.pop() == preference.id

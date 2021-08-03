@@ -195,7 +195,7 @@ def add_preferences(user, updated_preferences, subscription_id):
     Parameters
     ----------
     user - db.User
-    preferences - {SubscriptionDateTime.id:Boolean}
+    preferences - {SubscriptionDateTime.id:{enabled:Boolean, autoRenew:Boolean}
     subscription_id - int
 
     Returns
@@ -204,11 +204,11 @@ def add_preferences(user, updated_preferences, subscription_id):
     """
     added = set()
     for datetime_id, status in updated_preferences.items():
-        if status.enabled:
+        if status['enabled']:
             preference = UserSubscriptionPreferences(
                 subscription_id=subscription_id,
                 preference_id=datetime_id,
-                auto_renew=status.auto_renew
+                auto_renew=status['autoRenew']
             )
             db.session.add(preference)
             user.subscription_preferences.append(preference)
