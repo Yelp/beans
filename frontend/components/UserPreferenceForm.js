@@ -43,7 +43,7 @@ class UserPreferenceForm extends Component {
   handleChange(event) {
     const data = {
       [event.target.value]: {
-        [event.target.id]: {enabled: event.target.checked}
+        [event.target.id]: { enabled: event.target.checked },
       },
     };
     this.setState(data);
@@ -52,7 +52,7 @@ class UserPreferenceForm extends Component {
   handleAutorenewalChange(event) {
     const data = {
       [event.target.value]: {
-        [event.target.id]: {auto_renew: event.target.checked}
+        [event.target.id]: { autoRenew: event.target.checked },
       },
     };
     this.setState(data);
@@ -96,7 +96,8 @@ No Subscription Available.
     if (preference) {
       return preference.datetime.map((datetime) => {
         let checked = datetime.active;
-        let auto_renew = datetime.auto_renew;
+        // TODO(areilly): I don't know what I meant to do here, but I don't think it was this
+        const { autoRenew } = datetime;
         if (state === null) {
             // eslint-disable-line
         } else if (`${preference.id}` in state) {
@@ -113,7 +114,7 @@ No Subscription Available.
             />
             <input
               id={datetime.id}
-              defaultChecked={auto_renew}
+              defaultChecked={autoRenew}
               onChange={this.handleAutorenewalChange}
               value={preference.id}
               type="checkbox"
