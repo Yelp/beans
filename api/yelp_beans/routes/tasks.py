@@ -12,6 +12,7 @@ from yelp_beans.logic.user import is_valid_user_subscription_preference
 from yelp_beans.logic.user import sync_employees
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import save_meetings
+from yelp_beans.matching.match_utils import store_meeting_request
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -20,8 +21,6 @@ from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.send_email import send_batch_meeting_confirmation_email
 from yelp_beans.send_email import send_batch_unmatched_email
 from yelp_beans.send_email import send_batch_weekly_opt_in_email
-
-from api.yelp_beans.matching.match_utils import store_meeting_request
 
 tasks = Blueprint('tasks', __name__)
 
