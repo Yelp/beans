@@ -51,7 +51,7 @@ def test_preference_api_post(monkeypatch, app, database, fake_user):
             '/v1/user/preferences/subscription/{}'.format(sub_key),
             method='POST',
             data=json.dumps({
-                database.sub.datetime[0].id: False,
+                database.sub.datetime[0].id: {'enabled': False, 'autoRenew': False},
                 'email': fake_user.email,
             }),
             content_type='application/json'
