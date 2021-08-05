@@ -3,7 +3,7 @@ $(shell node -p "require('./frontend/lib/config.json').$(1)")
 endef
 
 PROJECT := $(call GetFromPkg,PROJECT)
-a
+
 
 .PHONY: deploy
 deploy: deploy_services deploy_dispatch
