@@ -78,7 +78,7 @@ class UserSubscriptionPreferences(db.Model):
     preference_id = db.Column(db.Integer, db.ForeignKey('subscription_date_time.id'))
     preference = db.relationship('SubscriptionDateTime',
                                  backref='user_subscription_preferences')
-    auto_renew = db.Column(db.Boolean)
+    auto_renew = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class SubscriptionDateTime(db.Model):
