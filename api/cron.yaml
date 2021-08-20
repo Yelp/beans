@@ -19,7 +19,8 @@ cron:
   retry_parameters:
     min_backoff_seconds: 30
 
-- description: weekly meeting spec generation
+# This needs to be run after the specs are generated, and before opt-in emails are sent out
+- description: generate meeting requests for users to auto renew
   url: /tasks/generate_meeting_requests_for_users_who_auto_renew
   schedule: every monday 6:30
   timezone: America/Los_Angeles
