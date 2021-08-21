@@ -35,7 +35,7 @@ venv: $(VIRTUALENV_REQUIREMENTS) bin/venv-update
 
 .PHONY: serve
 serve: development
-	FLASK_APP=main.py flask run
+	. venv/bin/activate; FLASK_APP=main.py flask run
 
 .PHONY: clean
 clean:
