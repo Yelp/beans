@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserPreferenceForm is rendered with one subscription 1`] = `
+<div>
+  <div>
+    <h3>
+      iOS Weekly (all offices welcome, please set up your own time/place)
+    </h3>
+    <h6>
+      Remote
+      ,
+
+      Online
+
+      (
+      2
+      )
+    </h6>
+    <div>
+      <label
+        htmlFor={27}
+      >
+        <input
+          defaultChecked={true}
+          id={27}
+          onChange={[Function]}
+          type="checkbox"
+          value={20}
+        />
+        <input
+          defaultChecked={false}
+          id={27}
+          onChange={[Function]}
+          type="checkbox"
+          value={20}
+        />
+        Thursday 3:00 PM PDT
+      </label>
+      <button
+        className="btn btn-danger left30"
+        onClick={[Function]}
+        type="button"
+      >
+        Set Preferences!
+      </button>
+    </div>
+  </div>
+</div>
+`;

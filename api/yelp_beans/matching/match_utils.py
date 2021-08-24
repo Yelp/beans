@@ -90,5 +90,8 @@ def get_previous_meetings(subscription, cooldown=None):
     return disallowed_meetings
 
 def store_meeting_request(meeting_request):
+    if meeting_request is None:
+        return
+
     db.session.add(meeting_request)
     db.session.commit()
