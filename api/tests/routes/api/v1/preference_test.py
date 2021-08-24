@@ -32,6 +32,8 @@ def test_preferences_api_user_exists(app, database, fake_user):
                 {
                     'active': True,
                     'date': '2017-01-20T23:00:00+00:00',
+                    # TODO(areilly) Where is this coming from?
+                    'auto_renew': False,
                     'id': database.sub.datetime[0].id
                 }
             ],

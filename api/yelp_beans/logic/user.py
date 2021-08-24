@@ -170,7 +170,7 @@ def remove_preferences(user, updated_preferences, subscription_id):
     Parameters
     ----------
     user - db.User
-    preferences - {SubscriptionDateTime.id:Boolean}
+    preferences - {SubscriptionDateTime.id:{}}
     subscription_id - int
 
     Returns
@@ -181,7 +181,7 @@ def remove_preferences(user, updated_preferences, subscription_id):
     removed = set()
     for preference in user.subscription_preferences:
         if preference.subscription.id == subscription_id:
-            if not updated_preferences.get(preference.preference_id, True):
+            if not updated_preferences.get(preference.preference_id, {}).get('enabled', True):
                 removed.add(preference.preference_id)
                 db.session.delete(preference)
 

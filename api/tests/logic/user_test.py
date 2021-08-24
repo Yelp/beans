@@ -181,7 +181,7 @@ def test_remove_preferences_removes_on_opt_out(session, subscription):
     session.commit()
 
     assert user.subscription_preferences == [user_pref]
-    updated_preferences = {preference.id: False}
+    updated_preferences = {preference.id: {'enabled': False}}
     removed = remove_preferences(user, updated_preferences, subscription.id)
     assert removed == {user_pref.preference_id}
     user = User.query.filter(User.id == user.id).one()
@@ -231,7 +231,7 @@ def test_remove_preferences_multiple_remove_on_opt_in(session, subscription):
     session.commit()
 
     assert user.subscription_preferences == [user_pref_1, user_pref_2]
-    updated_preferences = {preference_1.id: False, preference_2.id: False}
+    updated_preferences = {preference_1.id: {'enabled': False}, preference_2.id: {'enabled': False}}
     removed = remove_preferences(user, updated_preferences, subscription.id)
     assert removed == {user_pref_1.preference_id, user_pref_2.preference_id}
     user = user = User.query.filter(User.id == user.id).one()

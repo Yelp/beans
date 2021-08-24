@@ -70,11 +70,13 @@ def test_merge_subscriptions_with_preferences(database, fake_user):
                 'active': False,
                 'date': '2017-01-20T19:00:00+00:00',
                 'id': database.sub.datetime[1].id
+
             },
             {
                 'active': True,
                 'date': '2017-01-20T23:00:00+00:00',
-                'id': database.sub.datetime[0].id
+                'id': database.sub.datetime[0].id,
+                'auto_renew': False
             }
         ]
     }
