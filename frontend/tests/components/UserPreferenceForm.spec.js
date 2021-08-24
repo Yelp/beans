@@ -28,5 +28,6 @@ describe('UserPreferenceForm', () => {
     const component = renderer.create(<UserPreferenceForm preferences={preferences} email="test@gmail.com" />);
     const json = component.toJSON()
     expect(json).toMatchSnapshot();
+    expect(true);
   });
 });

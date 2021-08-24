@@ -96,7 +96,7 @@ No Subscription Available.
     if (preference) {
       return preference.datetime.map((datetime) => {
         let checked = datetime.active;
-        let autoRenew = datetime.auto_renew;
+        const autoRenew = datetime.auto_renew;
         if (state === null) {
             // eslint-disable-line
         } else if (`${preference.id}` in state) {
