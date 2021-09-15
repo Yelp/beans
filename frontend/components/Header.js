@@ -14,7 +14,7 @@ Beans
     <img
       className="yelp_logo"
       alt="Yelp Logo"
-      src="https://s3-media3.fl.yelpcdn.com/assets/srv0/styleguide/b62d62e8722a/assets/img/brand_guidelines/yelp_fullcolor_outline@2x.png"
+      src="https://s3-media0.fl.yelpcdn.com/assets/public/yelp_logo_www_home.yji-7d24f1680fdb98ca54a82c26cdbdc7bd.svg"
     />
   </nav>
 );
