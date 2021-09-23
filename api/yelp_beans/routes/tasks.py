@@ -38,7 +38,7 @@ def generate_meeting_requests():
     current_specs = get_specs_for_current_week()
     for preference in UserSubscriptionPreferences.query.all():
         logging.info(preference)
-        if preference.auto_renew is True:
+        if preference.auto_renew:
             meeting_spec = filter(lambda spec: spec.meeting_subscription_id == preference.subscription_id, current_specs)[0]
             meeting_request = MeetingRequest(meeting_spec=meeting_spec, user=preference.user)
             store_meeting_request(meeting_request)
