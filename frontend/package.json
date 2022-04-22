@@ -10,7 +10,7 @@
     "express-session": "^1.16.2",
     "http-proxy-middleware": "^1.0.6",
     "moment-timezone": "^0.5.21",
-    "nconf": "^0.10.0",
+    "nconf": "^0.11.4",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
     "prop-types": "^15.6.2",
