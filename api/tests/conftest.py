@@ -68,6 +68,10 @@ def app(request):
     return app
 
 @pytest.fixture(scope='session')
+def client(app):
+    return app.test_client()
+
+@pytest.fixture(scope='session')
 def db(app, request):
     """Session-wide test database."""
 
