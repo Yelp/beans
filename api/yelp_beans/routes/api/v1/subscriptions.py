@@ -20,23 +20,23 @@ subscriptions_blueprint = Blueprint('subscriptions', __name__)
 
 @enum.unique
 class Weekday(enum.Enum):
-    monday = "monday"
-    tuesday = "tuesday"
-    wednesday = "wednesday"
-    thursday = "thursday"
-    friday = "friday"
-    saturday = "saturday"
-    sunday = "sunday"
+    MONDAY = "monday"
+    TUESDAY = "tuesday"
+    WEDNESDAY = "wednesday"
+    THURSDAY = "thursday"
+    FRIDAY = "friday"
+    SATURDAY = "saturday"
+    SUNDAY = "sunday"
 
     def to_day_number(self) -> int:
         day_to_number = {
-            Weekday.monday: 0,
-            Weekday.tuesday: 1,
-            Weekday.wednesday: 2,
-            Weekday.thursday: 3,
-            Weekday.friday: 4,
-            Weekday.saturday: 5,
-            Weekday.sunday: 6,
+            Weekday.MONDAY: 0,
+            Weekday.TUESDAY: 1,
+            Weekday.WEDNESDAY: 2,
+            Weekday.THURSDAY: 3,
+            Weekday.FRIDAY: 4,
+            Weekday.SATURDAY: 5,
+            Weekday.SUNDAY: 6,
         }
         return day_to_number[self]
 
