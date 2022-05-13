@@ -183,6 +183,12 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
         'location': office + " " + location,
         'add': ','.join([user.email for user in user_list])
     }
+    if meeting_datetime.tzinfo and meeting_datetime.tzinfo.zone:
+        # If the meeting time have a timezone specified
+        # and Calendar URL link doesn't contain timezone
+        # Add the "ctz" parameter to Google's Calendar template link
+        url_params["ctz"] = meeting_datetime.tzinfo.zone
+
     invite_url += urllib.parse.urlencode(url_params)
     return invite_url
 
