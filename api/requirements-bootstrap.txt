@@ -1,4 +1,5 @@
-pip==18.1
+pip==22.1.2
+pip-tools==6.8.0
 pymonkey==0.3.1
-venv-update==3.2.4
-wheel==0.33.6
+setuptools==60.9.3
+wheel==0.37.1

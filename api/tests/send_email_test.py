@@ -1,8 +1,14 @@
+import datetime
+from urllib.parse import parse_qs
+from urllib.parse import urlparse
+
 import pytest
+import pytz
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
+from yelp_beans.send_email import create_google_calendar_invitation_link
 from yelp_beans.send_email import send_batch_initial_opt_in_email
 from yelp_beans.send_email import send_batch_meeting_confirmation_email
 from yelp_beans.send_email import send_batch_unmatched_email
@@ -58,3 +64,32 @@ def test_send_batch_meeting_confirmation_email(database, session):
 def test_send_batch_unmatched_email(database, fake_user):
     matches, unmatched = generate_meetings([fake_user], database.specs[0])
     send_batch_unmatched_email(unmatched)
+
+@pytest.mark.parametrize(
+    "test_datetime,expected_link_ctz",
+    [
+        (
+            datetime.datetime(2022, 5, 13, 23, 34, 45, tzinfo=pytz.timezone('America/Chicago')),
+            "America/Chicago"
+        ),
+        (
+            datetime.datetime(2022, 5, 13, 23, 34, 45, tzinfo=pytz.timezone('America/Los_Angeles')),
+            "America/Los_Angeles"
+        ),
+        (
+            datetime.datetime(2022, 5, 13, 23, 34, 45, tzinfo=pytz.timezone('Europe/London')),
+            "Europe/London"
+        ),
+        (
+            datetime.datetime(2022, 5, 13, 23, 34, 45),
+            None
+        ),
+    ]
+)
+def test_create_google_calendar_invitation_link(test_datetime, expected_link_ctz):
+    generated_calendar_url = create_google_calendar_invitation_link([], "title", "office", "location", test_datetime,
+                                                                    test_datetime)
+    parsed_url = urlparse(generated_calendar_url)
+    ctz_param = parse_qs(parsed_url.query).get("ctz", None)
+    ctz_value = ctz_param[0] if ctz_param else None
+    assert ctz_value == expected_link_ctz
