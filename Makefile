@@ -4,6 +4,8 @@ endef
 
 PROJECT := $(call GetFromPkg,PROJECT)
 
+.PHONY: all
+all: development
 
 .PHONY: deploy
 deploy: deploy_services deploy_dispatch
