@@ -1,0 +1,16 @@
+{
+	"name": "Ubuntu",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { "VARIANT": "ubuntu-22.04" }
+	},
+
+	"forwardPorts": [5000, 8080],
+
+	"remoteUser": "vscode",
+	"features": {
+		"sshd": "latest",
+		"node": "lts",
+		"python": "3.8"
+	}
+}

@@ -12,6 +12,7 @@ def create_app():
     from yelp_beans.routes.api.v1.meeting_requests import meeting_requests
     from yelp_beans.routes.api.v1.metrics import metrics_blueprint
     from yelp_beans.routes.api.v1.preferences import preferences_blueprint
+    from yelp_beans.routes.api.v1.subscriptions import subscriptions_blueprint
     from yelp_beans.routes.api.v1.user import user_blueprint
     from yelp_beans.routes.tasks import tasks
     # Cron Endpoint
@@ -20,8 +21,14 @@ def create_app():
     # Api Endpoints
     app.register_blueprint(meeting_requests, url_prefix='/v1/meeting_request')
     app.register_blueprint(metrics_blueprint, url_prefix='/v1/metrics')
-    app.register_blueprint(preferences_blueprint,
-                           url_prefix='/v1/user/preferences')
+    app.register_blueprint(
+        preferences_blueprint,
+        url_prefix='/v1/user/preferences',
+    )
+    app.register_blueprint(
+        subscriptions_blueprint,
+        url_prefix='/v1/subscriptions',
+    )
     app.register_blueprint(user_blueprint, url_prefix='/v1/user')
 
     with app.app_context():
