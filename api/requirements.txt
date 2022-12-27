@@ -24,7 +24,7 @@ PyYAML==5.4
 requests==2.25.1
 s3transfer==0.3.3
 sendgrid==6.4.8
-setuptools==51.1.1
+setuptools==65.5.1
 six==1.15.0
 SQLAlchemy==1.3.22
 starkbank-ecdsa==1.1.0
