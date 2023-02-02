@@ -19,11 +19,7 @@ class MeetingRequest extends Component {
   }
 
   static getMeetingSpecKey() {
-    const path = window.location.href.split('/');
-    // Remove any get parameters
-    if (path[path.length - 1].indexOf('?') > -1) {
-      return path[path.length - 1].substring(0, path[path.length - 1].indexOf('?'));
-    }
+    const path = window.location.pathname.split('/');
     return path[path.length - 1];
   }
 
