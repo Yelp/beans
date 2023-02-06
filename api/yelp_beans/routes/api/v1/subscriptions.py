@@ -156,3 +156,13 @@ def get_subscriptions():
     resp = jsonify([json.loads(spec.json()) for spec in specs])
     resp.status_code = 200
     return resp
+
+
+@subscriptions_blueprint.route('/<int:sub_id>', methods=["GET"])
+def get_subscription(sub_id: int):
+    sub_model = MeetingSubscription.query.filter(MeetingSubscription.id == sub_id).one()
+    sub = Subscription.from_sqlalchemy(sub_model)
+    # There is probably a better way to do this, but not sure what it is yet
+    resp = jsonify(json.loads(sub.json()))
+    resp.status_code = 200
+    return resp

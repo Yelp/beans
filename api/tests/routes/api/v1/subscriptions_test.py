@@ -117,3 +117,35 @@ def test_get_subscriptions_has_rule(client, session):
             'timezone': 'America/Los_Angeles',
         },
     ]
+
+
+def test_get_subscription(client, session):
+    preference = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    session.add(preference)
+    rule = Rule(name='field', value='value')
+    session.add(rule)
+    subscription = MeetingSubscription(
+        timezone='America/Los_Angeles',
+        datetime=[preference],
+        title="Test",
+        size=2,
+        office='tester',
+        location='test place',
+        rule_logic='all',
+        user_rules=[rule],
+    )
+    session.add(subscription)
+    session.commit()
+
+    resp = client.get(f'v1/subscriptions/{subscription.id}')
+    assert resp.json == {
+        'id': subscription.id,
+        'location': 'test place',
+        'name': "Test",
+        'office': 'tester',
+        'rule_logic': 'all',
+        'rules': [{'field': 'field', 'value': 'value'}],
+        'size': 2,
+        'time_slots': [{'day': 'thursday', 'hour': 13, 'minute': 0}],
+        'timezone': 'America/Los_Angeles',
+    }
