@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import enum
 import json
 from datetime import datetime
@@ -40,27 +42,66 @@ class Weekday(enum.Enum):
         }
         return day_to_number[self]
 
+    @staticmethod
+    def from_day_number(day_number: int) -> Weekday:
+        for day in Weekday:
+            if day_number == day.to_day_number():
+                return day
+        raise ValueError(f"No day for day number of {day_number}")
+
 
 class TimeSlot(BaseModel):
     day: Weekday
     hour: int
     minute: int = 0
 
+    @classmethod
+    def from_sqlalchemy(cls, model: SubscriptionDateTime) -> RuleModel:
+        return cls(
+            day=Weekday.from_day_number(model.datetime.weekday()),
+            hour=model.datetime.hour,
+            minute=model.datetime.minute,
+        )
+
 
 class RuleModel(BaseModel):
     field: str
     value: str
+
+    @classmethod
+    def from_sqlalchemy(cls, model: Rule) -> RuleModel:
+        return cls(field=model.name, value=model.value)
 
 
 class NewSubscription(BaseModel):
     location: str = 'Online'
     name: str
     office: str = 'Remote'
-    rule_logic: Literal['any', 'all'] = 'any'
+    rule_logic: Literal['any', 'all', None] = None
     rules: List[RuleModel] = ()
     size: int = 2
     time_slots: List[TimeSlot]
     timezone: str = 'America/Los_Angeles'
+
+
+class Subscription(NewSubscription):
+    id: int
+
+    @classmethod
+    def from_sqlalchemy(cls, model: MeetingSubscription) -> Subscription:
+        rules = [RuleModel.from_sqlalchemy(rule) for rule in model.user_rules]
+        time_slots = [TimeSlot.from_sqlalchemy(time_slot) for time_slot in model.datetime]
+        return cls(
+            id=model.id,
+            location=model.location,
+            name=model.title,
+            office=model.office,
+            rule_logic=model.rule_logic,
+            rules=rules,
+            size=model.size,
+            time_slots=time_slots,
+            timezone=model.timezone,
+        )
 
 
 def calculate_meeting_datetime(time_slot: TimeSlot, timezone_str: str) -> datetime:
@@ -103,5 +144,15 @@ def create_subscription():
     db.session.commit()
 
     resp = jsonify(id=subscription.id)
+    resp.status_code = 200
+    return resp
+
+
+@subscriptions_blueprint.route('/', methods=["GET"])
+def get_subscriptions():
+    spec_models = MeetingSubscription.query.all()
+    specs = [Subscription.from_sqlalchemy(model) for model in spec_models]
+    # There is probably a better way to do this, but not sure what it is yet
+    resp = jsonify([json.loads(spec.json()) for spec in specs])
     resp.status_code = 200
     return resp
