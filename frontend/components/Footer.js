@@ -6,7 +6,7 @@ const Footer = () => (
     <hr className="footer_hr" />
     <div className="container">
       <div className="row">
-        <div className="col-lg-8 col-lg-offset-2 text-center">
+        <div className="w-100 text-center">
           <h5>
             <small>
 Made with ♥ at Yelp.

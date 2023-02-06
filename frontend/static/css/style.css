@@ -10,11 +10,6 @@ input[type='radio'], input[type='checkbox'] {
     margin-left: 30px;
 }
 
-.yelp_logo {
-    position: absolute;
-    right: 0px;
-}
-
 .logo {
     width: 6em;
     padding-left: 1em;
