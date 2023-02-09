@@ -3,6 +3,7 @@ import logging
 
 import networkx as nx
 from yelp_beans.logic.user import user_preference
+from yelp_beans.matching.match_utils import get_meeting_weights
 from yelp_beans.matching.match_utils import get_previous_meetings
 
 
@@ -79,10 +80,6 @@ def construct_graph(user_ids, disallowed_meetings):
     Yay graphs! Networkx will do all the work for us.
     """
 
-    # special weights that be put on the matching potential of each meeting,
-    # depending on heuristics for what makes a good/bad potential meeting.
-    meeting_to_weight = {}
-
     # This creates the graph and the maximal matching set is returned.
     # It does not return anyone who didn't get matched.
     meetings = []
@@ -90,6 +87,10 @@ def construct_graph(user_ids, disallowed_meetings):
         meeting for meeting in itertools.combinations(user_ids, 2)
     }
     allowed_meetings = possible_meetings - disallowed_meetings
+
+    # special weights that be put on the matching potential of each meeting,
+    # depending on heuristics for what makes a good/bad potential meeting.
+    meeting_to_weight = get_meeting_weights(allowed_meetings)
 
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)
