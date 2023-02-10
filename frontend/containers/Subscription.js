@@ -13,8 +13,8 @@ const DAYS_OF_THE_WEEK = [
 ];
 
 const RULE_LOGIC_OPTIONS = [
-  { label: 'All', value: 'all' },
-  { label: 'Any', value: 'any' },
+  { label: 'all rules', value: 'all' },
+  { label: 'at least one rule', value: 'any' },
 ];
 
 const RuleShape = PropTypes.shape({
@@ -108,7 +108,7 @@ const RulesField = ({ rules, ruleLogic }) => (
     <h3>Rules</h3>
     <div className="form-row mt-2">
       <label htmlFor="rule-logic" className="col-form-label">
-        Rule Logic:
+        Must match
       </label>
       <div className="col-auto">
         <select className="form-control" id="rule-logic" disabled={rules.length <= 1}>
