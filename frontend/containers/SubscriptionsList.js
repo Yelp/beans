@@ -44,6 +44,7 @@ const SubscriptionList = () => {
             <th>Rules</th>
             <th>Time Zone</th>
             <th>Time Slots</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +58,7 @@ const SubscriptionList = () => {
               <td><Rules rules={sub.rules} ruleLogic={sub.rule_logic} /></td>
               <td>{sub.timezone}</td>
               <td><TimeSlots timeSlots={sub.time_slots} /></td>
+              <td><a href={`/admin/subscriptions/${sub.id}`}>edit</a></td>
             </tr>
           ))}
         </tbody>
