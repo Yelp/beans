@@ -158,10 +158,10 @@ const RulesField = ({ rules, ruleLogic, updateField }) => {
           Must match
         </label>
         <div className="col-auto">
-          <select className="form-control" id="rule-logic" disabled={rules.length <= 1} onChange={(e) => updateField('rule_logic', e.target.value)}>
-            <option value="no-rule-logic" select={ruleLogic == null}>Select a rule logic</option>
+          <select className="form-control" id="rule-logic" value={ruleLogic} disabled={rules.length <= 1} onChange={(e) => updateField('rule_logic', e.target.value)}>
+            <option value={null}>Select a rule logic</option>
             {RULE_LOGIC_OPTIONS.map((ruleLogicOption) => (
-              <option value={ruleLogicOption.value} selected={ruleLogicOption.value === ruleLogic}>
+              <option value={ruleLogicOption.value} key={ruleLogicOption.value}>
                 {ruleLogicOption.label}
               </option>
             ))}
@@ -170,7 +170,7 @@ const RulesField = ({ rules, ruleLogic, updateField }) => {
       </div>
       <div className="form-group mt-2">
         {rules.map((rule) => (
-          <RuleField rule={rule} updateRule={updateRule} removeRule={removeRule} />
+          <RuleField key={rule.uuid} rule={rule} updateRule={updateRule} removeRule={removeRule} />
         ))}
         <button type="button" className="btn btn-secondary btn-sm mt-2" onClick={addRule}>Add Rule</button>
       </div>
@@ -221,9 +221,9 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
         Day of Week:
       </label>
       <div className="col-auto">
-        <select className="form-control" id={dayId} onChange={(e) => updateTimeSlot(timeSlot.uuid, 'day', e.target.value)}>
+        <select className="form-control" id={dayId} value={timeSlot.day} onChange={(e) => updateTimeSlot(timeSlot.uuid, 'day', e.target.value)}>
           {DAYS_OF_THE_WEEK.map((day) => (
-            <option value={day.value} selected={day.value === timeSlot.day}>{day.label}</option>
+            <option value={day.value} key={day.value}>{day.label}</option>
           ))}
         </select>
       </div>
@@ -289,6 +289,7 @@ const TimeSlotsField = ({ timeSlots, timezone, updateField }) => {
       <div className="form-group mt-2">
         {timeSlots.map((timeSlot) => (
           <TimeSlotField
+            key={timeSlot.uuid}
             timeSlot={timeSlot}
             updateTimeSlot={updateTimeSlot}
             removeTimeSlot={removeTimeSlot}
