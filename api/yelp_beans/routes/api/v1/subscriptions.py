@@ -56,6 +56,9 @@ class TimeSlot(BaseModel):
     hour: int
     minute: int = 0
 
+    class Config:
+        frozen = True
+
     @classmethod
     def from_sqlalchemy(cls, model: SubscriptionDateTime, timezone: str) -> RuleModel:
         tz_time = arrow.get(model.datetime.replace(tzinfo=utc)).to(timezone)
@@ -69,6 +72,9 @@ class TimeSlot(BaseModel):
 class RuleModel(BaseModel):
     field: str
     value: str
+
+    class Config:
+        frozen = True
 
     @classmethod
     def from_sqlalchemy(cls, model: Rule) -> RuleModel:
@@ -167,5 +173,65 @@ def get_subscription(sub_id: int):
     sub = Subscription.from_sqlalchemy(sub_model)
     # There is probably a better way to do this, but not sure what it is yet
     resp = jsonify(json.loads(sub.json()))
+    resp.status_code = 200
+    return resp
+
+
+@subscriptions_blueprint.route('/<int:sub_id>', methods=["PUT"])
+def update_subscription(sub_id: int):
+    sub_model = MeetingSubscription.query.filter(MeetingSubscription.id == sub_id).one()
+    try:
+        data = NewSubscription.parse_obj(request.get_json())
+    except ValidationError as e:
+        # There is probably a better way to do this, but not sure what it is yet
+        resp = jsonify(json.loads(e.json()))
+        resp.status_code = 400
+        return resp
+
+    sub_model.title = data.name
+    sub_model.size = data.size
+    sub_model.office = data.office
+    sub_model.location = data.location
+    sub_model.timezone = data.timezone
+    sub_model.rule_logic = data.rule_logic if data.rules else None
+
+    existing_rules = {RuleModel.from_sqlalchemy(r): r for r in sub_model.user_rules}
+    for rule in data.rules:
+        if rule in existing_rules:
+            del existing_rules[rule]
+        else:
+            sub_model.user_rules.append(Rule(name=rule.field, value=rule.value))
+
+    # Remaining rules weren't in the list of updated rules
+    for rule in existing_rules.values():
+        sub_model.user_rules.remove(rule)
+
+    # To account for daylight savings we have to make sure the utc datetimes
+    # are being compared at the same time of year
+    def normalize_datetime(dt: SubscriptionDateTime) -> tuple[int, int, int]:
+        time_slot = TimeSlot.from_sqlalchemy(dt, sub_model.timezone)
+        normalized = calculate_meeting_datetime(time_slot, sub_model.timezone)
+        # We only care that the weekday, hour, and minute now that we have normalized it
+        return (normalized.weekday(), normalized.hour, normalized.minute)
+
+    existing_datetimes = {normalize_datetime(ts): ts for ts in sub_model.datetime}
+
+    for time_slot in data.time_slots:
+        # we have to compare based on the meeting datetime, so that the timezone
+        # being changed is accounted for since we store utc
+        time_slot_dt = calculate_meeting_datetime(time_slot, data.timezone)
+        time_slot_key = (time_slot_dt.weekday(), time_slot_dt.hour, time_slot_dt.minute)
+        if time_slot_key in existing_datetimes:
+            del existing_datetimes[time_slot_key]
+        else:
+            sub_model.datetime.append(SubscriptionDateTime(datetime=time_slot_dt))
+
+    # Remaining datetimes weren't in the list of updated time_slots
+    for dt in existing_datetimes.values():
+        sub_model.datetime.remove(dt)
+
+    db.session.commit()
+
+    resp = jsonify()
     resp.status_code = 200
     return resp
