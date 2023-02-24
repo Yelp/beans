@@ -12,7 +12,10 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from pydantic import BaseModel
+from pydantic import Field
 from pydantic import ValidationError
+from pydantic import validator
+from pytz import all_timezones
 from pytz import utc
 from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
@@ -53,8 +56,8 @@ class Weekday(enum.Enum):
 
 class TimeSlot(BaseModel):
     day: Weekday
-    hour: int
-    minute: int = 0
+    hour: int = Field(ge=0, le=23)
+    minute: int = Field(0, ge=0, le=59)
 
     class Config:
         frozen = True
@@ -83,13 +86,19 @@ class RuleModel(BaseModel):
 
 class NewSubscription(BaseModel):
     location: str = 'Online'
-    name: str
+    name: str = Field(min_lenth=1)
     office: str = 'Remote'
     rule_logic: Literal['any', 'all', None] = None
-    rules: List[RuleModel] = ()
-    size: int = 2
-    time_slots: List[TimeSlot]
+    rules: List[RuleModel] = Field(default_factory=list)
+    size: int = Field(2, ge=2)
+    time_slots: List[TimeSlot] = Field(min_items=1)
     timezone: str = 'America/Los_Angeles'
+
+    @validator('timezone')
+    def is_valid_timezone(cls, value: str) -> str:
+        if value not in all_timezones:
+            raise ValueError(f"{value} is not a valid timezone")
+        return value
 
 
 class Subscription(NewSubscription):
