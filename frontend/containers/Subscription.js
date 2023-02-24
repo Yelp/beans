@@ -201,7 +201,7 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
 
   React.useEffect(() => {
     const parts = time.split(':');
-    if (parts !== 2) {
+    if (parts.length !== 2) {
       return;
     }
     const [strHour, strMinute] = parts;
@@ -210,6 +210,7 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
     if (Number.isNaN(hour) || Number.isNaN(minute)) {
       return;
     }
+
     updateTimeSlot(timeSlot.uuid, 'hour', hour);
     updateTimeSlot(timeSlot.uuid, 'minute', minute);
   }, [time]);
@@ -307,14 +308,43 @@ TimeSlotsField.propTypes = {
   updateField: PropTypes.func.isRequired,
 };
 
+const ErrorMessage = ({ errors }) => (
+  <div className="alert alert-danger mb-2" role="alert">
+    Error updating subscription.
+    <ul>
+      {errors.map((error) => (
+        <li key={JSON.stringify(error)}>
+          {error.loc && `${error.loc.join('.')}: `}
+          {error.msg}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+ErrorMessage.propTypes = {
+  errors: PropTypes.arrayOf(PropTypes.shape({
+    loc: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    msg: PropTypes.string.isRequired,
+  })).isRequired,
+};
+
 const addUUID = (array) => array.map((item) => {
   const newItem = { ...item };
   newItem.uuid = crypto.randomUUID();
   return newItem;
 });
 
+const removeUUID = (array) => array.map((item) => {
+  const { uuid, ...remainingFields } = item;
+  return remainingFields;
+});
+
 const Subscription = () => {
   const [subscription, setSubscription] = React.useState(null);
+  const [saving, setSaving] = React.useState(false);
+  const [errors, setErrors] = React.useState(null);
+
   React.useEffect(() => {
     axios.get(`/v1/subscriptions/${getSubscriptionId()}`).then(
       (res) => {
@@ -342,8 +372,38 @@ const Subscription = () => {
     });
   };
 
+  const updateSubscription = () => {
+    setSaving(true);
+    const { id, ...payloadSubscription } = subscription;
+    payloadSubscription.rules = removeUUID(payloadSubscription.rules);
+    payloadSubscription.time_slots = removeUUID(payloadSubscription.time_slots);
+    // we don't require setting the rule logic if there is only rule because all vs any doesn't
+    // change anything if there is one rule. On the backend we require that we set, so default
+    // to all in that case
+    if (payloadSubscription.rules.length === 1 && payloadSubscription.rule_logic == null) {
+      payloadSubscription.rule_logic = 'all';
+    }
+
+    setSaving(false);
+    axios.put(`/v1/subscriptions/${id}`, payloadSubscription)
+      .then(() => {
+        setSaving(false);
+        setErrors(null);
+        window.location.assign('/admin/subscriptions');
+      })
+      .catch((error) => {
+        setSaving(false);
+        if (error.response) {
+          setErrors(error.response.data);
+        } else {
+          setErrors([{ msg: 'Error sending PUT request to server' }]);
+        }
+      });
+  };
+
   return (
     <div className="container mt-2">
+      {errors && <ErrorMessage errors={errors} />}
       <StringField field="name" label="Name" value={subscription.name} updateField={updateField} />
       <div className="form-row">
         <div className="col">
@@ -366,7 +426,7 @@ const Subscription = () => {
         timezone={subscription.timezone}
         updateField={updateField}
       />
-      <button type="button" className="btn btn-primary mt-2">Update</button>
+      <button type="button" className="btn btn-primary mt-2" onClick={updateSubscription} disabled={saving}>Update</button>
     </div>
   );
 };
