@@ -63,13 +63,13 @@ StringField.defaultProps = {
 };
 
 const NumberField = ({
-  field, label, value, updateField,
+  field, label, value, updateField, min,
 }) => (
   <div className="form-group">
     <label htmlFor={field}>
       {label}
     </label>
-    <input type="number" className="form-control" id={field} value={value} onChange={(e) => updateField(field, e.target.value)} required />
+    <input type="number" min={min} className="form-control" id={field} value={value} onChange={(e) => updateField(field, e.target.value)} required />
   </div>
 );
 
@@ -78,6 +78,10 @@ NumberField.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.number.isRequired,
   updateField: PropTypes.func.isRequired,
+  min: PropTypes.number,
+};
+NumberField.defaultProps = {
+  min: null,
 };
 
 const RuleField = ({ rule, updateRule, removeRule }) => {
@@ -198,17 +202,26 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
   const dayId = `timeSlot-${timeSlot.uuid}-day`;
   const timeId = `timeSlot-${timeSlot.uuid}-time`;
   const [time, setTime] = React.useState(formatTime(timeSlot.hour, timeSlot.minute));
+  const [timeError, setTimeError] = React.useState(null);
 
   React.useEffect(() => {
     const parts = time.split(':');
-    if (parts.length !== 2) {
-      return;
-    }
-    const [strHour, strMinute] = parts;
-    const hour = parseInt(strHour, 10);
-    const minute = parseInt(strMinute, 10);
-    if (Number.isNaN(hour) || Number.isNaN(minute)) {
-      return;
+    // Default to invalid value, so update doesn't work if there is a bad string
+    let hour = -1;
+    let minute = -1;
+    if (parts.length === 2) {
+      const [strHour, strMinute] = parts;
+      const parsedHour = parseInt(strHour, 10);
+      const parsedMinute = parseInt(strMinute, 10);
+      if (Number.isNaN(parsedHour) || Number.isNaN(parsedMinute)) {
+        setTimeError("Couldn't parse hour and/or minute as a number");
+      } else {
+        setTimeError(null);
+        hour = parsedHour;
+        minute = parsedMinute;
+      }
+    } else {
+      setTimeError('Invalid Time format. Must be HH:MM');
     }
 
     updateTimeSlot(timeSlot.uuid, 'hour', hour);
@@ -241,6 +254,11 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
           required
         />
       </div>
+      {timeError && (
+        <div className="col-auto d-flex align-items-center text-danger small">
+          {timeError}
+        </div>
+      )}
       <div className="col-auto">
         <button type="button" className="btn btn-outline-danger btn-sm mt-1" onClick={() => removeTimeSlot(timeSlot.uuid)}>Remove</button>
       </div>
@@ -413,7 +431,7 @@ const Subscription = () => {
           <StringField field="office" label="Office" value={subscription.office} updateField={updateField} />
         </div>
         <div className="col-2">
-          <NumberField field="size" label="Size" value={subscription.size} updateField={updateField} />
+          <NumberField field="size" label="Size" min={2} value={subscription.size} updateField={updateField} />
         </div>
       </div>
       <RulesField
