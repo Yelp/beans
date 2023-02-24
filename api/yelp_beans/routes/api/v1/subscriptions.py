@@ -13,6 +13,7 @@ from flask import jsonify
 from flask import request
 from pydantic import BaseModel
 from pydantic import ValidationError
+from pytz import utc
 from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
 from yelp_beans.models import SubscriptionDateTime
@@ -56,11 +57,12 @@ class TimeSlot(BaseModel):
     minute: int = 0
 
     @classmethod
-    def from_sqlalchemy(cls, model: SubscriptionDateTime) -> RuleModel:
+    def from_sqlalchemy(cls, model: SubscriptionDateTime, timezone: str) -> RuleModel:
+        tz_time = arrow.get(model.datetime.replace(tzinfo=utc)).to(timezone)
         return cls(
             day=Weekday.from_day_number(model.datetime.weekday()),
-            hour=model.datetime.hour,
-            minute=model.datetime.minute,
+            hour=tz_time.hour,
+            minute=tz_time.minute,
         )
 
 
@@ -90,7 +92,7 @@ class Subscription(NewSubscription):
     @classmethod
     def from_sqlalchemy(cls, model: MeetingSubscription) -> Subscription:
         rules = [RuleModel.from_sqlalchemy(rule) for rule in model.user_rules]
-        time_slots = [TimeSlot.from_sqlalchemy(time_slot) for time_slot in model.datetime]
+        time_slots = [TimeSlot.from_sqlalchemy(time_slot, model.timezone) for time_slot in model.datetime]
         return cls(
             id=model.id,
             location=model.location,
@@ -108,6 +110,7 @@ def calculate_meeting_datetime(time_slot: TimeSlot, timezone_str: str) -> dateti
     cur_time = arrow.now(timezone_str)
     result_time = cur_time.replace(hour=time_slot.hour, minute=time_slot.minute, second=0, microsecond=0)
     result_time = result_time.shift(weekday=time_slot.day.to_day_number())
+    result_time = result_time.to('utc')
 
     return result_time.datetime
 
