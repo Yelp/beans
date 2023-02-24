@@ -1,7 +1,11 @@
 import itertools
+import json
+import os
 from datetime import datetime
 from datetime import timedelta
+from unittest import mock
 
+import pytest
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.matching.match import generate_meetings
@@ -18,8 +22,25 @@ from yelp_beans.models import UserSubscriptionPreferences
 
 MEETING_COOLDOWN_WEEKS = 10
 
+base_dir = os.path.dirname(__file__)
+mock_json_location = os.path.join(base_dir, "mock_employee_data")
+@pytest.fixture
+def mock_requests_get():
+    with mock.patch('requests.get', autospec=True) as mock_requests_get:
+        yield mock_requests_get
 
-def test_generate_meetings_same_department(session, subscription):
+class MockResponse:
+    def __init__(self):
+        self.status_code = 200
+        self.text = '3'
+
+    def json(self):
+        with open(os.path.join(mock_json_location, "general_mock.json")) as f:
+            result = json.load(f)
+        return result
+
+def test_generate_meetings_same_department(session, subscription, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
     rule = Rule(name='department', value='')
     session.add(rule)
     subscription.dept_rules = [rule]
@@ -39,7 +60,8 @@ def test_generate_meetings_same_department(session, subscription):
     assert len(matches) == 0
 
 
-def test_generate_meetings_with_history(session, subscription):
+def test_generate_meetings_with_history(session, subscription, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
     rule = Rule(name='department', value='')
     session.add(rule)
     subscription.dept_rules = [rule]
@@ -86,7 +108,8 @@ def test_generate_meetings_with_history(session, subscription):
     assert len(unmatched) == 2
 
 
-def test_no_re_matches(session):
+def test_no_re_matches(session, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)

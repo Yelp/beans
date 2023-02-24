@@ -1,6 +1,10 @@
+import json
+import os
 from datetime import datetime
 from datetime import timedelta
+from unittest import mock
 
+import pytest
 from yelp_beans.matching.match import generate_meetings
 from yelp_beans.matching.match_utils import get_counts_for_pairs
 from yelp_beans.matching.match_utils import get_previous_meetings
@@ -16,6 +20,22 @@ from yelp_beans.models import UserSubscriptionPreferences
 
 MEETING_COOLDOWN_WEEKS = 10
 
+base_dir = os.path.dirname(__file__)
+mock_json_location = os.path.join(base_dir, "mock_employee_data")
+
+@pytest.fixture
+def mock_requests_get():
+    with mock.patch('requests.get', autospec=True) as mock_requests_get:
+        yield mock_requests_get
+class MockResponse:
+    def __init__(self):
+        self.status_code = 200
+        self.text = '3'
+
+    def json(self):
+        with open(os.path.join(mock_json_location, "general_mock.json")) as f:
+            result = json.load(f)
+        return result
 
 def test_pair_to_counts():
     pairs = [('user1', 'user2'), ('user1', 'user2'), ('user2', 'user3')]
@@ -24,7 +44,8 @@ def test_pair_to_counts():
     assert(counts[('user1', 'user2')] == 2)
 
 
-def test_generate_save_meetings(session, subscription):
+def test_generate_save_meetings(session, subscription, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
     subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)

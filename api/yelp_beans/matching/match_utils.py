@@ -170,7 +170,7 @@ def get_meeting_weights(allowed_meetings):
     G.add_edges_from(list(zip(employees.index, employees['Manager_ID'])))
 
     for user_pair in allowed_meetings:
-        users_distance_score = get_pairwise_distance(user_pair, max_tenure, org_graph=G, employee_df=employees)
+        users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees, max_tenure=max_tenure)
         meeting_to_weight[user_pair] = users_distance_score
 
     return meeting_to_weight

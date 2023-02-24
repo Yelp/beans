@@ -1,0 +1,35 @@
+[
+  {
+    "Employee_ID": "1",
+    "Manager_ID": "1",
+    "Cost_Center_-_Name": "Test",
+    "Days_Since_Start": 100,
+    "Location": "Canada",
+    "languages": "English",
+    "Education": "B.A.",
+    "Work_Experience_group": "test",
+    "Pronoun": "they"
+  },
+  {
+    "Employee_ID": "2",
+    "Manager_ID": "1",
+    "Cost_Center_-_Name": "Test",
+    "Days_Since_Start": 100,
+    "Location": "Canada",
+    "languages": "English",
+    "Education": "B.A.",
+    "Work_Experience_group": "test",
+    "Pronoun": "they"
+  },
+  {
+    "Employee_ID": "3",
+    "Manager_ID": "1",
+    "Cost_Center_-_Name": "Test",
+    "Days_Since_Start": 10,
+    "Location": "Canada",
+    "languages": "English",
+    "Education": "B.A.",
+    "Work_Experience_group": "test",
+    "Pronoun": "they"
+  }
+]
