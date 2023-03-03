@@ -12,6 +12,7 @@ import MetricsList from './containers/MetricsList';
 import MeetingRequest from './containers/MeetingRequest';
 import User from './containers/User';
 import SubscriptionsList from './containers/SubscriptionsList';
+import Subscription from './containers/Subscription';
 
 ReactDOM.render(
   <Router>
@@ -21,7 +22,8 @@ ReactDOM.render(
       <Route path="/dashboard" component={MetricsList} />
       <Route path="/user/:email" component={User} />
       <Route path="/meeting_request/:id" component={MeetingRequest} />
-      <Route path="/admin/subscriptions" component={SubscriptionsList} />
+      <Route path="/admin/subscriptions/:id" component={Subscription} />
+      <Route exact path="/admin/subscriptions" component={SubscriptionsList} />
       <Footer />
     </div>
   </Router>,
