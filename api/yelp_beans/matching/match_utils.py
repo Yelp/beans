@@ -117,6 +117,7 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     note: we considered using education and work experience, but think it likely correlates with the first attribute
     """
     user_a, user_b = user_pair
+    print(user_a, user_b)
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
@@ -128,8 +129,14 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     distance += dist_1
 
     # location
-    user_a_city, user_a_country = user_a_attributes["Location"].split(", ")
-    user_b_city, user_b_country = user_b_attributes["Location"].split(", ")
+    try:
+        user_a_city, user_a_country = user_a_attributes["Location"].split(", ")
+    except ValueError:
+        user_a_city, user_a_country = "unkown", user_a_attributes["Location"]
+    try:
+        user_b_city, user_b_country = user_b_attributes["Location"].split(", ")
+    except ValueError:
+        user_b_city, user_b_country = "unkown", user_b_attributes["Location"]
     country_dist = 0 if user_a_country == user_b_country else 1
     city_dist = 0 if user_a_city == user_b_city else 1
     dist_2 = country_dist + city_dist
@@ -160,14 +167,15 @@ def get_meeting_weights(allowed_meetings):
         headers={'X-API-Key': CORP_API_TOKEN},
     ).json())
 
-    employees = employees.set_index("Employee_ID")
+    employees = employees.set_index("Work_Email", drop=False)
     employees = employees[["Manager_ID", "Cost_Center_-_Name", "Days_Since_Start", "Location", "languages",
-                           "Education", "Work_Experience_group", "Pronoun"]]
+                           "Education", "Work_Experience_group", "Pronoun", "Work_Email", "Employee_ID"]]
+    employees = employees.merge(employees, left_on='Manager_ID', right_on='Employee_ID', suffixes=('', '_manager'))
     max_tenure = max(employees['Days_Since_Start'].astype(int))
 
     # yelp employee network graph created through reporting line
     G = nx.Graph()
-    G.add_edges_from(list(zip(employees.index, employees['Manager_ID'])))
+    G.add_edges_from(list(zip(employees.index, employees['Work_Email_manager'])))
 
     for user_pair in allowed_meetings:
         users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees, max_tenure=max_tenure)
