@@ -38,8 +38,10 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     if prev_meeting_tuples is None:
         prev_meeting_tuples = get_previous_meetings(spec.meeting_subscription)
 
-    uid_to_users = {user.id: user for user in users}
+    uid_to_users = {user.email: user for user in users}
     user_ids = sorted(uid_to_users.keys())
+    print(f"user: {users}")
+    print(f"USER_IDs: {user_ids}")
 
     # Determine matches that should not happen
     disallowed_meeting_set = get_disallowed_meetings(
@@ -69,7 +71,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
 
     logging.info('{} employees unmatched'.format(len(unmatched)))
     logging.info([user.get_username() for user in unmatched])
-
+    print(f"matches: {matches}, unmatches: {unmatched}")
     return matches, unmatched
 
 

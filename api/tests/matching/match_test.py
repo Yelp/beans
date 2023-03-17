@@ -70,13 +70,13 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user1 = User(email='1@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
     session.add(user1)
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user2 = User(email='2@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
     session.add(user2)
-    user3 = User(email='c@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user3 = User(email='3@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
     session.add(user3)
-    user4 = User(email='d@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user4 = User(email='4@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
     session.add(user4)
 
     user_list = [user1, user2, user3, user4]

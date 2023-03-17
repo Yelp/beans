@@ -118,11 +118,15 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     """
     user_a, user_b = user_pair
     print(user_a, user_b)
+    print("employee_df:")
+    print(employee_df.to_string())
+    employee_df.set_index("Work_Email", inplace=True)
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
     distance = 0
-
+    print("org_graph nodes")
+    print(org_graph.nodes)
     # org chart distance
     dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)
     dist_1 = dist_1/10  # approx. min-max scaled
@@ -175,7 +179,8 @@ def get_meeting_weights(allowed_meetings):
 
     # yelp employee network graph created through reporting line
     G = nx.Graph()
-    G.add_edges_from(list(zip(employees.index, employees['Work_Email_manager'])))
+    # G.add_edges_from(list(zip(employees.index, employees['Work_Email_manager'])))
+    G.add_edges_from(list(zip(employees["Work_Email"], employees['Work_Email_manager'])))
 
     for user_pair in allowed_meetings:
         users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees, max_tenure=max_tenure)
