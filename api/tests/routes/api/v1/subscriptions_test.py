@@ -12,6 +12,7 @@ from yelp_beans.models import SubscriptionDateTime
 def mock_cur_time():
 
     def mock_return(timezone):
+        # This is an arbitrary time
         return arrow.get("2017-08-01T12:00:00").to(timezone)
 
     with mock.patch('yelp_beans.routes.api.v1.subscriptions.arrow.now', side_effect=mock_return):
