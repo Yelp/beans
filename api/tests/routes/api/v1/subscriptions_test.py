@@ -325,7 +325,7 @@ def test_update_subscription_remove_rule_and_datatime(client, session, mock_cur_
     assert row.datetime == [preferences[0]]
 
 
-def test_update_subscription_update_timezone(client, session):
+def test_update_subscription_update_timezone(client, session, mock_cur_time):
     subscription = MeetingSubscription(
         timezone='America/Los_Angeles',
         datetime=[SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))],
@@ -355,7 +355,7 @@ def test_update_subscription_update_timezone(client, session):
     row = session.query(MeetingSubscription).filter(MeetingSubscription.id == subscription.id).one()
 
     db_datetimes = [(dt.datetime.weekday(), dt.datetime.hour, dt.datetime.minute) for dt in row.datetime]
-    assert db_datetimes == [(3, 18, 0)]
+    assert db_datetimes == [(3, 17, 0)]
 
 
 def test_update_subscription_update_timezone_still_same_time(client, session):
