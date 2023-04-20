@@ -29,8 +29,6 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
 
 
 def is_same(field, match, users):
-    print(f"is_same: users[match[0]].meta_data[field]: {users[match[0]].meta_data[field]}\n"
-          f"users[match[1]].meta_data[field]: {users[match[1]].meta_data[field]}")
     return users[match[0]].meta_data[field] == users[match[1]].meta_data[field]
 
 
@@ -54,6 +52,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
         users, prev_meeting_tuples, spec
     )
     print(f"generate_pair_meetings: disallowed_meeting_set:{disallowed_meeting_set}")
+    print(f"generate_pair_meetings: user_ids:{user_ids}")
     graph_matches = construct_graph(user_ids, disallowed_meeting_set)
 
     # matching returns (1,4) and (4,1) this de-dupes
@@ -78,7 +77,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
 
     logging.info('{} employees unmatched'.format(len(unmatched)))
     logging.info([user.get_username() for user in unmatched])
-    print(f"matches: {matches}, unmatches: {unmatched}")
+    print(f"generate_pair_meetings, matches: {matches}, unmatches: {unmatched}")
     return matches, unmatched
 
 
@@ -93,9 +92,14 @@ def construct_graph(user_ids, disallowed_meetings):
     # It does not return anyone who didn't get matched.
     meetings = []
     possible_meetings = {
-        meeting for meeting in itertools.combinations(user_ids, 2)
+        tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)
     }
-    allowed_meetings = possible_meetings - disallowed_meetings
+    print(f"construct_graph, user_ids: {user_ids}")
+    print(f"construct_graph, disallowed_meetings: {disallowed_meetings}")
+    print(f"construct_graph, possible_meetings: {possible_meetings}")
+    allowed_meetings = possible_meetings - {tuple(sorted(a)) for a in disallowed_meetings}
+
+    print(f"construct_graph, allowed_meetings: {allowed_meetings}")
 
     # special weights that be put on the matching potential of each meeting,
     # depending on heuristics for what makes a good/bad potential meeting.

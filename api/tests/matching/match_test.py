@@ -130,11 +130,11 @@ def test_no_re_matches(session, mock_requests_get):
         users.append(user)
     session.commit()
 
-    previous_meetings = {pair for pair in itertools.combinations([user.id for user in users], 2)}
-    previous_meetings = previous_meetings - {(users[0].id, users[1].id)}
+    previous_meetings = {pair for pair in itertools.combinations([user.email for user in users], 2)}
+    previous_meetings = previous_meetings - {(users[0].email, users[1].email)}
     matches, unmatched = generate_meetings(users, meeting_spec, previous_meetings)
     assert len(unmatched) == num_users - 2
-    assert [(match[0].id, match[1].id) for match in matches] == [(users[0].id, users[1].id)]
+    assert [(match[0].email, match[1].email) for match in matches] == [(users[0].email, users[1].email)]
 
 
 def test_generate_group_meeting(session):

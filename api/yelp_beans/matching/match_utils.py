@@ -118,15 +118,16 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     """
     user_a, user_b = user_pair
     print(user_a, user_b)
-    print("get_pairwise_distance: employee_df:")
-    print(employee_df.to_string())
+    # print("get_pairwise_distance: employee_df:")
+    # print(employee_df.to_string())
+    # print(f"get_pairwise_distance, employee_df.columns: {employee_df.columns}")
     employee_df.set_index("Work_Email", inplace=True)
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
     distance = 0
-    print("get_pairwise_distance: org_graph nodes")
-    print(org_graph.nodes)
+    # print("get_pairwise_distance: org_graph nodes")
+    # print(org_graph.nodes)
     # org chart distance
     dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)
     dist_1 = dist_1/10  # approx. min-max scaled
@@ -172,18 +173,20 @@ def get_meeting_weights(allowed_meetings):
     ).json())
 
     employees = employees.set_index("Work_Email", drop=False)
+    # print(f"get_meeting_weights: employees.columns: {employees.columns}")
     employees = employees[["Manager_ID", "Cost_Center_-_Name", "Days_Since_Start", "Location", "languages",
                            "Education", "Work_Experience_group", "Pronoun", "Work_Email", "Employee_ID"]]
     employees = employees.merge(employees, left_on='Manager_ID', right_on='Employee_ID', suffixes=('', '_manager'))
+    # print(f"get_meeting_weights: employees.columns after merge: {employees.columns}")
     max_tenure = max(employees['Days_Since_Start'].astype(int))
 
     # yelp employee network graph created through reporting line
     G = nx.Graph()
     # G.add_edges_from(list(zip(employees.index, employees['Work_Email_manager'])))
     G.add_edges_from(list(zip(employees["Work_Email"], employees['Work_Email_manager'])))
-
+    # print(f"get_meeting_weights: employees.columns after add edges: {employees.columns}")
     for user_pair in allowed_meetings:
-        users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees, max_tenure=max_tenure)
+        users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees.copy(), max_tenure=max_tenure)
         meeting_to_weight[user_pair] = users_distance_score
 
     return meeting_to_weight
