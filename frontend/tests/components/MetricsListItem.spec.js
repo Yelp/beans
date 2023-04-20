@@ -3,7 +3,6 @@ import renderer from 'react-test-renderer';
 
 import MetricsListItem from '../../components/MetricsListItem';
 
-
 describe('MetricsListItem', () => {
   it('is rendered with one subscription', () => {
     const metric = { title: 'weekly', total_subscribed: 10, week_participants: 20 };

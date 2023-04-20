@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 const Footer = () => (
   <div>
     <hr className="footer_hr" />
@@ -9,7 +8,7 @@ const Footer = () => (
         <div className="w-100 text-center">
           <h5>
             <small>
-Made with ♥ at Yelp.
+              Made with ♥ at Yelp.
             </small>
           </h5>
           <a href="https://github.com/Yelp/beans">

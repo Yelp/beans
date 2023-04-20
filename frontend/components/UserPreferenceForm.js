@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import moment from 'moment-timezone';
 
-
 class UserPreferenceForm extends Component {
   static isoDateToString(ISODate, timezone) {
     return moment(ISODate).tz(timezone).format('dddd LT z');
@@ -59,13 +58,13 @@ class UserPreferenceForm extends Component {
           </h3>
           <h6>
             {preference.office}
-,
+            ,
             {' '}
             {preference.location}
             {' '}
-(
+            (
             {preference.size}
-)
+            )
           </h6>
           <div>
             { this.renderTimes(preference, state) }
@@ -78,7 +77,7 @@ class UserPreferenceForm extends Component {
     }
     return (
       <div>
-No Subscription Available.
+        No Subscription Available.
       </div>
     );
   }
@@ -108,7 +107,7 @@ No Subscription Available.
     }
     return (
       <div>
-No data.
+        No data.
       </div>
     );
   }
