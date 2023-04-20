@@ -35,5 +35,4 @@ checkConfig('CLOUD_BUCKET');
 checkConfig('OAUTH2_CLIENT_ID');
 checkConfig('OAUTH2_CLIENT_SECRET');
 
-
 module.exports = nconf;

@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 const Header = () => (
   <nav className="navbar mb-3">
     <span>
@@ -10,7 +9,7 @@ const Header = () => (
         src="/img/beans-white.svg"
       />
       <span className="logo-font">
-  Beans
+        Beans
       </span>
     </span>
     <img

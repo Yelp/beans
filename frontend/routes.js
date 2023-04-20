@@ -8,7 +8,6 @@ import SubscriptionsList from './containers/SubscriptionsList';
 import Subscription from './containers/Subscription';
 import App from './App';
 
-
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={User} />

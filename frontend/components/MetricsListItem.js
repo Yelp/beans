@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 const MetricsListItem = ({ metric }) => (
   <div className="panel panel-danger">
     <div className="panel-heading">
@@ -9,11 +8,11 @@ const MetricsListItem = ({ metric }) => (
     </div>
     <ul className="list-group">
       <li className="list-group-item">
-          Total Subscribed:
+        Total Subscribed:
         {metric.total_subscribed}
       </li>
       <li className="list-group-item">
-          Participants this week:
+        Participants this week:
         {metric.week_participants}
       </li>
     </ul>

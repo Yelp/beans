@@ -1,5 +1,4 @@
-const WebpackVisualizer = require('webpack-visualizer-plugin');
-
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -13,12 +12,6 @@ module.exports = {
   module: {
     rules: [
       {
-        use: 'eslint-loader?{fix: true}',
-        test: /\.js$/,
-        exclude: /node_modules/,
-        enforce: 'pre',
-      },
-      {
         use: 'babel-loader',
         test: /\.js$/,
         exclude: /node_modules/,
@@ -30,8 +23,6 @@ module.exports = {
     extensions: ['.js'],
   },
   plugins: [
-    new WebpackVisualizer({
-      filename: './dist/webpack.stats.html',
-    }),
+    new ESLintPlugin(),
   ],
 };
