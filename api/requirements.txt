@@ -13,7 +13,7 @@ idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.3
 jmespath==0.10.0
-MarkupSafe==1.1.1
+MarkupSafe==2.1.2
 networkx==2.5
 psycopg2-binary==2.8.6
 pydantic==1.9.0
