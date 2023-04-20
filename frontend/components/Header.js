@@ -2,17 +2,18 @@ import React from 'react';
 
 
 const Header = () => (
-  <nav className="navbar">
-    <img
-      className="logo"
-      alt="Beans Logo"
-      src="/img/beans-white.svg"
-    />
-    <span className="logo-font">
-Beans
+  <nav className="navbar mb-3">
+    <span>
+      <img
+        className="logo"
+        alt="Beans Logo"
+        src="/img/beans-white.svg"
+      />
+      <span className="logo-font">
+  Beans
+      </span>
     </span>
     <img
-      className="yelp_logo"
       alt="Yelp Logo"
       src="https://s3-media0.fl.yelpcdn.com/assets/public/yelp_logo_www_home.yji-7d24f1680fdb98ca54a82c26cdbdc7bd.svg"
     />

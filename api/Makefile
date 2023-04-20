@@ -5,6 +5,8 @@ endef
 PROJECT := $(call GetFromPkg,PROJECT)
 VIRTUALENV_REQUIREMENTS = requirements.txt requirements-dev.txt
 
+export PATH := ./venv/bin/:$(PATH)
+
 .PHONY: all
 all: development
 
@@ -21,21 +23,24 @@ development: venv install-hooks
 
 .PHONY: install-hooks
 install-hooks: venv
-	./venv/bin/pre-commit install -f --install-hooks
+	pre-commit install -f --install-hooks
 
 .PHONY: test
+test: export SERVER_SOFTWARE = testing
 test: development install-hooks
-	tox
+	coverage run -m pytest tests
+	coverage report --show-missing
+	coverage html
+	pre-commit run --all-files
 
-venv: $(VIRTUALENV_REQUIREMENTS) bin/venv-update
-	./bin/venv-update \
-	    venv= venv/ --python=python3.8 \
-	    install= $(patsubst %,-r %,$(VIRTUALENV_REQUIREMENTS)) \
-	    bootstrap-deps= -r requirements-bootstrap.txt \
+venv: $(VIRTUALENV_REQUIREMENTS) requirements-bootstrap.txt
+	python3.8 -m venv --clear venv
+	./venv/bin/pip install -r requirements-bootstrap.txt
+	./venv/bin/pip-sync $(VIRTUALENV_REQUIREMENTS) requirements-bootstrap.txt
 
 .PHONY: serve
 serve: development
-	. venv/bin/activate; FLASK_APP=main.py flask run
+	FLASK_APP=main.py flask run
 
 .PHONY: clean
 clean:

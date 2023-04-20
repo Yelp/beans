@@ -10,12 +10,6 @@ input[type='radio'], input[type='checkbox'] {
     margin-left: 30px;
 }
 
-.yelp_logo {
-    position: absolute;
-    right: 0px;
-    padding: 10px;
-}
-
 .logo {
     width: 6em;
     padding-left: 1em;
@@ -58,4 +52,8 @@ input[type='radio'], input[type='checkbox'] {
 
 .github-img{
     height: 30px;
+}
+
+.subscription-time-zone-input {
+    max-width: 50ch;
 }
