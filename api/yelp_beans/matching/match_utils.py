@@ -118,14 +118,14 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     """
     user_a, user_b = user_pair
     print(user_a, user_b)
-    print("employee_df:")
+    print("get_pairwise_distance: employee_df:")
     print(employee_df.to_string())
     employee_df.set_index("Work_Email", inplace=True)
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
     distance = 0
-    print("org_graph nodes")
+    print("get_pairwise_distance: org_graph nodes")
     print(org_graph.nodes)
     # org chart distance
     dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)

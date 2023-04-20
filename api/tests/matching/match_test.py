@@ -89,19 +89,19 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
     assert len(unmatched) == 0
 
     meeting_history = set([
-        (user1.id, user2.id),
-        (user3.id, user4.id),
-        (user2.id, user3.id),
-        (user1.id, user4.id),
+        (user1.email, user2.email),
+        (user3.email, user4.email),
+        (user2.email, user3.email),
+        (user1.email, user4.email),
     ])
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 0
     assert len(unmatched) == 4
 
     meeting_history = set([
-        (user1.id, user2.id),
-        (user3.id, user4.id),
-        (user2.id, user3.id),
+        (user1.email, user2.email),
+        (user3.email, user4.email),
+        (user2.email, user3.email),
     ])
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 1

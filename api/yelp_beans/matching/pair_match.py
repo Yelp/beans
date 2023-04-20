@@ -15,16 +15,22 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
     # don't match users with previous meetings
     pairs = prev_meeting_tuples
 
-    userids = sorted([user.id for user in users])
-    id_to_user = {user.id: user for user in users}
+    userids = sorted([user.email for user in users])
+    id_to_user = {user.email: user for user in users}
     all_pairs = {pair for pair in itertools.combinations(userids, 2)}
 
+    # Debugging message
+    print(f"get_disallowed_meetings: users: {users}")
     for rule in spec.meeting_subscription.dept_rules:
         pairs = pairs.union({pair for pair in all_pairs if is_same(rule.name, pair, id_to_user)})
+        print(f"get_disallowed_meetings: rule: {rule.name}")
+        print(f"get_disallowed_meetings: pairs: {pairs}")
     return pairs
 
 
 def is_same(field, match, users):
+    print(f"is_same: users[match[0]].meta_data[field]: {users[match[0]].meta_data[field]}\n"
+          f"users[match[1]].meta_data[field]: {users[match[1]].meta_data[field]}")
     return users[match[0]].meta_data[field] == users[match[1]].meta_data[field]
 
 
@@ -40,13 +46,14 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
 
     uid_to_users = {user.email: user for user in users}
     user_ids = sorted(uid_to_users.keys())
-    print(f"user: {users}")
-    print(f"USER_IDs: {user_ids}")
+    print(f"generate_pair_meetings: user: {users}")
+    print(f"generate_pair_meetings: USER_IDs: {user_ids}")
 
     # Determine matches that should not happen
     disallowed_meeting_set = get_disallowed_meetings(
         users, prev_meeting_tuples, spec
     )
+    print(f"generate_pair_meetings: disallowed_meeting_set:{disallowed_meeting_set}")
     graph_matches = construct_graph(user_ids, disallowed_meeting_set)
 
     # matching returns (1,4) and (4,1) this de-dupes
