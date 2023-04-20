@@ -20,8 +20,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Install tox
-        run: pip3 install tox
       - name: Run tests
         run: make test
   frontend_tests:
@@ -38,3 +36,14 @@ jobs:
           node-version: 14.x
       - name: Run tests
         run: make test
+  environment_tests:
+    name: Devenv Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install devcontainer cli
+        run: npm install -g @devcontainers/cli
+      - name: Build and start container
+        run: devcontainer up --workspace-folder .
+      - name: Test developer workflow
+        run: devcontainer exec --workspace-folder . .devcontainer/test_dev_env.sh

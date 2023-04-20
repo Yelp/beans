@@ -89,7 +89,7 @@ def merge_subscriptions_with_preferences(user):
 
 
 def get_subscription_dates(subscription):
-    return [
+    dates = [
         {
             'id': date.id,
             'date': date.datetime.replace(tzinfo=utc).isoformat(),
@@ -97,6 +97,8 @@ def get_subscription_dates(subscription):
         }
         for date in subscription.datetime
     ]
+    # Return a sorted list so that it is sorted on the frontend
+    return sorted(dates, key=lambda i: i['date'])
 
 
 def get_specs_from_subscription(subscription):
