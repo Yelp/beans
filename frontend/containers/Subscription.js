@@ -20,11 +20,13 @@ const RULE_LOGIC_OPTIONS = [
 const RuleShape = PropTypes.shape({
   field: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
+  uuid: PropTypes.string.isRequired,
 });
 const TimeSlotShape = PropTypes.shape({
   day: PropTypes.string.isRequired,
   hour: PropTypes.number.isRequired,
   minute: PropTypes.number.isRequired,
+  uuid: PropTypes.string.isRequired,
 });
 
 const getSubscriptionId = () => {
