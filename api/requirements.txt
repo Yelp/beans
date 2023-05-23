@@ -22,7 +22,7 @@ python-dateutil==2.8.1
 python-http-client==3.3.1
 pytz==2020.5
 PyYAML==5.4
-requests==2.25.1
+requests==2.31.0
 s3transfer==0.3.3
 sendgrid==6.4.8
 setuptools==65.5.1
