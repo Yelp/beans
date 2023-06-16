@@ -114,6 +114,13 @@ No data.
   }
 
   render() {
+    if (this.props.loading) {
+      return (
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
+      );
+    }
     return (
       <div>
         { this.renderPreferences(this.state) }
@@ -125,6 +132,7 @@ No data.
 UserPreferenceForm.propTypes = {
   email: PropTypes.string.isRequired,
   preferences: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  loading: PropTypes.bool.isRequired,
 };
 
 export default UserPreferenceForm;

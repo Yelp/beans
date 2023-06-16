@@ -19,6 +19,7 @@ class UserPreferences extends Component {
         },
       ],
       email: '',
+      loading: true,
     };
   }
 
@@ -26,17 +27,17 @@ class UserPreferences extends Component {
     axios.get('/email').then((res) => {
       axios.get(`/v1/user/preferences/?email=${res.data.email}`).then(
         (res2) => {
-          this.setState({ preferences: res2.data, email: res.data.email });
+          this.setState({ preferences: res2.data, email: res.data.email, loading: false });
         },
       );
     });
   }
 
   render() {
-    const { preferences, email } = this.state;
+    const { preferences, email, loading } = this.state;
     return (
       <div className="preferences">
-        <UserPreferenceForm preferences={preferences} email={email} />
+        <UserPreferenceForm preferences={preferences} email={email} loading={loading} />
       </div>
     );
   }
