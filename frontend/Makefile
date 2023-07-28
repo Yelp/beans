@@ -4,6 +4,7 @@ endef
 
 PROJECT := $(call GetFromPkg,PROJECT)
 SOURCES := $(shell find . -name '*.js')
+export NODE_ENV = "development"
 
 .PHONY: all
 all: development
@@ -19,9 +20,8 @@ production: touch.webpack.prod
 .PHONY: development
 development: touch.webpack.dev
 
-touch.webpack.%: export PRODUCTION_FLAG = $(shell [ "$(NODE_ENV)" == "production" ] && echo "-p")
 touch.webpack.%: $(SOURCES) node_modules webpack.config.js .babelrc package.json
-	npm run webpack -- $(PRODUCTION_FLAG)
+	npm run webpack -- --mode $(NODE_ENV)
 	touch "$@"
 
 .PHONY: test

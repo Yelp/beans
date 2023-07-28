@@ -1,5 +1,5 @@
-const nconf = require('nconf');
 const path = require('path');
+const nconf = require('nconf');
 
 function checkConfig(setting) {
   if (!nconf.get(setting)) {

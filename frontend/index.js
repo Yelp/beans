@@ -1,8 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
   BrowserRouter as Router,
   Route,
+  Routes,
 } from 'react-router-dom';
 
 import Header from './components/Header';
@@ -14,18 +15,20 @@ import User from './containers/User';
 import SubscriptionsList from './containers/SubscriptionsList';
 import Subscription from './containers/Subscription';
 
-ReactDOM.render(
+const root = createRoot(document.querySelector('#container'));
+root.render(
   <Router>
     <div>
       <Header />
-      <Route exact path="/" component={User} />
-      <Route path="/dashboard" component={MetricsList} />
-      <Route path="/user/:email" component={User} />
-      <Route path="/meeting_request/:id" component={MeetingRequest} />
-      <Route path="/admin/subscriptions/:id" component={Subscription} />
-      <Route exact path="/admin/subscriptions" component={SubscriptionsList} />
+      <Routes>
+        <Route exact path="/" element={<User />} />
+        <Route path="/dashboard" element={<MetricsList />} />
+        <Route path="/user/:email" element={<User />} />
+        <Route path="/meeting_request/:id" element={<MeetingRequest />} />
+        <Route path="/admin/subscriptions/:id" element={<Subscription />} />
+        <Route exact path="/admin/subscriptions" element={<SubscriptionsList />} />
+      </Routes>
       <Footer />
     </div>
   </Router>,
-  document.querySelector('#container'),
 );
