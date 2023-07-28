@@ -12,9 +12,10 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import Field
+from pydantic import field_validator
 from pydantic import ValidationError
-from pydantic import validator
 from pytz import all_timezones
 from pytz import utc
 from yelp_beans.models import MeetingSubscription
@@ -58,9 +59,7 @@ class TimeSlot(BaseModel):
     day: Weekday
     hour: int = Field(ge=0, le=23)
     minute: int = Field(0, ge=0, le=59)
-
-    class Config:
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
     @classmethod
     def from_sqlalchemy(cls, model: SubscriptionDateTime, timezone: str) -> RuleModel:
@@ -75,9 +74,7 @@ class TimeSlot(BaseModel):
 class RuleModel(BaseModel):
     field: str
     value: str
-
-    class Config:
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
     @classmethod
     def from_sqlalchemy(cls, model: Rule) -> RuleModel:
@@ -91,10 +88,11 @@ class NewSubscription(BaseModel):
     rule_logic: Literal['any', 'all', None] = None
     rules: List[RuleModel] = Field(default_factory=list)
     size: int = Field(2, ge=2)
-    time_slots: List[TimeSlot] = Field(min_items=1)
+    time_slots: List[TimeSlot] = Field(min_length=1)
     timezone: str = 'America/Los_Angeles'
 
-    @validator('timezone')
+    @field_validator('timezone')
+    @classmethod
     def is_valid_timezone(cls, value: str) -> str:
         if value not in all_timezones:
             raise ValueError(f"{value} is not a valid timezone")
