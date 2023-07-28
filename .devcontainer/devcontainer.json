@@ -12,7 +12,7 @@
 	"remoteUser": "vscode",
 	"features": {
 		"sshd": "latest",
-		"node": "lts",
+		"node": "20",
 		"python": "3.8"
 	}
 }
