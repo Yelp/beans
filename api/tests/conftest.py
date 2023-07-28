@@ -2,10 +2,11 @@ import logging
 import time
 from collections import namedtuple
 from datetime import datetime
+from pathlib import Path
 
 import mock
 import pytest
-from database import db as _db
+from database import db
 from factory import create_app
 from pytz import timezone
 from pytz import utc
@@ -35,7 +36,8 @@ FAKE_USER = [{
 
 @pytest.fixture(scope='session', autouse=True)
 def mock_config():
-    with open('tests/test_data/config.yaml') as config_file:
+    config = Path(__file__).parent / 'test_data/config.yaml'
+    with config.open() as config_file:
         data = config_file.read()
     with mock.patch(
         'yelp_beans.logic.config.open',
@@ -51,58 +53,26 @@ def sendgrid_mock():
         yield
 
 
-@pytest.fixture(scope='session')
-def app(request):
+@pytest.fixture()
+def app():
     """Session-wide test `Flask` application writing to test database."""
     app = create_app()
-    app.testing = True
+    app.config.update({
+        "TESTING": True,
+    })
+    yield app
 
-    # Establish an application context before running the tests.
-    ctx = app.app_context()
-    ctx.push()
 
-    def teardown():
-        ctx.pop()
-
-    request.addfinalizer(teardown)
-    return app
-
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def client(app):
     return app.test_client()
 
-@pytest.fixture(scope='session')
-def db(app, request):
-    """Session-wide test database."""
-
-    def teardown():
-        _db.drop_all()
-
-    _db.app = app
-    _db.create_all()
-
-    request.addfinalizer(teardown)
-    return _db
-
 
 @pytest.fixture(scope='function')
-def session(db, request):
+def session(app):
     """Creates a new database session for a test."""
-    connection = db.engine.connect()
-    transaction = connection.begin()
-
-    options = dict(bind=connection, binds={})
-    session = db.create_scoped_session(options=options)
-
-    db.session = session
-
-    def teardown():
-        transaction.rollback()
-        connection.close()
-        session.remove()
-
-    request.addfinalizer(teardown)
-    return session
+    with app.app_context():
+        yield db.session
 
 
 @pytest.fixture
