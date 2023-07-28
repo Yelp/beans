@@ -34,23 +34,25 @@ const getSubscriptionId = () => {
   return path[path.length - 1];
 };
 
-const StringField = ({
+function StringField({
   field, label, value, inputClassName, updateField,
-}) => (
-  <div className="form-group">
-    <label htmlFor={field}>
-      {label}
-    </label>
-    <input
-      type="text"
-      className={`form-control ${inputClassName}`}
-      id={field}
-      value={value}
-      onChange={(e) => updateField(field, e.target.value)}
-      required
-    />
-  </div>
-);
+}) {
+  return (
+    <div className="form-group">
+      <label htmlFor={field}>
+        {label}
+      </label>
+      <input
+        type="text"
+        className={`form-control ${inputClassName}`}
+        id={field}
+        value={value}
+        onChange={(e) => updateField(field, e.target.value)}
+        required
+      />
+    </div>
+  );
+}
 
 StringField.propTypes = {
   field: PropTypes.string.isRequired,
@@ -64,16 +66,18 @@ StringField.defaultProps = {
   inputClassName: '',
 };
 
-const NumberField = ({
+function NumberField({
   field, label, value, updateField, min,
-}) => (
-  <div className="form-group">
-    <label htmlFor={field}>
-      {label}
-    </label>
-    <input type="number" min={min} className="form-control" id={field} value={value} onChange={(e) => updateField(field, e.target.value)} required />
-  </div>
-);
+}) {
+  return (
+    <div className="form-group">
+      <label htmlFor={field}>
+        {label}
+      </label>
+      <input type="number" min={min} className="form-control" id={field} value={value} onChange={(e) => updateField(field, e.target.value)} required />
+    </div>
+  );
+}
 
 NumberField.propTypes = {
   field: PropTypes.string.isRequired,
@@ -86,7 +90,7 @@ NumberField.defaultProps = {
   min: null,
 };
 
-const RuleField = ({ rule, updateRule, removeRule }) => {
+function RuleField({ rule, updateRule, removeRule }) {
   const ruleFieldId = `rule-${rule.uuid}-field`;
   const ruleValueId = `rule-${rule.uuid}-value`;
   // I can't figure out how to make this pass and they do have an related control
@@ -125,7 +129,7 @@ const RuleField = ({ rule, updateRule, removeRule }) => {
     </div>
   );
   /* eslint-enable jsx-a11y/label-has-associated-control */
-};
+}
 
 RuleField.propTypes = {
   rule: RuleShape.isRequired,
@@ -135,7 +139,7 @@ RuleField.propTypes = {
 
 // I can't figure out how to make this pass and they do have an related control
 /* eslint-disable jsx-a11y/label-has-associated-control */
-const RulesField = ({ rules, ruleLogic, updateField }) => {
+function RulesField({ rules, ruleLogic, updateField }) {
   const addRule = () => updateField('rules', (existRules) => {
     const newRules = existRules.slice();
     newRules.push({ uuid: crypto.randomUUID(), field: '', value: '' });
@@ -182,7 +186,7 @@ const RulesField = ({ rules, ruleLogic, updateField }) => {
       </div>
     </div>
   );
-};
+}
 /* eslint-enable jsx-a11y/label-has-associated-control */
 
 RulesField.propTypes = {
@@ -200,7 +204,7 @@ const formatTime = (hour, minute) => {
   return `${paddedHour}:${paddedMinute}`;
 };
 
-const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
+function TimeSlotField({ timeSlot, updateTimeSlot, removeTimeSlot }) {
   const dayId = `timeSlot-${timeSlot.uuid}-day`;
   const timeId = `timeSlot-${timeSlot.uuid}-time`;
   const [time, setTime] = React.useState(formatTime(timeSlot.hour, timeSlot.minute));
@@ -267,7 +271,7 @@ const TimeSlotField = ({ timeSlot, updateTimeSlot, removeTimeSlot }) => {
     </div>
   );
   /* eslint-enable jsx-a11y/label-has-associated-control */
-};
+}
 
 TimeSlotField.propTypes = {
   timeSlot: TimeSlotShape.isRequired,
@@ -275,7 +279,7 @@ TimeSlotField.propTypes = {
   removeTimeSlot: PropTypes.func.isRequired,
 };
 
-const TimeSlotsField = ({ timeSlots, timezone, updateField }) => {
+function TimeSlotsField({ timeSlots, timezone, updateField }) {
   const addTimeSlot = () => updateField('time_slots', (existTimeSlots) => {
     const newTimeSlots = existTimeSlots.slice();
     newTimeSlots.push({
@@ -320,7 +324,7 @@ const TimeSlotsField = ({ timeSlots, timezone, updateField }) => {
       </div>
     </div>
   );
-};
+}
 
 TimeSlotsField.propTypes = {
   timeSlots: PropTypes.arrayOf(TimeSlotShape).isRequired,
@@ -328,19 +332,21 @@ TimeSlotsField.propTypes = {
   updateField: PropTypes.func.isRequired,
 };
 
-const ErrorMessage = ({ errors }) => (
-  <div className="alert alert-danger mb-2" role="alert">
-    Error updating subscription.
-    <ul>
-      {errors.map((error) => (
-        <li key={JSON.stringify(error)}>
-          {error.loc && `${error.loc.join('.')}: `}
-          {error.msg}
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+function ErrorMessage({ errors }) {
+  return (
+    <div className="alert alert-danger mb-2" role="alert">
+      Error updating subscription.
+      <ul>
+        {errors.map((error) => (
+          <li key={JSON.stringify(error)}>
+            {error.loc && `${error.loc.join('.')}: `}
+            {error.msg}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 ErrorMessage.propTypes = {
   errors: PropTypes.arrayOf(PropTypes.shape({
@@ -360,7 +366,7 @@ const removeUUID = (array) => array.map((item) => {
   return remainingFields;
 });
 
-const Subscription = () => {
+function Subscription() {
   const [subscription, setSubscription] = React.useState(null);
   const [saving, setSaving] = React.useState(false);
   const [errors, setErrors] = React.useState(null);
@@ -449,6 +455,6 @@ const Subscription = () => {
       <button type="button" className="btn btn-primary mt-2" onClick={updateSubscription} disabled={saving}>Update</button>
     </div>
   );
-};
+}
 
 export default Subscription;
