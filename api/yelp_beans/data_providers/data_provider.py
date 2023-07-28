@@ -1,5 +1,3 @@
-
-
 class DataProvider(object):
 
     def ingest(self, data=None):

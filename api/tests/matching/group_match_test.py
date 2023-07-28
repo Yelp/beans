@@ -119,7 +119,7 @@ def test_get_previous_meetings_counts(session):
     session.add(mp2)
     session.commit()
 
-    assert(get_previous_meetings_counts([user1, user2], subscription) == {(user1.id, user2.id): 1})
+    assert get_previous_meetings_counts([user1, user2], subscription) == {(user1.id, user2.id): 1}
 
 
 def test_get_user_weights(session):
@@ -146,4 +146,4 @@ def test_get_user_weights(session):
 
     previous_meetings_count = get_previous_meetings_counts([user1, user2], subscription)
 
-    assert(get_user_weights([user1, user2], previous_meetings_count, 10, 5) == [[0, 5], [5, 0]])
+    assert get_user_weights([user1, user2], previous_meetings_count, 10, 5) == [[0, 5], [5, 0]]
