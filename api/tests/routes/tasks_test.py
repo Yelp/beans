@@ -37,7 +37,7 @@ def test_weekly_opt_in(session, subscription):
         preference=preference,
         subscription=subscription,
     )
-    user1 = User(email="a@yelp.com", meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
 
     session.add(preference)
     session.add(user_pref)
@@ -45,30 +45,30 @@ def test_weekly_opt_in(session, subscription):
     session.commit()
 
     response = weekly_opt_in()
-    assert response == 'OK'
+    assert response == "OK"
 
 
 def test_clean_user_subscriptions(session):
     preference = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 23, 0))
     subscription = MeetingSubscription(
-        title='Test Weekly',
+        title="Test Weekly",
         size=2,
-        location='8th Floor',
-        office='USA: CA SF New Montgomery Office',
-        timezone='America/Los_Angeles',
+        location="8th Floor",
+        office="USA: CA SF New Montgomery Office",
+        timezone="America/Los_Angeles",
         datetime=[preference],
-        user_rules=[Rule(name='department', value='dept')],
-        rule_logic='all',
+        user_rules=[Rule(name="department", value="dept")],
+        rule_logic="all",
     )
     user_1 = User(
         email="a@yelp.com",
-        meta_data={'department': 'dept'},
+        meta_data={"department": "dept"},
         subscription_preferences=[UserSubscriptionPreferences(preference=preference, subscription=subscription)],
     )
     # Should be removed because of incorrect department
     user_2 = User(
         email="a@yelp.com",
-        meta_data={'department': 'other dept'},
+        meta_data={"department": "other dept"},
         subscription_preferences=[UserSubscriptionPreferences(preference=preference, subscription=subscription)],
     )
 
@@ -78,7 +78,7 @@ def test_clean_user_subscriptions(session):
     session.commit()
 
     response = clean_user_subscriptions()
-    assert response == 'OK'
+    assert response == "OK"
 
     user_sub_prefs = UserSubscriptionPreferences.query.all()
     assert len(user_sub_prefs) == 1

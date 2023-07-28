@@ -1,5 +1,5 @@
 meeting_cooldown_weeks: 10
 data_providers:
-    # Example 1: A local JSON file
-    - class: yelp_beans.data_providers.json_file_data_provider.JSONFileDataProvider
-      path: tests/test_data/employees.json
+  # Example 1: A local JSON file
+  - class: yelp_beans.data_providers.json_file_data_provider.JSONFileDataProvider
+    path: tests/test_data/employees.json

@@ -1,12 +1,12 @@
-import axios from 'axios';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import axios from "axios";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 class UserPreferenceForm extends Component {
   static isoDateToString(ISODate, timezone) {
-    return moment(ISODate).tz(timezone).format('dddd LT z');
+    return moment(ISODate).tz(timezone).format("dddd LT z");
   }
 
   constructor(props) {
@@ -19,9 +19,9 @@ class UserPreferenceForm extends Component {
 
     if (preferences.length !== 0) {
       this.state = preferences.reduce((preference) => {
-        const dates = preference.datetime.reduce(
-          (datetime) => ({ [datetime.id]: datetime.active }),
-        );
+        const dates = preference.datetime.reduce((datetime) => ({
+          [datetime.id]: datetime.active,
+        }));
         return { [preference.id]: dates };
       });
     }
@@ -30,12 +30,14 @@ class UserPreferenceForm extends Component {
   handleSubmit(prefId, event) {
     event.preventDefault();
     if (this.state) {
-      axios.post(
-        `/v1/user/preferences/subscription/${prefId}`,
-        { ...this.state[prefId], email: this.props.email },
-      ).then(() => {
-        alert('Preference Updated'); // eslint-disable-line
-      });
+      axios
+        .post(`/v1/user/preferences/subscription/${prefId}`, {
+          ...this.state[prefId],
+          email: this.props.email,
+        })
+        .then(() => {
+          alert("Preference Updated"); // eslint-disable-line
+        });
     }
   }
 
@@ -53,33 +55,24 @@ class UserPreferenceForm extends Component {
     if (preferences.length !== 0) {
       return preferences.map((preference) => (
         <div key={preference.id}>
-          <h3>
-            {preference.title}
-          </h3>
+          <h3>{preference.title}</h3>
           <h6>
-            {preference.office}
-            ,
-            {' '}
-            {preference.location}
-            {' '}
-            (
-            {preference.size}
-            )
+            {preference.office}, {preference.location} ({preference.size})
           </h6>
           <div>
-            { this.renderTimes(preference, state) }
-            <button type="button" onClick={(event) => this.handleSubmit(preference.id, event)} className="btn btn-danger left30">
+            {this.renderTimes(preference, state)}
+            <button
+              type="button"
+              onClick={(event) => this.handleSubmit(preference.id, event)}
+              className="btn btn-danger left30"
+            >
               Set Preferences!
             </button>
           </div>
         </div>
       ));
     }
-    return (
-      <div>
-        No Subscription Available.
-      </div>
-    );
+    return <div>No Subscription Available.</div>;
   }
 
   renderTimes(preference, state) {
@@ -87,7 +80,7 @@ class UserPreferenceForm extends Component {
       return preference.datetime.map((datetime) => {
         let checked = datetime.active;
         if (state === null) {
-            // eslint-disable-line
+          // eslint-disable-line
         } else if (`${preference.id}` in state) {
           checked = state[`${preference.id}`][`${datetime.active}`];
         }
@@ -100,16 +93,15 @@ class UserPreferenceForm extends Component {
               value={preference.id}
               type="checkbox"
             />
-            {UserPreferenceForm.isoDateToString(datetime.date, preference.timezone)}
+            {UserPreferenceForm.isoDateToString(
+              datetime.date,
+              preference.timezone,
+            )}
           </label>
         );
       });
     }
-    return (
-      <div>
-        No data.
-      </div>
-    );
+    return <div>No data.</div>;
   }
 
   render() {
@@ -120,11 +112,7 @@ class UserPreferenceForm extends Component {
         </div>
       );
     }
-    return (
-      <div>
-        { this.renderPreferences(this.state) }
-      </div>
-    );
+    return <div>{this.renderPreferences(this.state)}</div>;
   }
 }
 

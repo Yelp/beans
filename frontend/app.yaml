@@ -2,22 +2,22 @@ runtime: nodejs20
 instance_class: F2
 
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
+  - url: /favicon\.ico
+    static_files: favicon.ico
+    upload: favicon\.ico
 
-- url: /bootstrap
-  static_dir: bootstrap
+  - url: /bootstrap
+    static_dir: bootstrap
 
-- url: /static
-  static_dir: static/
-  http_headers:
-    Access-Control-Allow-Origin: "*"
+  - url: /static
+    static_dir: static/
+    http_headers:
+      Access-Control-Allow-Origin: "*"
 
-- url: /js
-  static_dir: dist/bundle
+  - url: /js
+    static_dir: dist/bundle
 
-- url: /.*
-  secure: always
-  script: auto
-  redirect_http_response_code: 301
+  - url: /.*
+    secure: always
+    script: auto
+    redirect_http_response_code: 301

@@ -7,4 +7,4 @@ def get_secret(id):
         secrets = json.loads(open("client_secrets.json").read())
         return secrets[id]
     else:
-        raise IOError("No secrets file.")
+        raise OSError("No secrets file.")

@@ -1,15 +1,20 @@
-{% extends "base_email_template.html" %}
-{% block content %}
+{% extends "base_email_template.html" %} {% block content %}
 <tr>
-    <td>
-        <p>Hi there {{first_name}}!</p>
-        <p>
-            Sorry we couldn't find a match for you this week for {{meeting_title}}. :( This usually happens because there were an
-            odd number of people that signed up for the week, or people signed up for a time slot you haven't signed up for. To
-            maximize your chances of getting a match,
-            <a href="https://{{project}}.appspot.com" style="color: #666666; text-decoration: underline;"> sign up for more time
-            slots!</a> If you have any questions please reach out to rkwills@yelp.com
-        </p>
-    </td>
+  <td>
+    <p>Hi there {{first_name}}!</p>
+    <p>
+      Sorry we couldn't find a match for you this week for {{meeting_title}}. :(
+      This usually happens because there were an odd number of people that
+      signed up for the week, or people signed up for a time slot you haven't
+      signed up for. To maximize your chances of getting a match,
+      <a
+        href="https://{{project}}.appspot.com"
+        style="color: #666666; text-decoration: underline"
+      >
+        sign up for more time slots!</a
+      >
+      If you have any questions please reach out to rkwills@yelp.com
+    </p>
+  </td>
 </tr>
 {% endblock %}

@@ -15,20 +15,19 @@ from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
-
 MEETING_COOLDOWN_WEEKS = 10
 
 
 def test_generate_meetings_same_department(session, subscription):
-    rule = Rule(name='department', value='')
+    rule = Rule(name="department", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user1)
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user2)
     user_list = [user1, user2]
     session.commit()
@@ -40,7 +39,7 @@ def test_generate_meetings_same_department(session, subscription):
 
 
 def test_generate_meetings_with_history(session, subscription):
-    rule = Rule(name='department', value='')
+    rule = Rule(name="department", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
 
@@ -48,13 +47,13 @@ def test_generate_meetings_with_history(session, subscription):
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user1)
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user2)
-    user3 = User(email='c@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
+    user3 = User(email="c@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user3)
-    user4 = User(email='d@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user4 = User(email="d@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user4)
 
     user_list = [user1, user2, user3, user4]
@@ -66,21 +65,25 @@ def test_generate_meetings_with_history(session, subscription):
     assert len(matches) == 2
     assert len(unmatched) == 0
 
-    meeting_history = set([
-        (user1.id, user2.id),
-        (user3.id, user4.id),
-        (user2.id, user3.id),
-        (user1.id, user4.id),
-    ])
+    meeting_history = set(
+        [
+            (user1.id, user2.id),
+            (user3.id, user4.id),
+            (user2.id, user3.id),
+            (user1.id, user4.id),
+        ]
+    )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 0
     assert len(unmatched) == 4
 
-    meeting_history = set([
-        (user1.id, user2.id),
-        (user3.id, user4.id),
-        (user2.id, user3.id),
-    ])
+    meeting_history = set(
+        [
+            (user1.id, user2.id),
+            (user3.id, user4.id),
+            (user2.id, user3.id),
+        ]
+    )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
     assert len(matches) == 1
     assert len(unmatched) == 2
@@ -88,7 +91,7 @@ def test_generate_meetings_with_history(session, subscription):
 
 def test_no_re_matches(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     session.add(pref_1)
@@ -99,8 +102,7 @@ def test_no_re_matches(session):
     users = []
     num_users = 20
     for i in range(0, num_users):
-        user = User(email='{}@yelp.com'.format(i), meta_data={
-                    'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref])
+        user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
@@ -116,7 +118,7 @@ def test_no_re_matches(session):
 
 def test_generate_group_meeting(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     session.add(pref_1)
@@ -127,8 +129,7 @@ def test_generate_group_meeting(session):
     users = []
     num_users = 21
     for i in range(0, num_users):
-        user = User(email='{}@yelp.com'.format(i), meta_data={
-                    'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref])
+        user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
@@ -145,7 +146,7 @@ def test_generate_group_meeting(session):
 
 def test_generate_group_meeting_invalid_number_of_users(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     session.add(pref_1)
@@ -155,8 +156,7 @@ def test_generate_group_meeting_invalid_number_of_users(session):
 
     users = []
     for i in range(0, 2):
-        user = User(email='{}@yelp.com'.format(i), meta_data={
-            'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref])
+        user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
@@ -172,7 +172,7 @@ def test_previous_meeting_penalty(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
     pref_2 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 2))
     pref_3 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 3))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1, pref_2, pref_3])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1, pref_2, pref_3])
     user_pref1 = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
     user_pref2 = UserSubscriptionPreferences(preference=pref_2, subscription=subscription)
     user_pref3 = UserSubscriptionPreferences(preference=pref_3, subscription=subscription)
@@ -193,8 +193,11 @@ def test_previous_meeting_penalty(session):
     users = []
     num_users = 20
     for i in range(0, num_users):
-        user = User(email='{}@yelp.com'.format(i), meta_data={
-                    'department': 'dept{}'.format(i)}, subscription_preferences=[user_pref1, user_pref2, user_pref3])
+        user = User(
+            email=f"{i}@yelp.com",
+            meta_data={"department": f"dept{i}"},
+            subscription_preferences=[user_pref1, user_pref2, user_pref3],
+        )
         session.add(user)
         mr1 = MeetingRequest(user=user, meeting_spec=meeting_spec1)
         mr2 = MeetingRequest(user=user, meeting_spec=meeting_spec2)

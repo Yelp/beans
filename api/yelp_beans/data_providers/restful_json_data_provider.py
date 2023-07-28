@@ -1,10 +1,10 @@
 import requests
 from requests.auth import HTTPBasicAuth
+
 from yelp_beans.data_providers.data_provider import DataProvider
 
 
 class RestfulJSONDataProvider(DataProvider):
-
     def __init__(self, url, username=None, password=None, timeout=60.0):
         self.url = url
         self.username = username

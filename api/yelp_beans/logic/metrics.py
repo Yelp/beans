@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from sqlalchemy.orm import joinedload
+
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week_query
@@ -14,11 +15,15 @@ from yelp_beans.models import UserSubscriptionPreferences
 
 
 def get_subscribers():
-    sub_prefs = UserSubscriptionPreferences.query.options(
-        joinedload(UserSubscriptionPreferences.user),
-    ).filter(
-        UserSubscriptionPreferences.subscription_id.isnot(None),
-    ).all()
+    sub_prefs = (
+        UserSubscriptionPreferences.query.options(
+            joinedload(UserSubscriptionPreferences.user),
+        )
+        .filter(
+            UserSubscriptionPreferences.subscription_id.isnot(None),
+        )
+        .all()
+    )
     subscriptions = MeetingSubscription.query.all()
 
     # creates metrics keys for all subscriptions including ones without users
@@ -49,10 +54,7 @@ def get_meeting_participants():
     # duplicate data since there should always be more meetings then subscriptions.
     # Doing the join in python allows us to get the data only once and shouldn't
     # require us getting more data than needed
-    subscription_id_to_subscription = {
-        meet_sub.id: meet_sub
-        for meet_sub in MeetingSubscription.query.all()
-    }
+    subscription_id_to_subscription = {meet_sub.id: meet_sub for meet_sub in MeetingSubscription.query.all()}
 
     participants = MeetingParticipant.query.options(
         joinedload(MeetingParticipant.user),
@@ -66,11 +68,11 @@ def get_meeting_participants():
         meeting_title = meeting_subscription.title
         metrics.append(
             {
-                'participant': participant.user.email,
-                'meeting': participant.meeting.id,
-                'meeting_title': meeting_title,
-                'date': meeting_spec.datetime.isoformat(),
-                'time': get_meeting_datetime(meeting_spec, meeting_subscription.timezone).strftime('%I:%M%p'),
+                "participant": participant.user.email,
+                "meeting": participant.meeting.id,
+                "meeting_title": meeting_title,
+                "date": meeting_spec.datetime.isoformat(),
+                "time": get_meeting_datetime(meeting_spec, meeting_subscription.timezone).strftime("%I:%M%p"),
             }
         )
     return metrics
@@ -78,26 +80,21 @@ def get_meeting_participants():
 
 def get_meeting_requests():
     requests = []
-    specs = get_specs_for_current_week_query().options(
-        joinedload(MeetingSpec.meeting_subscription)
-    ).all()
-    spec_id_to_title = {
-        spec.id: spec.meeting_subscription.title
-        for spec in specs
-    }
+    specs = get_specs_for_current_week_query().options(joinedload(MeetingSpec.meeting_subscription)).all()
+    spec_id_to_title = {spec.id: spec.meeting_subscription.title for spec in specs}
 
-    meeting_requests = MeetingRequest.query.options(
-        joinedload(MeetingRequest.user)
-    ).filter(
-        MeetingRequest.meeting_spec_id.in_([spec.id for spec in specs])
-    ).all()
+    meeting_requests = (
+        MeetingRequest.query.options(joinedload(MeetingRequest.user))
+        .filter(MeetingRequest.meeting_spec_id.in_([spec.id for spec in specs]))
+        .all()
+    )
 
     for request in meeting_requests:
         request_title = spec_id_to_title[request.meeting_spec_id]
         requests.append(
             {
-                'title': request_title,
-                'user': request.user.email,
+                "title": request_title,
+                "user": request.user.email,
             }
         )
     return requests

@@ -12,18 +12,18 @@ CONFIG_FILES = (
     "api/config.yaml",
     "frontend/lib/config.json",
 )
-BEANS_CONFIG_ENV = 'YELP_BEANS_CONFIG'
+BEANS_CONFIG_ENV = "YELP_BEANS_CONFIG"
 
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser()
-    parser.add_argument('action', choices=('print', 'load_from_env'))
+    parser.add_argument("action", choices=("print", "load_from_env"))
     return parser
 
 
 def get_git_root() -> Path:
     res = subprocess.run(
-        ('git', 'rev-parse', '--show-toplevel'),
+        ("git", "rev-parse", "--show-toplevel"),
         check=True,
         capture_output=True,
         text=True,
@@ -44,7 +44,7 @@ def print_config_as_str() -> None:
 
 def load_config_from_env() -> None:
     if BEANS_CONFIG_ENV not in os.environ:
-        print(f'{BEANS_CONFIG_ENV} not in the environment. Not writing configs')
+        print(f"{BEANS_CONFIG_ENV} not in the environment. Not writing configs")
         return
 
     git_root = get_git_root()
@@ -58,13 +58,13 @@ def load_config_from_env() -> None:
 
 def main():
     args = create_parser().parse_args()
-    if args.action == 'print':
+    if args.action == "print":
         print_config_as_str()
-    elif args.action == 'load_from_env':
+    elif args.action == "load_from_env":
         load_config_from_env()
     else:
         raise ValueError("Unsupported action")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
