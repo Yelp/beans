@@ -7,22 +7,17 @@ from yelp_beans.routes.api.v1.meeting_requests import get_meeting_request
 
 
 def test_create_meeting_request(app, monkeypatch, database, fake_user):
-
-    monkeypatch.setattr(meeting_requests, 'get_user', lambda x: fake_user)
+    monkeypatch.setattr(meeting_requests, "get_user", lambda x: fake_user)
 
     meeting_spec_key = database.specs[0].id
     with app.test_request_context(
-        '/v1/meeting_request/',
-        method='POST',
-        data=json.dumps({
-            'meeting_spec_key': meeting_spec_key,
-            'meeting_request_key': '',
-            'email': fake_user.email
-        }),
-        content_type='application/json'
+        "/v1/meeting_request/",
+        method="POST",
+        data=json.dumps({"meeting_spec_key": meeting_spec_key, "meeting_request_key": "", "email": fake_user.email}),
+        content_type="application/json",
     ):
         response = create_delete_meeting_request().json
-        assert response['key'] != ''
+        assert response["key"] != ""
 
     requests = MeetingRequest.query.all()
     assert len(requests) == 1
@@ -31,14 +26,10 @@ def test_create_meeting_request(app, monkeypatch, database, fake_user):
 
 
 def test_delete_meeting_request(app, monkeypatch, database, fake_user, session):
-
-    monkeypatch.setattr(meeting_requests, 'get_user', lambda x: fake_user)
+    monkeypatch.setattr(meeting_requests, "get_user", lambda x: fake_user)
 
     meeting_spec_key = database.specs[0].id
-    meeting_request = MeetingRequest(
-        meeting_spec=database.specs[0],
-        user=fake_user
-    )
+    meeting_request = MeetingRequest(meeting_spec=database.specs[0], user=fake_user)
     session.add(meeting_request)
     session.commit()
 
@@ -47,30 +38,25 @@ def test_delete_meeting_request(app, monkeypatch, database, fake_user, session):
     assert len(requests) == 1
 
     with app.test_request_context(
-            '/v1/meeting_request/',
-            method='POST',
-            data=json.dumps({
-                'meeting_spec_key': meeting_spec_key,
-                'meeting_request_key': meeting_request_key,
-                'email': fake_user.email
-            }),
-            content_type='application/json'
+        "/v1/meeting_request/",
+        method="POST",
+        data=json.dumps(
+            {"meeting_spec_key": meeting_spec_key, "meeting_request_key": meeting_request_key, "email": fake_user.email}
+        ),
+        content_type="application/json",
     ):
         response = create_delete_meeting_request().json
-        assert response == {'key': ''}
+        assert response == {"key": ""}
 
     requests = MeetingRequest.query.all()
     assert len(requests) == 0
 
 
 def test_get_meeting_request(app, monkeypatch, database, fake_user, session):
-    monkeypatch.setattr(meeting_requests, 'get_user', lambda x: fake_user)
+    monkeypatch.setattr(meeting_requests, "get_user", lambda x: fake_user)
 
     meeting_spec_key = database.specs[0].id
-    meeting_request = MeetingRequest(
-        meeting_spec=database.specs[0],
-        user=fake_user
-    )
+    meeting_request = MeetingRequest(meeting_spec=database.specs[0], user=fake_user)
     session.add(meeting_request)
     session.commit()
 
@@ -78,18 +64,18 @@ def test_get_meeting_request(app, monkeypatch, database, fake_user, session):
     requests = MeetingRequest.query.all()
     assert len(requests) == 1
 
-    with app.test_request_context('/v1/meeting_request/{}'.format(meeting_spec_key)):
+    with app.test_request_context(f"/v1/meeting_request/{meeting_spec_key}"):
         response = get_meeting_request(meeting_spec_key).json
-        assert response == {'key': meeting_request_key}
+        assert response == {"key": meeting_request_key}
 
 
 def test_get_meeting_request_no_exist(app, monkeypatch, database, fake_user):
-    monkeypatch.setattr(meeting_requests, 'get_user', lambda x: fake_user)
+    monkeypatch.setattr(meeting_requests, "get_user", lambda x: fake_user)
 
     meeting_spec_key = database.specs[0].id
     requests = MeetingRequest.query.all()
     assert len(requests) == 0
 
-    with app.test_request_context('/v1/meeting_request/{}'.format(meeting_spec_key)):
+    with app.test_request_context(f"/v1/meeting_request/{meeting_spec_key}"):
         response = get_meeting_request(meeting_spec_key).json
-        assert response == {'key': ''}
+        assert response == {"key": ""}

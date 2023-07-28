@@ -4,6 +4,7 @@ from datetime import timedelta
 from database import db
 from pytz import timezone
 from pytz import utc
+
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
 
@@ -11,8 +12,7 @@ from yelp_beans.models import MeetingSubscription
 def filter_subscriptions_by_user_data(subscriptions, user):
     approved_subscriptions = []
     for subscription in subscriptions:
-        subscription_rules = MeetingSubscription.query.filter(
-            MeetingSubscription.id == subscription['id']).one().user_rules
+        subscription_rules = MeetingSubscription.query.filter(MeetingSubscription.id == subscription["id"]).one().user_rules
 
         approved = apply_rules(user, subscription, subscription_rules)
         if approved is not None:
@@ -31,15 +31,15 @@ def apply_rules(user, subscription, subscription_rules):
     subscription_rules: models.Rule()
     """
     if isinstance(subscription, dict):
-        rule_logic_str = subscription.get('rule_logic')
+        rule_logic_str = subscription.get("rule_logic")
     else:
         rule_logic_str = subscription.rule_logic
 
-    if rule_logic_str == 'any':
-        assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+    if rule_logic_str == "any":
+        assert subscription_rules, "You created logic for rules but don't have any rules!"
         rule_logic = any
-    elif rule_logic_str == 'all':
-        assert subscription_rules, 'You created logic for rules but don\'t have any rules!'
+    elif rule_logic_str == "all":
+        assert subscription_rules, "You created logic for rules but don't have any rules!"
         rule_logic = all
     else:
         return subscription
@@ -61,44 +61,38 @@ def apply_rules(user, subscription, subscription_rules):
 
 def merge_subscriptions_with_preferences(user):
     user_preferences = [
-        {
-            'subscription_id': user_subscription.subscription_id,
-            'datetime_id': user_subscription.preference_id
-        } for user_subscription in user.subscription_preferences
+        {"subscription_id": user_subscription.subscription_id, "datetime_id": user_subscription.preference_id}
+        for user_subscription in user.subscription_preferences
     ]
     subscriptions = [
         {
-            'id': subscription.id,
-            'title': subscription.title,
-            'office': subscription.office,
-            'location': subscription.location,
-            'size': subscription.size,
-            'timezone': subscription.timezone,
-            'rule_logic': subscription.rule_logic,
-            'datetime': get_subscription_dates(subscription),
-        } for subscription in MeetingSubscription.query.all()
+            "id": subscription.id,
+            "title": subscription.title,
+            "office": subscription.office,
+            "location": subscription.location,
+            "size": subscription.size,
+            "timezone": subscription.timezone,
+            "rule_logic": subscription.rule_logic,
+            "datetime": get_subscription_dates(subscription),
+        }
+        for subscription in MeetingSubscription.query.all()
     ]
     for subscription in subscriptions:
         for user_preference in user_preferences:
-            if subscription['id'] == user_preference['subscription_id']:
-                for date in subscription['datetime']:
-                    if date['id'] == user_preference['datetime_id']:
-                        date['active'] = True
+            if subscription["id"] == user_preference["subscription_id"]:
+                for date in subscription["datetime"]:
+                    if date["id"] == user_preference["datetime_id"]:
+                        date["active"] = True
 
     return subscriptions
 
 
 def get_subscription_dates(subscription):
     dates = [
-        {
-            'id': date.id,
-            'date': date.datetime.replace(tzinfo=utc).isoformat(),
-            'active': False
-        }
-        for date in subscription.datetime
+        {"id": date.id, "date": date.datetime.replace(tzinfo=utc).isoformat(), "active": False} for date in subscription.datetime
     ]
     # Return a sorted list so that it is sorted on the frontend
-    return sorted(dates, key=lambda i: i['date'])
+    return sorted(dates, key=lambda i: i["date"])
 
 
 def get_specs_from_subscription(subscription):
@@ -106,17 +100,14 @@ def get_specs_from_subscription(subscription):
     for subscription_datetime in subscription.datetime:
         subscription_tz = timezone(subscription.timezone)
         week_start = datetime.now(subscription_tz) - timedelta(days=datetime.now(subscription_tz).weekday())
-        week_start = week_start.replace(
-            hour=0, minute=0, second=0, microsecond=0)
+        week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
 
         subscription_dt = subscription_datetime.datetime.replace(tzinfo=utc).astimezone(subscription_tz)
         week_iter = week_start
         while week_iter.weekday() != subscription_dt.weekday():
             week_iter += timedelta(days=1)
 
-        meeting_datetime = week_iter.replace(
-            hour=subscription_dt.hour, minute=subscription_dt.minute
-        ).astimezone(utc)
+        meeting_datetime = week_iter.replace(hour=subscription_dt.hour, minute=subscription_dt.minute).astimezone(utc)
 
         specs.append(MeetingSpec(meeting_subscription=subscription, datetime=meeting_datetime))
     return week_start, specs
@@ -127,8 +118,7 @@ def store_specs_from_subscription(subscription, week_start, specs):
     Idempotent function to store meeting specs for this week.
     """
     current_specs = MeetingSpec.query.filter(
-        MeetingSpec.meeting_subscription_id == subscription.id,
-        MeetingSpec.datetime > week_start
+        MeetingSpec.meeting_subscription_id == subscription.id, MeetingSpec.datetime > week_start
     ).all()
 
     if current_specs:

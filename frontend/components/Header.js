@@ -1,17 +1,11 @@
-import React from 'react';
+import React from "react";
 
 function Header() {
   return (
     <nav className="navbar mb-3">
       <span>
-        <img
-          className="logo"
-          alt="Beans Logo"
-          src="/img/beans-white.svg"
-        />
-        <span className="logo-font">
-          Beans
-        </span>
+        <img className="logo" alt="Beans Logo" src="/img/beans-white.svg" />
+        <span className="logo-font">Beans</span>
       </span>
       <img
         alt="Yelp Logo"

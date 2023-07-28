@@ -1,12 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 function MetricsListItem({ metric }) {
   return (
     <div className="panel panel-danger">
-      <div className="panel-heading">
-        {metric.title}
-      </div>
+      <div className="panel-heading">{metric.title}</div>
       <ul className="list-group">
         <li className="list-group-item">
           Total Subscribed:

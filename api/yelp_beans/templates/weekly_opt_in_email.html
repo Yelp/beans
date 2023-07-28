@@ -1,17 +1,17 @@
-{% extends "base_email_template.html" %}
-{% block content %}
+{% extends "base_email_template.html" %} {% block content %}
 <tr>
-    <td>
-        <p>Hey {{first_name}},</p>
-        <p>
-            Would you like to meet someone new this week? This meeting is officially on {{meeting_day}}
-            at {{meeting_time}}, but the time and date can be flexible.
-        </p>
-    </td>
+  <td>
+    <p>Hey {{first_name}},</p>
+    <p>
+      Would you like to meet someone new this week? This meeting is officially
+      on {{meeting_day}} at {{meeting_time}}, but the time and date can be
+      flexible.
+    </p>
+  </td>
 </tr>
 <tr>
-    <td align="center">
-        <a class="button" href="{{meeting_url}}">Sign Up for a Meeting!</a>
-    </td>
+  <td align="center">
+    <a class="button" href="{{meeting_url}}">Sign Up for a Meeting!</a>
+  </td>
 </tr>
 {% endblock %}

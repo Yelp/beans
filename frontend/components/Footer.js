@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function Footer() {
   return (
@@ -8,9 +8,7 @@ function Footer() {
         <div className="row">
           <div className="w-100 text-center">
             <h5>
-              <small>
-                Made with ♥ at Yelp.
-              </small>
+              <small>Made with ♥ at Yelp.</small>
             </h5>
             <a href="https://github.com/Yelp/beans">
               <img

@@ -13,7 +13,6 @@ from yelp_beans.models import SubscriptionDateTime
 from yelp_beans.models import User
 from yelp_beans.models import UserSubscriptionPreferences
 
-
 MEETING_COOLDOWN_WEEKS = 10
 
 
@@ -33,10 +32,10 @@ def test_generate_groups():
 
 def test_generate_group_meetings_invalid_number_of_users(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     meeting = Meeting(meeting_spec=meeting_spec, cancelled=False)
     mp1 = MeetingParticipant(meeting=meeting, user=user2)
@@ -68,11 +67,11 @@ def test_generate_group_meetings_invalid_number_of_users(session):
 
 def test_generate_group_meetings(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
-    user3 = User(email='c@yelp.com', meta_data={'department': 'dept3'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    user3 = User(email="c@yelp.com", meta_data={"department": "dept3"}, subscription_preferences=[user_pref])
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     meeting = Meeting(meeting_spec=meeting_spec, cancelled=False)
     mp1 = MeetingParticipant(meeting=meeting, user=user3)
@@ -99,10 +98,10 @@ def test_generate_group_meetings(session):
 
 def test_get_previous_meetings_counts(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     meeting = Meeting(meeting_spec=meeting_spec, cancelled=False)
     mp1 = MeetingParticipant(meeting=meeting, user=user2)
@@ -124,10 +123,10 @@ def test_get_previous_meetings_counts(session):
 
 def test_get_user_weights(session):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
-    subscription = MeetingSubscription(title='all engineering weekly', datetime=[pref_1])
+    subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
-    user1 = User(email='a@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
-    user2 = User(email='b@yelp.com', meta_data={'department': 'dept2'}, subscription_preferences=[user_pref])
+    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     meeting = Meeting(meeting_spec=meeting_spec, cancelled=False)
     mp1 = MeetingParticipant(meeting=meeting, user=user2)

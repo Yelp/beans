@@ -3,7 +3,6 @@ from __future__ import annotations
 import enum
 import json
 from datetime import datetime
-from typing import List
 from typing import Literal
 
 import arrow
@@ -14,15 +13,16 @@ from flask import request
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
-from pydantic import field_validator
 from pydantic import ValidationError
+from pydantic import field_validator
 from pytz import all_timezones
 from pytz import utc
+
 from yelp_beans.models import MeetingSubscription
 from yelp_beans.models import Rule
 from yelp_beans.models import SubscriptionDateTime
 
-subscriptions_blueprint = Blueprint('subscriptions', __name__)
+subscriptions_blueprint = Blueprint("subscriptions", __name__)
 
 
 @enum.unique
@@ -82,16 +82,16 @@ class RuleModel(BaseModel):
 
 
 class NewSubscription(BaseModel):
-    location: str = 'Online'
+    location: str = "Online"
     name: str = Field(min_lenth=1)
-    office: str = 'Remote'
-    rule_logic: Literal['any', 'all', None] = None
-    rules: List[RuleModel] = Field(default_factory=list)
+    office: str = "Remote"
+    rule_logic: Literal["any", "all", None] = None
+    rules: list[RuleModel] = Field(default_factory=list)
     size: int = Field(2, ge=2)
-    time_slots: List[TimeSlot] = Field(min_length=1)
-    timezone: str = 'America/Los_Angeles'
+    time_slots: list[TimeSlot] = Field(min_length=1)
+    timezone: str = "America/Los_Angeles"
 
-    @field_validator('timezone')
+    @field_validator("timezone")
     @classmethod
     def is_valid_timezone(cls, value: str) -> str:
         if value not in all_timezones:
@@ -123,12 +123,12 @@ def calculate_meeting_datetime(time_slot: TimeSlot, timezone_str: str) -> dateti
     cur_time = arrow.now(timezone_str)
     result_time = cur_time.replace(hour=time_slot.hour, minute=time_slot.minute, second=0, microsecond=0)
     result_time = result_time.shift(weekday=time_slot.day.to_day_number())
-    result_time = result_time.to('utc')
+    result_time = result_time.to("utc")
 
     return result_time.datetime
 
 
-@subscriptions_blueprint.route('/', methods=["POST"])
+@subscriptions_blueprint.route("/", methods=["POST"])
 def create_subscription():
     try:
         data = NewSubscription.parse_obj(request.get_json())
@@ -139,8 +139,7 @@ def create_subscription():
         return resp
 
     sub_datetimes = [
-        SubscriptionDateTime(datetime=calculate_meeting_datetime(time_slot, data.timezone))
-        for time_slot in data.time_slots
+        SubscriptionDateTime(datetime=calculate_meeting_datetime(time_slot, data.timezone)) for time_slot in data.time_slots
     ]
     rules = [Rule(name=rule.field, value=rule.value) for rule in data.rules]
 
@@ -164,7 +163,7 @@ def create_subscription():
     return resp
 
 
-@subscriptions_blueprint.route('/', methods=["GET"])
+@subscriptions_blueprint.route("/", methods=["GET"])
 def get_subscriptions():
     spec_models = MeetingSubscription.query.all()
     specs = [Subscription.from_sqlalchemy(model) for model in spec_models]
@@ -174,7 +173,7 @@ def get_subscriptions():
     return resp
 
 
-@subscriptions_blueprint.route('/<int:sub_id>', methods=["GET"])
+@subscriptions_blueprint.route("/<int:sub_id>", methods=["GET"])
 def get_subscription(sub_id: int):
     sub_model = MeetingSubscription.query.filter(MeetingSubscription.id == sub_id).one()
     sub = Subscription.from_sqlalchemy(sub_model)
@@ -184,7 +183,7 @@ def get_subscription(sub_id: int):
     return resp
 
 
-@subscriptions_blueprint.route('/<int:sub_id>', methods=["PUT"])
+@subscriptions_blueprint.route("/<int:sub_id>", methods=["PUT"])
 def update_subscription(sub_id: int):
     sub_model = MeetingSubscription.query.filter(MeetingSubscription.id == sub_id).one()
     try:

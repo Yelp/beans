@@ -5,20 +5,20 @@ instance_class: F2
 service: api
 
 handlers:
-- url: /tasks/.*
-  script: auto
-  auth_fail_action: unauthorized
-  secure: always
+  - url: /tasks/.*
+    script: auto
+    auth_fail_action: unauthorized
+    secure: always
 
-- url: /preferences/.*
-  script: auto
-  secure: always
+  - url: /preferences/.*
+    script: auto
+    secure: always
 
-- url: /rule
-  script: auto
-  auth_fail_action: unauthorized
-  secure: always
+  - url: /rule
+    script: auto
+    auth_fail_action: unauthorized
+    secure: always
 
-- url: /.* # Anything not explicitly listed above
-  script: auto
-  secure: always
+  - url: /.* # Anything not explicitly listed above
+    script: auto
+    secure: always

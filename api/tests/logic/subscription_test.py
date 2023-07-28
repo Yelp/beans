@@ -19,11 +19,12 @@ def test_get_specs_from_subscription(database):
     week_start, specs = get_specs_from_subscription(database.sub)
     assert len(specs) == 2
 
+
 @pytest.mark.skip(reason="reverting timezone functionality")
 def test_get_specs_from_subscription_pst(session):
     preference = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
     session.add(preference)
-    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference])
+    subscription = MeetingSubscription(timezone="America/Los_Angeles", datetime=[preference])
     session.add(subscription)
     session.commit()
     _, specs = get_specs_from_subscription(subscription)
@@ -35,7 +36,7 @@ def test_get_specs_from_subscription_pst(session):
 def test_get_specs_from_subscription_pdt(session):
     preference = SubscriptionDateTime(datetime=datetime(2017, 1, 20, 13, 0))
     session.add(preference)
-    subscription = MeetingSubscription(timezone='America/Los_Angeles', datetime=[preference])
+    subscription = MeetingSubscription(timezone="America/Los_Angeles", datetime=[preference])
     session.add(subscription)
     session.commit()
     _, specs = get_specs_from_subscription(subscription)
@@ -52,51 +53,37 @@ def test_get_subscription_dates(database):
     dates = get_subscription_dates(database.sub)
     assert len(dates) == 2
     # Dates are ordered so this is the reverse of how they were created
-    assert dates[0]['date'] == '2017-01-20T19:00:00+00:00'
+    assert dates[0]["date"] == "2017-01-20T19:00:00+00:00"
 
 
 def test_merge_subscriptions_with_preferences(database, fake_user):
     merged_preferences = merge_subscriptions_with_preferences(fake_user)
     assert merged_preferences[0] == {
-        'id': database.sub.id,
-        'title': 'Yelp Weekly',
-        'location': '8th Floor',
-        'office': 'USA: CA SF New Montgomery Office',
-        'timezone': 'America/Los_Angeles',
-        'size': 2,
-        'rule_logic': None,
-        'datetime': [
-            {
-                'active': False,
-                'date': '2017-01-20T19:00:00+00:00',
-                'id': database.sub.datetime[1].id
-            },
-            {
-                'active': True,
-                'date': '2017-01-20T23:00:00+00:00',
-                'id': database.sub.datetime[0].id
-            }
-        ]
+        "id": database.sub.id,
+        "title": "Yelp Weekly",
+        "location": "8th Floor",
+        "office": "USA: CA SF New Montgomery Office",
+        "timezone": "America/Los_Angeles",
+        "size": 2,
+        "rule_logic": None,
+        "datetime": [
+            {"active": False, "date": "2017-01-20T19:00:00+00:00", "id": database.sub.datetime[1].id},
+            {"active": True, "date": "2017-01-20T23:00:00+00:00", "id": database.sub.datetime[0].id},
+        ],
     }
 
 
 def test_filter_subscriptions_by_user_data_any(database, session):
-    preference = UserSubscriptionPreferences(
-        subscription=database.sub,
-        preference=database.prefs[0]
-    )
+    preference = UserSubscriptionPreferences(subscription=database.sub, preference=database.prefs[0])
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference]
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference])
     user.meta_data = {"department": "a"}
     session.add(user)
 
     rule = Rule(name="department", value="a")
     session.add(rule)
     database.sub.user_rules = [rule]
-    database.sub.rule_logic = 'any'
+    database.sub.rule_logic = "any"
     session.add(database.sub)
     session.commit()
 
@@ -104,7 +91,7 @@ def test_filter_subscriptions_by_user_data_any(database, session):
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
-    assert subscriptions[0]['id'] == database.sub.id
+    assert subscriptions[0]["id"] == database.sub.id
 
     user.meta_data = {"department": "b"}
     session.add(user)
@@ -116,21 +103,15 @@ def test_filter_subscriptions_by_user_data_any(database, session):
 
 
 def test_filter_subscriptions_by_user_data_list(database, session):
-    preference = UserSubscriptionPreferences(
-        subscription=database.sub,
-        preference=database.prefs[0]
-    )
+    preference = UserSubscriptionPreferences(subscription=database.sub, preference=database.prefs[0])
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference]
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference])
     user.meta_data = {"role": ["pushmaster", "technical_lead"]}
     session.add(user)
 
     rule = Rule(name="role", value="pushmaster")
     database.sub.user_rules = [rule]
-    database.sub.rule_logic = 'any'
+    database.sub.rule_logic = "any"
     session.add(rule)
     session.add(database.sub)
     session.commit()
@@ -139,7 +120,7 @@ def test_filter_subscriptions_by_user_data_list(database, session):
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
-    assert subscriptions[0]['id'] == database.sub.id
+    assert subscriptions[0]["id"] == database.sub.id
 
     user.meta_data = {"role": "infra"}
     session.add(user)
@@ -151,7 +132,7 @@ def test_filter_subscriptions_by_user_data_list(database, session):
 
 
 def test_filter_subscriptions_by_user_data_all(database, session):
-    database.sub.rule_logic = 'all'
+    database.sub.rule_logic = "all"
     rule1 = Rule(name="department", value="a")
     rule2 = Rule(name="location", value="c")
     database.sub.user_rules = [rule1, rule2]
@@ -159,15 +140,9 @@ def test_filter_subscriptions_by_user_data_all(database, session):
     session.add(rule2)
     session.add(database.sub)
 
-    preference = UserSubscriptionPreferences(
-        subscription=database.sub,
-        preference=database.prefs[0]
-    )
+    preference = UserSubscriptionPreferences(subscription=database.sub, preference=database.prefs[0])
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference]
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference])
     user.meta_data = {"department": "a", "location": "b"}
     session.add(user)
     session.commit()
@@ -177,30 +152,24 @@ def test_filter_subscriptions_by_user_data_all(database, session):
 
     assert subscriptions == []
 
-    user.meta_data = {'department': 'a', 'location': 'c'}
+    user.meta_data = {"department": "a", "location": "c"}
     session.add(user)
     session.commit()
     merged_preferences = merge_subscriptions_with_preferences(user)
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
-    assert subscriptions[0]['id'] == database.sub.id
+    assert subscriptions[0]["id"] == database.sub.id
 
 
 def test_filter_subscriptions_by_user_data_without_rules(database, session):
-    database.sub.rule_logic = 'all'
+    database.sub.rule_logic = "all"
     database.sub.user_rules = []
     session.add(database.sub)
 
-    preference = UserSubscriptionPreferences(
-        subscription=database.sub,
-        preference=database.prefs[0]
-    )
+    preference = UserSubscriptionPreferences(subscription=database.sub, preference=database.prefs[0])
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference]
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference])
     user.meta_data = {"department": "a", "location": "b"}
     session.add(user)
     session.commit()
@@ -217,10 +186,7 @@ def test_filter_subscriptions_by_user_data_none(database, session):
         preference=database.prefs[0],
     )
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference]
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference])
     session.add(user)
     session.commit()
 
@@ -228,25 +194,21 @@ def test_filter_subscriptions_by_user_data_none(database, session):
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
-    assert subscriptions[0]['id'] == database.sub.id
+    assert subscriptions[0]["id"] == database.sub.id
 
 
 def test_filter_subscriptions_by_user_data_none_when_rules_exist(database, session):
     rule = Rule(name="department", value="b")
     session.add(rule)
     database.sub.user_rules = [rule]
-    database.sub.rule_logic = 'none'
+    database.sub.rule_logic = "none"
     session.add(database.sub)
     preference = UserSubscriptionPreferences(
         subscription=database.sub,
         preference=database.prefs[0],
     )
     session.add(preference)
-    user = User(
-        email='a@a.com',
-        subscription_preferences=[preference],
-        meta_data={'department': 'a'}
-    )
+    user = User(email="a@a.com", subscription_preferences=[preference], meta_data={"department": "a"})
     session.add(user)
     session.commit()
 
@@ -254,4 +216,4 @@ def test_filter_subscriptions_by_user_data_none_when_rules_exist(database, sessi
     subscriptions = filter_subscriptions_by_user_data(merged_preferences, user)
 
     assert len(subscriptions) == 1
-    assert subscriptions[0]['id'] == database.sub.id
+    assert subscriptions[0]["id"] == database.sub.id

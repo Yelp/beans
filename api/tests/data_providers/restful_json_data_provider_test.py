@@ -1,4 +1,5 @@
-import mock
+from unittest import mock
+
 import pytest
 import requests_mock
 from yelp_beans.data_providers import restful_json_data_provider

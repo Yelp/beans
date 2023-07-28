@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 131
+
+[tool.ruff]
+ignore = []
+line-length = 131
+select = [
+    "E",
+    "F",
+    "W",
+    "UP",
+    "I",
+    "RUF",
+]
+
+[tool.ruff.isort]
+force-single-line = true

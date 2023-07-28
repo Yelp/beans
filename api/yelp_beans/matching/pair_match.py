@@ -2,6 +2,7 @@ import itertools
 import logging
 
 import networkx as nx
+
 from yelp_beans.logic.user import user_preference
 from yelp_beans.matching.match_utils import get_previous_meetings
 
@@ -41,9 +42,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     user_ids = sorted(uid_to_users.keys())
 
     # Determine matches that should not happen
-    disallowed_meeting_set = get_disallowed_meetings(
-        users, prev_meeting_tuples, spec
-    )
+    disallowed_meeting_set = get_disallowed_meetings(users, prev_meeting_tuples, spec)
     graph_matches = construct_graph(user_ids, disallowed_meeting_set)
 
     # matching returns (1,4) and (4,1) this de-dupes
@@ -56,7 +55,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
         time = user_preference(user_a, spec)
         matches.append((user_a, user_b, time))
 
-    logging.info('{} employees matched'.format(len(matches) * 2))
+    logging.info("{} employees matched".format(len(matches) * 2))
     logging.info([(meeting[0].get_username(), meeting[1].get_username()) for meeting in matches])
 
     unmatched = [
@@ -66,7 +65,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
         if user not in list(graph_matches.values())
     ]
 
-    logging.info('{} employees unmatched'.format(len(unmatched)))
+    logging.info(f"{len(unmatched)} employees unmatched")
     logging.info([user.get_username() for user in unmatched])
 
     return matches, unmatched
@@ -86,14 +85,12 @@ def construct_graph(user_ids, disallowed_meetings):
     # This creates the graph and the maximal matching set is returned.
     # It does not return anyone who didn't get matched.
     meetings = []
-    possible_meetings = {
-        meeting for meeting in itertools.combinations(user_ids, 2)
-    }
+    possible_meetings = {meeting for meeting in itertools.combinations(user_ids, 2)}
     allowed_meetings = possible_meetings - disallowed_meetings
 
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)
-        meetings.append(meeting + ({'weight': weight},))
+        meetings.append((*meeting, {"weight": weight}))
 
     graph = nx.Graph()
     graph.add_nodes_from(user_ids)
