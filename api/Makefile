@@ -40,7 +40,7 @@ venv: $(VIRTUALENV_REQUIREMENTS) requirements-bootstrap.txt
 
 .PHONY: serve
 serve: development
-	FLASK_APP=main.py flask run
+	flask --app main.py run --debug
 
 .PHONY: clean
 clean:

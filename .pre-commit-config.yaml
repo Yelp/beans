@@ -2,7 +2,7 @@ default_language_version:
   python: python3.11
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.4.0
     hooks:
     -   id: trailing-whitespace
         exclude: assets/vendor/
@@ -21,13 +21,13 @@ repos:
     -   id: check-merge-conflict
     -   id: fix-byte-order-marker
 -   repo: https://github.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 6.0.0
     hooks:
     -   id: flake8
         exclude: api/bin
         args: [--max-line-length=131]
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.3.6
+    rev: v3.10.0
     hooks:
     -   id: reorder-python-imports
         exclude: api/bin
@@ -39,7 +39,7 @@ repos:
         - --remove-import
         - from __future__ import unicode_literals
 -   repo: https://github.com/Yelp/detect-secrets
-    rev: v0.14.3
+    rev: v1.4.0
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']

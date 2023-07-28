@@ -241,6 +241,6 @@ def update_subscription(sub_id: int):
 
     db.session.commit()
 
-    resp = jsonify()
+    resp = jsonify({})
     resp.status_code = 200
     return resp
