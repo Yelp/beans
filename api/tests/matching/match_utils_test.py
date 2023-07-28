@@ -20,8 +20,8 @@ MEETING_COOLDOWN_WEEKS = 10
 def test_pair_to_counts():
     pairs = [('user1', 'user2'), ('user1', 'user2'), ('user2', 'user3')]
     counts = get_counts_for_pairs(pairs)
-    assert (counts[('user2', 'user3')] == 1)
-    assert(counts[('user1', 'user2')] == 2)
+    assert counts[('user2', 'user3')] == 1
+    assert counts[('user1', 'user2')] == 2
 
 
 def test_generate_save_meetings(session, subscription):

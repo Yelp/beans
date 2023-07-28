@@ -136,11 +136,11 @@ def test_generate_group_meeting(session):
 
     session.commit()
     matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=3)
-    assert(len(matches) == 7)
-    assert (len(unmatched) == 0)
+    assert len(matches) == 7
+    assert len(unmatched) == 0
     matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=5)
-    assert(len(matches) == 4)
-    assert (len(unmatched) == 1)
+    assert len(matches) == 4
+    assert len(unmatched) == 1
 
 
 def test_generate_group_meeting_invalid_number_of_users(session):
@@ -164,8 +164,8 @@ def test_generate_group_meeting_invalid_number_of_users(session):
 
     session.commit()
     matches, unmatched = generate_meetings(users, meeting_spec, prev_meeting_tuples=None, group_size=3)
-    assert(len(matches) == 0)
-    assert (len(unmatched) == 2)
+    assert len(matches) == 0
+    assert len(unmatched) == 2
 
 
 def test_previous_meeting_penalty(session):
@@ -229,7 +229,7 @@ def test_previous_meeting_penalty(session):
 
     for run in range(10):
         matches, unmatched = generate_meetings(users, meeting_spec1, prev_meeting_tuples=None, group_size=3)
-        assert(len(matches) == 6)
-        assert (len(unmatched) == 2)
+        assert len(matches) == 6
+        assert len(unmatched) == 2
         for matched_group in matches:
-            assert(not (users[0] in matched_group and users[1] in matched_group))
+            assert not (users[0] in matched_group and users[1] in matched_group)
