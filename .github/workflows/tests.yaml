@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install devcontainer cli
-        run: npm install -g @devcontainers/cli
+        run: npm install -g @devcontainers/cli@0.50.0
       - name: Build and start container
         run: devcontainer up --workspace-folder .
       - name: Test developer workflow
