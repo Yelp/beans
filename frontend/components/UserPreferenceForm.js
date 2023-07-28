@@ -29,11 +29,12 @@ class UserPreferenceForm extends Component {
 
   handleSubmit(prefId, event) {
     event.preventDefault();
+    const { email } = this.props;
     if (this.state) {
       axios
         .post(`/v1/user/preferences/subscription/${prefId}`, {
-          ...this.state[prefId],
-          email: this.props.email,
+          ...this.state[prefId], // eslint-disable-line
+          email,
         })
         .then(() => {
           alert("Preference Updated"); // eslint-disable-line
@@ -54,7 +55,7 @@ class UserPreferenceForm extends Component {
     const { preferences } = this.props;
     if (preferences.length !== 0) {
       return preferences.map((preference) => (
-        <div key={preference.id}>
+        <div key={preference.id} className="mb-3">
           <h3>{preference.title}</h3>
           <h6>
             {preference.office}, {preference.location} ({preference.size})
@@ -64,7 +65,7 @@ class UserPreferenceForm extends Component {
             <button
               type="button"
               onClick={(event) => this.handleSubmit(preference.id, event)}
-              className="btn btn-danger left30"
+              className="btn btn-danger btn-sm left30"
             >
               Set Preferences!
             </button>
@@ -105,7 +106,8 @@ class UserPreferenceForm extends Component {
   }
 
   render() {
-    if (this.props.loading) {
+    const { loading } = this.props;
+    if (loading) {
       return (
         <div className="spinner-border" role="status">
           <span className="sr-only">Loading...</span>
