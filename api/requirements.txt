@@ -59,7 +59,7 @@ pydantic==2.1.1
     # via -r requirements-minimal.txt
 pydantic-core==2.4.0
     # via pydantic
-pyparsing==3.1.0
+pyparsing==3.1.1
     # via httplib2
 python-dateutil==2.8.2
     # via
