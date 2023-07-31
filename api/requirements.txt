@@ -12,7 +12,7 @@ blinker==1.6.2
     # via flask
 boto3==1.28.14
     # via -r requirements-minimal.txt
-botocore==1.31.14
+botocore==1.31.16
     # via
     #   boto3
     #   s3transfer
