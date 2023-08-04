@@ -141,3 +141,35 @@ class MeetingParticipant(db.Model):
     meeting = db.relationship('Meeting')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User')
+
+
+class Employee(db.Model):
+    """ Models a Yelp employee.
+        Schema:
+        - email:            gmail email
+        - first_name:       self-explanatory
+        - last_name:        self-explanatory
+
+    Unfortunately, metadata is an attribute already used by sqlalchemy so we use meta_data in
+    the table. Note, however, that the json from the frontend uses metadata for the same column.
+    """
+    cost_center_name = db.Column(db.String())
+    days_since_start = db.Column(db.Integer)
+    employee_id = db.Column(db.String(), primary_key=True)
+    location = db.Column(db.String())
+    manager_id = db.Column(db.String())
+    pronoun = db.Column(db.String())
+    work_email = db.Column(db.String())
+    languages = db.Column(db.Text)
+
+    def serialize(self):
+        return {
+            'cost_center_name': self.cost_center_name,
+            'days_since_start': self.days_since_start,
+            'employee_id': self.employee_id,
+            'location': self.location,
+            'manager_id': self.manager_id,
+            'pronoun': self.pronoun,
+            'work_email': self.work_email,
+            'languages': self.languages,
+        }

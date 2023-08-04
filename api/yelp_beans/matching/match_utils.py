@@ -1,3 +1,4 @@
+import json
 import logging
 from collections import defaultdict
 from datetime import datetime
@@ -5,9 +6,9 @@ from datetime import timedelta
 
 import networkx as nx
 import pandas as pd
-import requests
 from database import db
 from yelp_beans.logic.config import get_config
+from yelp_beans.models import Employee
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingSpec
@@ -167,10 +168,17 @@ def get_meeting_weights(allowed_meetings):
     meeting_to_weight = {}
 
     # fetching employee information and create a pandas dataframe with it
-    employees = pd.DataFrame(requests.get(
-        f'{CORP_API}/employees',
-        headers={'X-API-Key': CORP_API_TOKEN},
-    ).json())
+    # employees = pd.DataFrame(requests.get(
+    #     f'{CORP_API}/employees',
+    #     headers={'X-API-Key': CORP_API_TOKEN},
+    # ).json())
+
+    # need to convert this to JSON to match the previous logic
+    db_query_result = db.session.query(Employee).all()
+    print(f"db_query_result: {db_query_result}")
+    json_dump = json.dumps([obj.serialize() for obj in db_query_result])
+    print(f"json_dump is: {json_dump}")
+    employees = pd.DataFrame(json_dump)
 
     employees = employees.set_index("Work_Email", drop=False)
     # print(f"get_meeting_weights: employees.columns: {employees.columns}")

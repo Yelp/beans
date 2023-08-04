@@ -9,6 +9,7 @@ import pytest
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.matching.match import generate_meetings
+from yelp_beans.models import Employee
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -49,6 +50,10 @@ def test_generate_meetings_same_department(session, subscription, mock_requests_
     session.add(user_pref)
     user1 = User(email='1@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
     session.add(user1)
+    test_employee = Employee(cost_center_name='cost_center', days_since_start=123, employee_id='id_1',
+                             location='Earth', manager_id='id_2',
+                             pronoun='they', work_email='1@yelp.com', languages='test')
+    session.add(test_employee)
     user2 = User(email='2@yelp.com', meta_data={'department': 'dept'}, subscription_preferences=[user_pref])
     session.add(user2)
     user_list = [user1, user2]
