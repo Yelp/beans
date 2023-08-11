@@ -1,18 +1,18 @@
 {
-	"name": "Ubuntu",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"args": { "VARIANT": "ubuntu-22.04" }
-	},
+  "name": "Ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": { "VARIANT": "ubuntu-22.04" }
+  },
 
-	"forwardPorts": [5000, 8080],
+  "forwardPorts": [5000, 8080],
 
-	"postCreateCommand": "python .devcontainer/configs_in_env.py load_from_env",
+  "postCreateCommand": "python .devcontainer/configs_in_env.py load_from_env",
 
-	"remoteUser": "vscode",
-	"features": {
-		"sshd": "latest",
-		"node": "lts",
-		"python": "3.8"
-	}
+  "remoteUser": "vscode",
+  "features": {
+    "sshd": "latest",
+    "node": "20",
+    "python": "3.11"
+  }
 }

@@ -1,7 +1,4 @@
-
-
-class DataProvider(object):
-
+class DataProvider:
     def ingest(self, data=None):
         raw_data = self._fetch(data)
         return self._parse(raw_data)
@@ -13,12 +10,12 @@ class DataProvider(object):
         employees = []
         for employee in data:
             user = {
-                'email': employee.get('email'),
-                'first_name': employee.get('first_name'),
-                'last_name': employee.get('last_name'),
-                'photo_url': employee.get('photo_url'),
+                "email": employee.get("email"),
+                "first_name": employee.get("first_name"),
+                "last_name": employee.get("last_name"),
+                "photo_url": employee.get("photo_url"),
             }
             remaining_keys = set(employee.keys()) - set(user.keys())
-            user['metadata'] = {attr: employee[attr] for attr in remaining_keys}
+            user["metadata"] = {attr: employee[attr] for attr in remaining_keys}
             employees.append(user)
         return employees

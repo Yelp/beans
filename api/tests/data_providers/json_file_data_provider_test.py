@@ -1,4 +1,5 @@
-import mock
+from unittest import mock
+
 import pytest
 from yelp_beans.data_providers import json_file_data_provider
 
@@ -11,11 +12,7 @@ def data_provider():
 
 
 def test_fetch(data_provider, employees):
-    with mock.patch.object(
-        json_file_data_provider,
-        'open',
-        mock.mock_open(read_data=employees)
-    ) as mock_open:
+    with mock.patch.object(json_file_data_provider, "open", mock.mock_open(read_data=employees)) as mock_open:
         result = data_provider._fetch(None)
-        mock_open.assert_called_once_with(mock.sentinel.path, 'rb')
+        mock_open.assert_called_once_with(mock.sentinel.path, "rb")
         assert len(result) == 1

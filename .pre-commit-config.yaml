@@ -1,57 +1,37 @@
+default_language_version:
+  python: python3.11
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
     hooks:
-    -   id: trailing-whitespace
+      - id: trailing-whitespace
         exclude: assets/vendor/
-        language_version: python3.8
-    -   id: end-of-file-fixer
-        exclude: assets/vendor/|api/bin/
-        language_version: python3.8
-    -   id: check-json
+      - id: end-of-file-fixer
+        exclude: assets/vendor/
+      - id: check-json
         files: \.(jshintrc|json)$
-        language_version: python3.8
-    -   id: check-yaml
-        language_version: python3.8
-    -   id: debug-statements
-        language_version: python3.8
-    -   id: name-tests-test
-        language_version: python3.8
-    -   id: requirements-txt-fixer
-        language_version: python3.8
-    -   id: fix-encoding-pragma
-        args:
-          - --remove
-        language_version: python3.8
-    -   id: check-byte-order-marker
-        language_version: python3.8
-    -   id: check-merge-conflict
-        language_version: python3.8
-    -   id: fix-byte-order-marker
-        language_version: python3.8
--   repo: https://github.com/pycqa/flake8
-    rev: 3.8.4
+      - id: check-yaml
+      - id: debug-statements
+      - id: name-tests-test
+      - id: requirements-txt-fixer
+      - id: check-merge-conflict
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
     hooks:
-    -   id: flake8
-        exclude: api/bin
-        args: [--max-line-length=131]
--   repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.3.6
+      - id: black
+        args: [--config, api/pyproject.toml]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0
     hooks:
-    -   id: reorder-python-imports
-        exclude: api/bin
-        args:
-        - --remove-import
-        - from __future__ import absolute_import
-        - --remove-import
-        - from __future__ import print_function
-        - --remove-import
-        - from __future__ import unicode_literals
-        language_version: python3.8
--   repo: https://github.com/Yelp/detect-secrets
-    rev: v0.14.3
+      - id: prettier
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.280
     hooks:
-    -   id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
+      - id: ruff
+        args: [--config, api/pyproject.toml, --fix, --exit-non-zero-on-fix]
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ["--baseline", ".secrets.baseline"]
         exclude: .*tests/.*|.*yelp/testing/.*|\.pre-commit-config\.yaml|package-lock\.json|.*.html
-        language_version: python3.8

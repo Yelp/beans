@@ -3,5 +3,5 @@ from setuptools import setup
 
 setup(
     name="yelp_beans",
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=["tests*"]),
 )

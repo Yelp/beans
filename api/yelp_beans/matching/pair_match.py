@@ -2,6 +2,7 @@ import itertools
 import logging
 
 import networkx as nx
+
 from yelp_beans.logic.user import user_preference
 from yelp_beans.matching.match_utils import get_meeting_weights
 from yelp_beans.matching.match_utils import get_previous_meetings
@@ -48,9 +49,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     print(f"generate_pair_meetings: USER_IDs: {user_ids}")
 
     # Determine matches that should not happen
-    disallowed_meeting_set = get_disallowed_meetings(
-        users, prev_meeting_tuples, spec
-    )
+    disallowed_meeting_set = get_disallowed_meetings(users, prev_meeting_tuples, spec)
     print(f"generate_pair_meetings: disallowed_meeting_set:{disallowed_meeting_set}")
     print(f"generate_pair_meetings: user_ids:{user_ids}")
     graph_matches = construct_graph(user_ids, disallowed_meeting_set)
@@ -65,7 +64,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
         time = user_preference(user_a, spec)
         matches.append((user_a, user_b, time))
 
-    logging.info('{} employees matched'.format(len(matches) * 2))
+    logging.info("{} employees matched".format(len(matches) * 2))
     logging.info([(meeting[0].get_username(), meeting[1].get_username()) for meeting in matches])
 
     unmatched = [
@@ -75,7 +74,7 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
         if user not in list(graph_matches.values())
     ]
 
-    logging.info('{} employees unmatched'.format(len(unmatched)))
+    logging.info(f"{len(unmatched)} employees unmatched")
     logging.info([user.get_username() for user in unmatched])
     print(f"generate_pair_meetings, matches: {matches}, unmatches: {unmatched}")
     return matches, unmatched
@@ -91,9 +90,7 @@ def construct_graph(user_ids, disallowed_meetings):
     # This creates the graph and the maximal matching set is returned.
     # It does not return anyone who didn't get matched.
     meetings = []
-    possible_meetings = {
-        tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)
-    }
+    possible_meetings = {tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)}
     print(f"construct_graph, user_ids: {user_ids}")
     print(f"construct_graph, disallowed_meetings: {disallowed_meetings}")
     print(f"construct_graph, possible_meetings: {possible_meetings}")
@@ -107,7 +104,7 @@ def construct_graph(user_ids, disallowed_meetings):
 
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)
-        meetings.append(meeting + ({'weight': weight},))
+        meetings.append((*meeting, {"weight": weight}))
 
     graph = nx.Graph()
     graph.add_nodes_from(user_ids)

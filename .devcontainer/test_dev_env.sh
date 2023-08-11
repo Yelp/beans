@@ -11,8 +11,7 @@ wJv9OVkEWfryJMJZzOapiKN2O05OPV0Lxrp9fq4qL4ncalYsTFj6j67P/UobzhZZJCZZOD1pnIEo/y\
 
 YELP_BEANS_CONFIG=$DEFAULT_CONFIG python3.10 .devcontainer/configs_in_env.py load_from_env
 
-# TODO: Make it so we don't need the NODE_OPTIONS
-NODE_OPTIONS="--openssl-legacy-provider" make development
+make development
 
 # Test API
 pushd api

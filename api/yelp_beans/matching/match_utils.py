@@ -7,6 +7,7 @@ from datetime import timedelta
 import networkx as nx
 import pandas as pd
 from database import db
+
 from yelp_beans.logic.config import get_config
 from yelp_beans.models import Employee
 from yelp_beans.models import Meeting
@@ -14,9 +15,9 @@ from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import User
 
+CORP_API_TOKEN = "xxxx"
+CORP_API = "https://corpapi.yelpcorp.com/v1"
 
-CORP_API_TOKEN = 'xxxx'
-CORP_API = 'https://corpapi.yelpcorp.com/v1'
 
 def save_meetings(matches, spec):
     for match in matches:
@@ -30,7 +31,7 @@ def save_meetings(matches, spec):
         db.session.commit()
         username_list = [user.get_username() for user in matched_users]
         logging.info(meeting_key)
-        logging.info(', '.join(username_list))
+        logging.info(", ".join(username_list))
 
 
 def get_counts_for_pairs(pairs):
@@ -44,9 +45,8 @@ def get_counts_for_pairs(pairs):
 
 
 def get_previous_meetings(subscription, cooldown=None):
-
     if cooldown is None:
-        cooldown = get_config()['meeting_cooldown_weeks']
+        cooldown = get_config()["meeting_cooldown_weeks"]
 
     meetings = defaultdict(list)
 
@@ -54,30 +54,28 @@ def get_previous_meetings(subscription, cooldown=None):
     time_threshold_for_meetings = datetime.now() - timedelta(weeks=cooldown)
 
     meeting_specs = [
-        spec for spec in MeetingSpec.query.filter(
-            MeetingSpec.datetime > time_threshold_for_meetings,
-            MeetingSpec.meeting_subscription_id == subscription.id
+        spec
+        for spec in MeetingSpec.query.filter(
+            MeetingSpec.datetime > time_threshold_for_meetings, MeetingSpec.meeting_subscription_id == subscription.id
         ).all()
     ]
 
-    logging.info('Previous Meeting History: ')
+    logging.info("Previous Meeting History: ")
     logging.info([meeting.datetime.strftime("%Y-%m-%d %H:%M") for meeting in meeting_specs])
 
     if meeting_specs == []:
         return set([])
 
     # get all meetings from meeting specs
-    meeting_keys = [meeting.id for meeting in Meeting.query.filter(
-        Meeting.meeting_spec_id.in_(
-            [meet.id for meet in meeting_specs])).all()]
+    meeting_keys = [
+        meeting.id for meeting in Meeting.query.filter(Meeting.meeting_spec_id.in_([meet.id for meet in meeting_specs])).all()
+    ]
 
     if meeting_keys == []:
         return set([])
 
     # get all participants from meetings
-    participants = MeetingParticipant.query.filter(
-        MeetingParticipant.meeting_id.in_(meeting_keys)
-    ).all()
+    participants = MeetingParticipant.query.filter(MeetingParticipant.meeting_id.in_(meeting_keys)).all()
 
     if participants == []:
         return set([])
@@ -89,12 +87,13 @@ def get_previous_meetings(subscription, cooldown=None):
     # ids are sorted, all matches should be in increasing order by id for the matching algorithm to work
     disallowed_meetings = set([tuple(sorted(meeting, key=lambda Key: Key.id)) for meeting in meetings.values()])
 
-    logging.info('Past Meetings')
+    logging.info("Past Meetings")
     logging.info([tuple([meeting.get_username() for meeting in meeting]) for meeting in disallowed_meetings])
 
     disallowed_meetings = {tuple([meeting.id for meeting in meeting]) for meeting in disallowed_meetings}
 
     return disallowed_meetings
+
 
 def jaccard(list1, list2):
     intersection = len(list(set(list1).intersection(list2)))
@@ -104,7 +103,13 @@ def jaccard(list1, list2):
         union = (len(list1) + len(list2)) - intersection
         return float(intersection) / union
 
-def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
+
+def get_pairwise_distance(
+    user_pair,
+    org_graph,
+    employee_df,
+    max_tenure=1000,
+):
     """
     get the distance between two users.
     The returned distance score is a linear combination of the multiple user attributes' distnace (normalized).
@@ -131,7 +136,7 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     # print(org_graph.nodes)
     # org chart distance
     dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)
-    dist_1 = dist_1/10  # approx. min-max scaled
+    dist_1 = dist_1 / 10  # approx. min-max scaled
     distance += dist_1
 
     # location
@@ -146,12 +151,12 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     country_dist = 0 if user_a_country == user_b_country else 1
     city_dist = 0 if user_a_city == user_b_city else 1
     dist_2 = country_dist + city_dist
-    dist_2 = dist_2/2  # min-max scaled
+    dist_2 = dist_2 / 2  # min-max scaled
     distance += dist_2
 
     # tenure
-    dist_3 = abs(int(user_a_attributes["Days_Since_Start"])-int(user_b_attributes["Days_Since_Start"]))
-    dist_3 = dist_3/max_tenure
+    dist_3 = abs(int(user_a_attributes["Days_Since_Start"]) - int(user_b_attributes["Days_Since_Start"]))
+    dist_3 = dist_3 / max_tenure
     distance += dist_3
 
     # language
@@ -160,6 +165,7 @@ def get_pairwise_distance(user_pair, org_graph, employee_df, max_tenure=1000,):
     distance += dist_4
 
     return distance
+
 
 def get_meeting_weights(allowed_meetings):
     """
@@ -183,16 +189,17 @@ def get_meeting_weights(allowed_meetings):
 
     employees = employees.set_index("work_email", drop=False)
     # print(f"get_meeting_weights: employees.columns: {employees.columns}")
-    employees = employees[["manager_id", "cost_center_name", "days_since_start", "location", "languages",
-                          "pronoun", "work_email", "employee_id"]]
-    employees = employees.merge(employees, left_on='manager_id', right_on='employee_id', suffixes=('', '_manager'))
+    employees = employees[
+        ["manager_id", "cost_center_name", "days_since_start", "location", "languages", "pronoun", "work_email", "employee_id"]
+    ]
+    employees = employees.merge(employees, left_on="manager_id", right_on="employee_id", suffixes=("", "_manager"))
     # print(f"get_meeting_weights: employees.columns after merge: {employees.columns}")
-    max_tenure = max(employees['days_since_start'].astype(int))
+    max_tenure = max(employees["days_since_start"].astype(int))
 
     # yelp employee network graph created through reporting line
     G = nx.Graph()
     # G.add_edges_from(list(zip(employees.index, employees['Work_Email_manager'])))
-    G.add_edges_from(list(zip(employees["work_email"], employees['work_email_manager'])))
+    G.add_edges_from(list(zip(employees["work_email"], employees["work_email_manager"])))
     # print(f"get_meeting_weights: employees.columns after add edges: {employees.columns}")
     for user_pair in allowed_meetings:
         users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees.copy(), max_tenure=max_tenure)

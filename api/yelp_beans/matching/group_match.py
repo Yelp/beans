@@ -54,7 +54,7 @@ def generate_groups(group, partition_size):
     :return: list of groups
     """
     for i in range(0, len(group), partition_size):
-        yield group[i:i + partition_size if (i + partition_size) < len(group) else len(group)]
+        yield group[i : i + partition_size if (i + partition_size) < len(group) else len(group)]
 
 
 def generate_group_meetings(users, spec, group_size, starting_weight, negative_weight):
@@ -80,12 +80,12 @@ def generate_group_meetings(users, spec, group_size, starting_weight, negative_w
             unmatched.extend(grouped_users)
         else:
             matches.append(grouped_users)
-    logging.info('{} employees matched'.format(len(matches) * group_size))
+    logging.info("{} employees matched".format(len(matches) * group_size))
     for group in matches:
         username_tuple = tuple([user.get_username() for user in group[:-1]])
         logging.info(username_tuple)
 
-    logging.info('{} employees unmatched'.format(len(unmatched)))
+    logging.info(f"{len(unmatched)} employees unmatched")
     logging.info([user.get_username() for user in unmatched])
 
     return matches, unmatched
@@ -141,10 +141,7 @@ class State:
     def get_cost(self, adj_matrix):
         cost = 0
         for i in range(0, len(self.ids), self.group_size):
-            cost += sum([
-                adj_matrix[edge[0]][edge[1]]
-                for edge in itertools.combinations(self.ids[i:i + self.group_size], 2)
-            ])
+            cost += sum([adj_matrix[edge[0]][edge[1]] for edge in itertools.combinations(self.ids[i : i + self.group_size], 2)])
         return cost
 
     def get_mutated_state(self):
@@ -155,8 +152,4 @@ class State:
 
         ids = self.ids[:]
         ids[x], ids[y] = ids[y], ids[x]
-        return State(
-            self.population_size,
-            self.group_size,
-            ids
-        )
+        return State(self.population_size, self.group_size, ids)

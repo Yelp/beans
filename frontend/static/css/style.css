@@ -1,59 +1,60 @@
 * {
-    font-family: "Open Sans";
-    font-size: 12pt;
+  font-family: "Open Sans";
+  font-size: 12pt;
 }
-input[type='radio'], input[type='checkbox'] {
-    margin-left: 30px;
-    margin-right: 12px;
+input[type="radio"],
+input[type="checkbox"] {
+  margin-left: 30px;
+  margin-right: 12px;
 }
 .left30 {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .logo {
-    width: 6em;
-    padding-left: 1em;
-    padding-right: 1em;
+  width: 6em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .logo-font {
-    font-size: 38pt;
-    vertical-align: bottom;
-    color: white;
-    font-family: "Pacifico";
+  font-size: 38pt;
+  vertical-align: bottom;
+  color: white;
+  font-family: "Pacifico";
 }
 
 .navbar {
-    background-color: #d32323;
-    border-radius: 0px;
+  background-color: #d32323;
+  border-radius: 0px;
 }
 
 .navbar img {
-    height: 80px;
+  height: 80px;
 }
 
 .content {
-    padding-top: .25em;
-    text-align: center;
+  padding-top: 0.25em;
+  text-align: center;
 }
 
 .preferences {
-    text-align: center;
+  text-align: center;
 }
 
 .profile-img {
-    height: 170px;
-    border-radius: 50%;
+  height: 170px;
+  border-radius: 50%;
 }
 
 .footer_hr {
-    border-top: 2px solid #eee;
+  border-top: 2px solid #eee;
 }
 
-.github-img{
-    height: 30px;
+.github-img {
+  height: 30px;
 }
 
 .subscription-time-zone-input {
-    max-width: 50ch;
+  max-width: 50ch;
 }

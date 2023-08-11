@@ -34,13 +34,13 @@ test: development install-hooks
 	pre-commit run --all-files
 
 venv: $(VIRTUALENV_REQUIREMENTS) requirements-bootstrap.txt
-	python3.8 -m venv --clear venv
+	python3.11 -m venv --clear venv
 	./venv/bin/pip install -r requirements-bootstrap.txt
 	./venv/bin/pip-sync $(VIRTUALENV_REQUIREMENTS) requirements-bootstrap.txt
 
 .PHONY: serve
 serve: development
-	FLASK_APP=main.py flask run
+	flask --app main.py run --debug
 
 .PHONY: clean
 clean:
