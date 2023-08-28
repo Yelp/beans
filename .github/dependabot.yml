@@ -4,7 +4,13 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+    groups:
+      all dependencies:
+        pattern: "*"
   - package-ecosystem: "pip"
     directory: "/api"
     schedule:
       interval: "weekly"
+    groups:
+      all dependencies:
+        pattern: "*"
