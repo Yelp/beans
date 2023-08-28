@@ -44,6 +44,6 @@ jobs:
       - name: Install devcontainer cli
         run: npm install -g @devcontainers/cli
       - name: Build and start container
-        run: devcontainer up --workspace-folder .
+        run: devcontainer up --workspace-folder ${{github.workspace}}
       - name: Test developer workflow
-        run: devcontainer exec --workspace-folder . .devcontainer/test_dev_env.sh
+        run: devcontainer exec --workspace-folder ${{github.workspace}} .devcontainer/test_dev_env.sh
