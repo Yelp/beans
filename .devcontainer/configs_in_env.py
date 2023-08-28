@@ -22,12 +22,16 @@ def create_parser() -> ArgumentParser:
 
 
 def get_git_root() -> Path:
-    res = subprocess.run(
-        ("git", "rev-parse", "--show-toplevel"),
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        res = subprocess.run(
+            ("git", "rev-parse", "--show-toplevel"),
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"{e.stdout=}\n{e.stderr=}")
+        raise
     return Path(res.stdout.strip())
 
 
