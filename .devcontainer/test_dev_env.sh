@@ -9,6 +9,8 @@ ie7AkjPA8ciRjJ2+jca1qrxfua07e9d1OW4BrMJKFFrXpd6j2ANsjO88PnCMgjSYBCsmsmQmlski8p\
 wJv9OVkEWfryJMJZzOapiKN2O05OPV0Lxrp9fq4qL4ncalYsTFj6j67P/UobzhZZJCZZOD1pnIEo/y\
 42A/riPeTuXNsEX1l4B54/6fgHlibBbwwCAAA="
 
+# Add the repo as a safe directory, so we can use git commands on it
+git config --global --add safe.directory $(pwd)
 YELP_BEANS_CONFIG=$DEFAULT_CONFIG python .devcontainer/configs_in_env.py load_from_env
 
 make development
