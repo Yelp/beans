@@ -41,9 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install devcontainer cli
-        run: npm install -g @devcontainers/cli
-      - name: Build and start container
-        run: devcontainer up --workspace-folder .
-      - name: Test developer workflow
-        run: devcontainer exec --workspace-folder . .devcontainer/test_dev_env.sh
+      - name: Build and run Dev Container tests
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: .devcontainer/test_dev_env.sh
