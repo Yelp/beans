@@ -7,7 +7,7 @@
 
   "forwardPorts": [5000, 8080],
 
-  "postCreateCommand": "python .devcontainer/configs_in_env.py load_from_env",
+  "postCreateCommand": "sudo delgroup docker && python .devcontainer/configs_in_env.py load_from_env",
 
   "remoteUser": "vscode",
   "features": {
