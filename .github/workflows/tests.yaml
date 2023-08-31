@@ -41,6 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Check user ids
+        run: id
       - name: Build and run Dev Container tests
         uses: devcontainers/ci@v0.3
         with:

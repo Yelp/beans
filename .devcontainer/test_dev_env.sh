@@ -1,5 +1,6 @@
 #!/bin/bash
 set -exo pipefail
+id
 
 # This is the config we have in the wiki encoded by configs_from_env
 DEFAULT_CONFIG="H4sIAH9rQGQC/3WRUW+CMBSF/wrpiy9Ctz3yhtBsTKMG4WFZl6bAlXTiraPdzG\
