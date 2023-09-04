@@ -162,7 +162,7 @@ def remove_preferences(user, updated_preferences, subscription_id):
     Parameters
     ----------
     user - db.User
-    preferences - {SubscriptionDateTime.id:Boolean}
+    preferences - {SubscriptionDateTime.id: {active:Boolean, auto_opt_in:Boolean}}
     subscription_id - int
 
     Returns
@@ -173,7 +173,7 @@ def remove_preferences(user, updated_preferences, subscription_id):
     removed = set()
     for preference in user.subscription_preferences:
         if preference.subscription.id == subscription_id:
-            if not updated_preferences.get(preference.preference_id, True):
+            if not updated_preferences.get(preference.preference_id, {}).get("active", True):
                 removed.add(preference.preference_id)
                 db.session.delete(preference)
 
@@ -187,7 +187,7 @@ def add_preferences(user, updated_preferences, subscription_id):
     Parameters
     ----------
     user - db.User
-    preferences - {SubscriptionDateTime.id:Boolean}
+    preferences - {SubscriptionDateTime.id: {active:Boolean, auto_opt_in:Boolean}}
     subscription_id - int
 
     Returns
@@ -195,11 +195,27 @@ def add_preferences(user, updated_preferences, subscription_id):
     set(SubscriptionDateTime.id)
     """
     added = set()
-    for datetime_id, active in updated_preferences.items():
-        if active:
+    for datetime_id, options in updated_preferences.items():
+        if options.get("active"):
+            # get existing UserSubscriptionPreferences entries for the combo of user_id + subscription_id + datatime_id
+            existing_user_sub_preferences = (
+                UserSubscriptionPreferences.query.filter(UserSubscriptionPreferences.subscription_id == subscription_id)
+                .filter(UserSubscriptionPreferences.user_id == user.id)
+                .filter(UserSubscriptionPreferences.preference_id == datetime_id)
+                .all()
+            )
+
+            # remove existing entries
+            [db.session.delete(preference) for preference in existing_user_sub_preferences]
+
+            # create a new UserSubscriptionPreferences entry for  combo of user_id + subscription_id + datatime_id
+            default_auto_opt_in = (
+                MeetingSubscription.query.filter(MeetingSubscription.id == subscription_id).one().default_auto_opt_in
+            )
             preference = UserSubscriptionPreferences(
                 subscription_id=subscription_id,
                 preference_id=datetime_id,
+                auto_opt_in=options.get("auto_opt_in", default_auto_opt_in),
             )
             db.session.add(preference)
             user.subscription_preferences.append(preference)

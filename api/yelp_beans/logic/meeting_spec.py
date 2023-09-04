@@ -20,7 +20,7 @@ def get_specs_for_current_week():
     return get_specs_for_current_week_query().all()
 
 
-def get_users_from_spec(meeting_spec):
+def get_users_from_spec(meeting_spec, exclude_auto_opted_in_preferences=False):
     logging.info("Meeting subscription for spec:")
     logging.info(meeting_spec.meeting_subscription)
     logging.info("All Preferences")
@@ -28,9 +28,15 @@ def get_users_from_spec(meeting_spec):
 
     user_sub_preferences = UserSubscriptionPreferences.query.filter(
         UserSubscriptionPreferences.subscription_id == meeting_spec.meeting_subscription_id
-    ).all()
+    )
 
-    logging.info("User Preferences")
+    if exclude_auto_opted_in_preferences:
+        user_sub_preferences = user_sub_preferences.filter(UserSubscriptionPreferences.auto_opt_in is False).all()
+        logging.info("User Preferences with auto_opt_in == False")
+    else:
+        user_sub_preferences = user_sub_preferences.all()
+        logging.info("User Preferences")
+
     logging.info(user_sub_preferences)
     meeting_timezone = timezone(meeting_spec.meeting_subscription.timezone)
     users = []

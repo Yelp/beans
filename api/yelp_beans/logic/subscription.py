@@ -61,7 +61,11 @@ def apply_rules(user, subscription, subscription_rules):
 
 def merge_subscriptions_with_preferences(user):
     user_preferences = [
-        {"subscription_id": user_subscription.subscription_id, "datetime_id": user_subscription.preference_id}
+        {
+            "subscription_id": user_subscription.subscription_id,
+            "datetime_id": user_subscription.preference_id,
+            "auto_opt_in": user_subscription.auto_opt_in,
+        }
         for user_subscription in user.subscription_preferences
     ]
     subscriptions = [
@@ -74,6 +78,7 @@ def merge_subscriptions_with_preferences(user):
             "timezone": subscription.timezone,
             "rule_logic": subscription.rule_logic,
             "datetime": get_subscription_dates(subscription),
+            "default_auto_opt_in": subscription.default_auto_opt_in,
         }
         for subscription in MeetingSubscription.query.all()
     ]
@@ -83,6 +88,7 @@ def merge_subscriptions_with_preferences(user):
                 for date in subscription["datetime"]:
                     if date["id"] == user_preference["datetime_id"]:
                         date["active"] = True
+                        date["auto_opt_in"] = user_preference["auto_opt_in"]
 
     return subscriptions
 

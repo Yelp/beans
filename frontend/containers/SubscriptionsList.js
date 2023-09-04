@@ -52,6 +52,7 @@ function SubscriptionList() {
             <th>Location</th>
             <th>Office</th>
             <th>Size</th>
+            <th>Default Auto Opt-In</th>
             <th>Rules</th>
             <th>Time Zone</th>
             <th>Time Slots</th>
@@ -66,6 +67,7 @@ function SubscriptionList() {
               <td>{sub.location}</td>
               <td>{sub.office}</td>
               <td>{sub.size}</td>
+              <td>{sub.default_auto_opt_in}</td>
               <td>{formatRules(sub.rules, sub.rule_logic)}</td>
               <td>{sub.timezone}</td>
               <td>{formatTimeSlots(sub.time_slots)}</td>

@@ -58,3 +58,54 @@ input[type="checkbox"] {
 .subscription-time-zone-input {
   max-width: 50ch;
 }
+
+.preference-header {
+  margin-left: -8%;
+  padding-bottom: 5px;
+
+  > h3 {
+    font-weight: bold;
+  }
+
+  > h6 {
+    color: darkgreen;
+  }
+}
+
+div:first-of-type > .preference-header:first-of-type {
+  padding-top: 25px;
+}
+
+.preference-options {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 12px;
+  width: 792px;
+  flex-direction: row;
+  padding-bottom: 40px;
+}
+
+.preference-options > fieldset {
+  border: 3px solid lightgrey;
+  border-radius: 12px;
+  padding: 10px;
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  justify-content: center;
+  height: 135px;
+}
+
+.preference-options > fieldset > legend {
+  width: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+}
+.preference-options > fieldset > label {
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
