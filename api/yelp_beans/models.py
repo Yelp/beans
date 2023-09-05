@@ -83,7 +83,7 @@ class UserSubscriptionPreferences(db.Model):
     subscription = db.relationship("MeetingSubscription", backref=db.backref("user_subscription_preferences", uselist=False))
     preference_id = db.Column(db.Integer, db.ForeignKey("subscription_date_time.id"))
     preference = db.relationship("SubscriptionDateTime", backref="user_subscription_preferences")
-    auto_opt_in = db.Column(db.Boolean, default=db.ForeignKey("meeting_subscription.default_auto_opt_in"))
+    auto_opt_in = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class SubscriptionDateTime(db.Model):

@@ -94,6 +94,7 @@ def test_get_subscriptions(client, session):
             "size": 2,
             "time_slots": [{"day": "thursday", "hour": 6, "minute": 0}],
             "timezone": "America/Los_Angeles",
+            "default_auto_opt_in": False,
         },
     ]
 
@@ -112,6 +113,7 @@ def test_get_subscriptions_has_rule(client, session):
         location="test place",
         rule_logic="all",
         user_rules=[rule],
+        default_auto_opt_in=True,
     )
     session.add(subscription)
     session.commit()
@@ -128,6 +130,7 @@ def test_get_subscriptions_has_rule(client, session):
             "size": 2,
             "time_slots": [{"day": "thursday", "hour": 6, "minute": 0}],
             "timezone": "America/Los_Angeles",
+            "default_auto_opt_in": True,
         },
     ]
 
@@ -161,6 +164,7 @@ def test_get_subscription(client, session):
         "size": 2,
         "time_slots": [{"day": "thursday", "hour": 6, "minute": 0}],
         "timezone": "America/Los_Angeles",
+        "default_auto_opt_in": False,
     }
 
 

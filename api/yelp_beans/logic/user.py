@@ -197,7 +197,7 @@ def add_preferences(user, updated_preferences, subscription_id):
     added = set()
     for datetime_id, options in updated_preferences.items():
         if options.get("active"):
-            # remove existing UserSubscriptionPreferences that match a preference that is getting updated
+            # remove existing UserSubscriptionPreferences that match a preference which will be updated
             existing_matching_prefs = [
                 pref
                 for pref in user.subscription_preferences
