@@ -197,18 +197,16 @@ def add_preferences(user, updated_preferences, subscription_id):
     added = set()
     for datetime_id, options in updated_preferences.items():
         if options.get("active"):
-            # get existing UserSubscriptionPreferences entries for the combo of user_id + subscription_id + datatime_id
-            existing_user_sub_preferences = (
-                UserSubscriptionPreferences.query.filter(UserSubscriptionPreferences.subscription_id == subscription_id)
-                .filter(UserSubscriptionPreferences.user_id == user.id)
-                .filter(UserSubscriptionPreferences.preference_id == datetime_id)
-                .all()
-            )
+            # remove existing UserSubscriptionPreferences that match a preference that is getting updated
+            existing_matching_prefs = [
+                pref
+                for pref in user.subscription_preferences
+                if pref.subscription_id == subscription_id and pref.preference_id == datetime_id
+            ]
+            for preference in existing_matching_prefs:
+                db.session.delete(preference)
+                user.subscription_preferences.remove(preference)
 
-            # remove existing entries
-            [db.session.delete(preference) for preference in existing_user_sub_preferences]
-
-            # create a new UserSubscriptionPreferences entry for  combo of user_id + subscription_id + datatime_id
             default_auto_opt_in = (
                 MeetingSubscription.query.filter(MeetingSubscription.id == subscription_id).one().default_auto_opt_in
             )

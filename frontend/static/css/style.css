@@ -93,7 +93,8 @@ div:first-of-type > .preference-header:first-of-type {
   display: grid;
   gap: 8px;
   justify-content: center;
-  height: 135px;
+  height: 145px;
+  align-content: center;
 }
 
 .preference-options > fieldset > legend {
@@ -101,6 +102,7 @@ div:first-of-type > .preference-header:first-of-type {
   padding-left: 10px;
   padding-right: 10px;
   font-size: 16px;
+  margin-bottom: 0;
 }
 .preference-options > fieldset > label {
   font-size: 13px;
@@ -108,4 +110,8 @@ div:first-of-type > .preference-header:first-of-type {
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  max-height: 28px;
+  margin-bottom: 0;
+  padding-left: 5px;
+  padding-right: 5px;
 }

@@ -1,9 +1,13 @@
 import logging
 
 from flask import Blueprint
+from pytz import timezone
+from pytz import utc
 from sqlalchemy.orm import joinedload
 
 from yelp_beans.logic.data_ingestion import DataIngestion
+from yelp_beans.logic.meeting_request import query_meeting_request
+from yelp_beans.logic.meeting_request import store_meeting_request
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_specs_for_current_week
 from yelp_beans.logic.subscription import get_specs_from_subscription
@@ -103,4 +107,41 @@ def clean_user_subscriptions():
             delete_user_subscription_preference(preference)
             logging.info(f"Deleted UserSubscriptionPreference<{preference.id}>")
 
+    return "OK"
+
+
+@tasks.route("/generate_meeting_requests_for_auto_opt_in_preferences", methods=["GET"])
+def generate_meeting_requests_for_auto_opt_in_preferences():
+    specs = get_specs_for_current_week()
+
+    logging.info("All specs: ")
+    logging.info(specs)
+
+    for spec in specs:
+        spec_timezone = timezone(spec.meeting_subscription.timezone)
+        spec_dt = spec.datetime.replace(tzinfo=utc).astimezone(spec_timezone)
+
+        user_sub_preferences_with_auto_opt_in = (
+            UserSubscriptionPreferences.query.filter(UserSubscriptionPreferences.subscription_id == spec.meeting_subscription_id)
+            .filter(UserSubscriptionPreferences.auto_opt_in.is_(True))
+            .all()
+        )
+
+        logging.info(f"All UserSubscriptionPreferences with auto_opt_in == True for spec = {spec}:")
+        logging.info(user_sub_preferences_with_auto_opt_in)
+        for user_preference in user_sub_preferences_with_auto_opt_in:
+            preference_dt = user_preference.preference.datetime.replace(tzinfo=utc).astimezone(spec_timezone)
+            if (
+                preference_dt.hour == spec_dt.hour
+                and preference_dt.minute == spec_dt.minute
+                and preference_dt.weekday() == spec_dt.weekday()
+            ):
+                logging.info(
+                    f"Generating MeetingRequest for UserSubscriptionPreferences = {user_preference} if one does not already exist"
+                )
+                if not query_meeting_request(spec, user_preference.user):
+                    meeting_request = MeetingRequest(meeting_spec=spec, user=user_preference.user)
+                    store_meeting_request(meeting_request)
+
+                    logging.info(f"Meeting request generated. MeetingRequest: {meeting_request}")
     return "OK"

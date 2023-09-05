@@ -3,17 +3,12 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from yelp_beans.logic.meeting_request import query_meeting_request
 from yelp_beans.logic.user import get_user
 from yelp_beans.models import MeetingRequest
 from yelp_beans.models import MeetingSpec
 
 meeting_requests = Blueprint("meeting_requests", __name__, template_folder="templates")
-
-
-def query_meeting_request(meeting_spec, user):
-    return MeetingRequest.query.filter(
-        MeetingRequest.meeting_spec_id == meeting_spec.id, MeetingRequest.user_id == user.id
-    ).first()
 
 
 @meeting_requests.route("/", methods=["POST"])
