@@ -38,7 +38,8 @@ class MeetingSubscription(db.Model):
         - user_list:                users requested/ have access to join subscription
         - user_rules:               rules set for allowing people to see a subscription
         - dept_rules:               rules set for matching people
-        - default_auto_opt_in:      boolean representing whether auto opt in for meeting requests is enabled
+        - default_auto_opt_in:      represents default value for auto opt in to meeting requests for a given meeting subscription
+
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -73,7 +74,7 @@ class UserSubscriptionPreferences(db.Model):
     Schema:
         - subscription:               subscription the employee is subscribed to
         - preference:                 time the employee prefers to meet
-        - auto_opt_in:                boolean representing whether auto opt in for meeting requests is enabled
+        - auto_opt_in:                represents whether auto opt in for meeting requests is enabled
     """
 
     id = db.Column(db.Integer, primary_key=True)

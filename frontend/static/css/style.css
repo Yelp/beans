@@ -104,6 +104,7 @@ div:first-of-type > .preference-header:first-of-type {
   font-size: 16px;
   margin-bottom: 0;
 }
+
 .preference-options > fieldset > label {
   font-size: 13px;
   display: inline-flex;

@@ -15,13 +15,14 @@ def store_meeting_request(meeting_request: MeetingRequest) -> int:
     -------
     MeetingRequest.id
     """
+
     db.session.add(meeting_request)
     db.session.commit()
 
     return meeting_request.id
 
 
-def query_meeting_request(meeting_spec: MeetingSpec, user: User):
+def query_meeting_request(meeting_spec: MeetingSpec, user: User) -> MeetingRequest:
     """
     Parameters
     ----------
