@@ -83,7 +83,7 @@ class UserPreferenceForm extends Component {
         </div>
       ));
     }
-    return <div>No Subscription Available.</div>;
+    return <div className="no-subscriptions">No Subscription Available.</div>;
   }
 
   renderTimes(preference, state) {
@@ -151,7 +151,7 @@ class UserPreferenceForm extends Component {
   render() {
     if (this.props.loading) {
       return (
-        <div className="spinner-border" role="status">
+        <div className="spinner-border preferences-spinner" role="status">
           <span className="sr-only">Loading...</span>
         </div>
       );

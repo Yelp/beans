@@ -1,12 +1,19 @@
+:root {
+  --preferences-margin-left: 8.5%;
+  --preference-header-margin-left: -9.25%;
+}
+
 * {
   font-family: "Open Sans";
   font-size: 12pt;
 }
+
 input[type="radio"],
 input[type="checkbox"] {
   margin-left: 30px;
   margin-right: 12px;
 }
+
 .left30 {
   margin-left: 30px;
 }
@@ -38,8 +45,16 @@ input[type="checkbox"] {
   text-align: center;
 }
 
+.preferences-spinner {
+  margin-left: var(--preference-header-margin-left);
+}
+
 .preferences {
   text-align: center;
+}
+
+.preferences:not(:has(.no-subscriptions)) {
+  margin-left: var(--preferences-margin-left);
 }
 
 .profile-img {
@@ -60,7 +75,7 @@ input[type="checkbox"] {
 }
 
 .preference-header {
-  margin-left: -8%;
+  margin-left: var(--preference-header-margin-left);
   padding-bottom: 5px;
 
   > h3 {
