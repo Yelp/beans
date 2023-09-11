@@ -55,7 +55,7 @@ pluggy==1.2.0
     #   tox
 pre-commit==3.3.3
     # via -r requirements-dev-minimal.txt
-pyproject-api==1.5.3
+pyproject-api==1.6.1
     # via tox
 pytest==7.4.0
     # via
