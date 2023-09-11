@@ -79,7 +79,7 @@ sendgrid==6.10.0
     # via -r requirements-minimal.txt
 six==1.16.0
     # via python-dateutil
-sqlalchemy==2.0.19
+sqlalchemy==2.0.20
     # via flask-sqlalchemy
 starkbank-ecdsa==2.2.0
     # via sendgrid
