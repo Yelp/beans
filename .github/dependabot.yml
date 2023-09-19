@@ -5,12 +5,12 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      all dependencies:
-        pattern: "*"
+      all-dependencies:
+        patterns: "*"
   - package-ecosystem: "pip"
     directory: "/api"
     schedule:
       interval: "weekly"
     groups:
-      all dependencies:
-        pattern: "*"
+      all-dependencies:
+        patterns: "*"
