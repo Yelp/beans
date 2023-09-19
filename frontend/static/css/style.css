@@ -108,7 +108,7 @@ div:first-of-type > .preference-header:first-of-type {
   display: grid;
   gap: 8px;
   justify-content: center;
-  height: 145px;
+  height: 165px;
   align-content: center;
 }
 
@@ -126,8 +126,10 @@ div:first-of-type > .preference-header:first-of-type {
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  max-height: 28px;
+  max-height: 45px;
   margin-bottom: 0;
   padding-left: 5px;
   padding-right: 5px;
+  text-align: left;
+  max-width: 200px;
 }

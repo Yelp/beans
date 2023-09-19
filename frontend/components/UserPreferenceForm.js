@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Switch from "react-switch";
 import moment from "moment-timezone";
+import { Tooltip } from "react-tooltip";
 
 class UserPreferenceForm extends Component {
   static isoDateToString(ISODate, timezone) {
@@ -112,11 +113,11 @@ class UserPreferenceForm extends Component {
             </legend>
 
             {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label htmlFor={`${id}-enabled`} key={`${id}-enabled-label`}>
-              Enabled
+            <label htmlFor={`${id}-subscribe`} key={`${id}-subscribe-label`}>
+              Subscribe
               <Switch
-                id={`${id}-enabled`}
-                key={`${id}-enabled`}
+                id={`${id}-subscribe`}
+                key={`${id}-subscribe`}
                 checked={active}
                 onChange={(checked) =>
                   this.handleChange(checked, id, "active", {
@@ -127,19 +128,35 @@ class UserPreferenceForm extends Component {
             </label>
 
             {active && (
-              // eslint-disable-next-line jsx-a11y/label-has-associated-control
-              <label htmlFor={`${id}-autoOptIn`} key={`${id}-autoOptIn-label`}>
-                Auto Opt-In
-                <Switch
-                  id={`${id}-autoOptIn`}
-                  key={`${id}-autoOptIn`}
-                  checked={autoOptIn}
-                  onChange={(checked) =>
-                    this.handleChange(checked, id, "auto_opt_in", { active })
-                  }
-                  disabled={!active}
+              <>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                <label
+                  htmlFor={`${id}-autoOptIn`}
+                  key={`${id}-autoOptIn-label`}
+                  className="autoOptIn"
+                >
+                  Auto opt-in to weekly matches
+                  <Switch
+                    id={`${id}-autoOptIn`}
+                    key={`${id}-autoOptIn`}
+                    checked={autoOptIn}
+                    onChange={(checked) =>
+                      this.handleChange(checked, id, "auto_opt_in", { active })
+                    }
+                  />
+                </label>
+                <Tooltip
+                  content="When enabled, you will be automatically opted in for weekly matches. If disabled, you will need to manually opt-in for matches each week through the email sent from beans@yelp.com."
+                  style={{
+                    maxWidth: "350px",
+                    borderRadius: "7px",
+                    textAlign: "left",
+                    fontSize: "12px",
+                  }}
+                  anchorSelect=".autoOptIn"
+                  place="bottom-start"
                 />
-              </label>
+              </>
             )}
           </fieldset>
         );
