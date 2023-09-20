@@ -118,8 +118,7 @@ def generate_meeting_requests_for_auto_opt_in_preferences():
     logging.info(specs)
 
     for spec in specs:
-        spec_timezone = timezone(spec.meeting_subscription.timezone)
-        spec_dt = spec.datetime.replace(tzinfo=utc).astimezone(spec_timezone)
+       spec_dt = get_meeting_datetime(spec)
 
         user_sub_preferences_with_auto_opt_in = (
             UserSubscriptionPreferences.query.filter(UserSubscriptionPreferences.subscription_id == spec.meeting_subscription_id)
