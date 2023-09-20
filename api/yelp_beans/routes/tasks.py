@@ -129,7 +129,9 @@ def generate_meeting_requests_for_auto_opt_in_preferences():
         logging.info(f"All UserSubscriptionPreferences with auto_opt_in == True for spec = {spec}:")
         logging.info(user_sub_preferences_with_auto_opt_in)
         for user_preference in user_sub_preferences_with_auto_opt_in:
-            preference_dt = user_preference.preference.datetime.replace(tzinfo=utc).astimezone(spec_timezone)
+            preference_dt = user_preference.preference.datetime.replace(tzinfo=utc).astimezone(
+                timezone(spec.meeting_subscription.timezone)
+            )
             if (
                 preference_dt.hour == spec_dt.hour
                 and preference_dt.minute == spec_dt.minute
