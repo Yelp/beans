@@ -57,7 +57,7 @@ psycopg2-binary==2.9.7
     # via -r requirements-minimal.txt
 pydantic==2.3.0
     # via -r requirements-minimal.txt
-pydantic-core==2.9.0
+pydantic-core==2.6.3
     # via pydantic
 pyparsing==3.1.1
     # via httplib2
