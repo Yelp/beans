@@ -62,6 +62,34 @@ StringField.defaultProps = {
   inputClassName: "",
 };
 
+function DefaultAutoOptInField({ field, label, value, updateField }) {
+  return (
+    <div className="form-group">
+      <label htmlFor={field}>{label}</label>
+      <select
+        className="form-control"
+        id={field}
+        value={value}
+        onChange={(e) => updateField(field, e.target.value === "true")}
+      >
+        <option key="true" value="true">
+          True
+        </option>
+        <option key="false" value="false">
+          False
+        </option>
+      </select>
+    </div>
+  );
+}
+
+DefaultAutoOptInField.propTypes = {
+  field: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.bool.isRequired,
+  updateField: PropTypes.func.isRequired,
+};
+
 function NumberField({ field, label, value, updateField, min }) {
   return (
     <div className="form-group">
@@ -524,6 +552,14 @@ function Subscription() {
             label="Size"
             min={2}
             value={subscription.size}
+            updateField={updateField}
+          />
+        </div>
+        <div className="col-2">
+          <DefaultAutoOptInField
+            field="default_auto_opt_in"
+            label="Default Auto Opt-In"
+            value={subscription.default_auto_opt_in}
             updateField={updateField}
           />
         </div>

@@ -69,7 +69,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
     create_url = "https://{}.appspot.com/meeting_request/{}".format(secrets["PROJECT"], meeting_spec.id)
     logging.info("created url " + create_url)
 
-    users = get_users_from_spec(meeting_spec)
+    users = get_users_from_spec(meeting_spec, exclude_user_prefs_with_auto_opt_in=True)
     users = [user for user in users if user]
 
     logging.info(len(users))

@@ -175,7 +175,7 @@ def test_remove_preferences_removes_on_opt_out(session, subscription):
     session.commit()
 
     assert user.subscription_preferences == [user_pref]
-    updated_preferences = {preference.id: False}
+    updated_preferences = {preference.id: {"active": False}}
     removed = remove_preferences(user, updated_preferences, subscription.id)
     assert removed == {user_pref.preference_id}
     user = User.query.filter(User.id == user.id).one()
@@ -195,7 +195,7 @@ def test_remove_preferences_does_not_remove_on_opt_in(session, subscription):
     session.commit()
 
     assert user.subscription_preferences == [user_pref]
-    updated_preferences = {preference.id: True}
+    updated_preferences = {preference.id: {"active": True, "auto_opt_in": False}}
     removed = remove_preferences(user, updated_preferences, subscription)
     assert removed == set()
     user = User.query.filter(User.id == user.id).one()
@@ -221,7 +221,7 @@ def test_remove_preferences_multiple_remove_on_opt_in(session, subscription):
     session.commit()
 
     assert user.subscription_preferences == [user_pref_1, user_pref_2]
-    updated_preferences = {preference_1.id: False, preference_2.id: False}
+    updated_preferences = {preference_1.id: {"active": False}, preference_2.id: {"active": False}}
     removed = remove_preferences(user, updated_preferences, subscription.id)
     assert removed == {user_pref_1.preference_id, user_pref_2.preference_id}
     user = user = User.query.filter(User.id == user.id).one()
@@ -235,12 +235,35 @@ def test_add_preferences_adds_on_opt_in(session, subscription):
     session.add(user)
     session.commit()
 
-    updated_preferences = {preference.id: True}
+    updated_preferences = {preference.id: {"active": True}}
     assert len(user.subscription_preferences) == 0
     added = add_preferences(user, updated_preferences, subscription.id)
     assert added.pop() == preference.id
     user = User.query.filter(User.id == user.id).one()
     assert user.subscription_preferences[0].preference == preference
+    assert user.subscription_preferences[0].auto_opt_in is False
+
+
+def test_add_preferences_doesnt_add_duplicate_entries(session, subscription):
+    preference = subscription.datetime[0]
+    user = User(email="a@yelp.com", meta_data={"department": "dept"})
+    session.add(user)
+    session.commit()
+
+    updated_preferences = {preference.id: {"active": True}}
+    assert len(user.subscription_preferences) == 0
+    added = add_preferences(user, updated_preferences, subscription.id)
+    assert added.pop() == preference.id
+    user = User.query.filter(User.id == user.id).one()
+    assert user.subscription_preferences[0].preference == preference
+    assert user.subscription_preferences[0].auto_opt_in is False
+
+    added_v2 = add_preferences(user, updated_preferences, subscription.id)
+    assert added_v2.pop() == preference.id
+    user = User.query.filter(User.id == user.id).one()
+    assert len(user.subscription_preferences) == 1
+    assert user.subscription_preferences[0].preference == preference
+    assert user.subscription_preferences[0].auto_opt_in is False
 
 
 def test_add_preferences_adds_multiple_on_opt_in(session, subscription):
@@ -250,15 +273,20 @@ def test_add_preferences_adds_multiple_on_opt_in(session, subscription):
     session.add(user)
     session.commit()
 
-    updated_preferences = {preference_1.id: True, preference_2.id: True}
+    updated_preferences = {
+        preference_1.id: {"active": True, "auto_opt_in": False},
+        preference_2.id: {"active": True, "auto_opt_in": True},
+    }
     assert len(user.subscription_preferences) == 0
     added = add_preferences(user, updated_preferences, subscription.id)
     assert preference_1.id in added
     assert preference_2.id in added
     assert len(user.subscription_preferences) == 2
     user = User.query.filter(User.id == user.id).one()
-    assert user.subscription_preferences[0].preference in (preference_1, preference_2)
-    assert user.subscription_preferences[1].preference in (preference_1, preference_2)
+    assert user.subscription_preferences[0].preference == preference_1
+    assert user.subscription_preferences[0].auto_opt_in is False
+    assert user.subscription_preferences[1].preference == preference_2
+    assert user.subscription_preferences[1].auto_opt_in is True
 
 
 def test_is_valid_user_subscription_preference_no_subscription(subscription):
