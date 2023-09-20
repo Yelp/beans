@@ -10,9 +10,9 @@ arrow==1.2.3
     # via -r requirements-minimal.txt
 blinker==1.6.2
     # via flask
-boto3==1.28.16
+boto3==1.28.51
     # via -r requirements-minimal.txt
-botocore==1.31.16
+botocore==1.31.51
     # via
     #   boto3
     #   s3transfer
@@ -22,14 +22,14 @@ charset-normalizer==3.2.0
     # via requests
 click==8.1.7
     # via flask
-flask==2.3.2
+flask==2.3.3
     # via
     #   -r requirements-minimal.txt
     #   flask-api-utils
     #   flask-sqlalchemy
 flask-api-utils==1.0.2
     # via -r requirements-minimal.txt
-flask-sqlalchemy==3.0.5
+flask-sqlalchemy==3.1.1
     # via -r requirements-minimal.txt
 greenlet==2.0.2
     # via sqlalchemy
@@ -55,9 +55,9 @@ networkx==3.1
     # via -r requirements-minimal.txt
 psycopg2-binary==2.9.7
     # via -r requirements-minimal.txt
-pydantic==2.1.1
+pydantic==2.3.0
     # via -r requirements-minimal.txt
-pydantic-core==2.4.0
+pydantic-core==2.9.0
     # via pydantic
 pyparsing==3.1.1
     # via httplib2
@@ -67,7 +67,7 @@ python-dateutil==2.8.2
     #   botocore
 python-http-client==3.3.7
     # via sendgrid
-pytz==2023.3
+pytz==2023.3.post1
     # via -r requirements-minimal.txt
 pyyaml==6.0.1
     # via -r requirements-minimal.txt
@@ -79,24 +79,24 @@ sendgrid==6.10.0
     # via -r requirements-minimal.txt
 six==1.16.0
     # via python-dateutil
-sqlalchemy==2.0.20
+sqlalchemy==2.0.21
     # via flask-sqlalchemy
 starkbank-ecdsa==2.2.0
     # via sendgrid
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   annotated-types
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
-urllib3==1.26.16
+urllib3==2.0.5
     # via
     #   -r requirements-minimal.txt
     #   botocore
     #   requests
-werkzeug==2.3.6
+werkzeug==2.3.7
     # via flask
-zipp==3.16.2
+zipp==3.17.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
