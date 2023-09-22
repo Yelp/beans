@@ -67,7 +67,7 @@ function SubscriptionList() {
               <td>{sub.location}</td>
               <td>{sub.office}</td>
               <td>{sub.size}</td>
-              <td>{sub.default_auto_opt_in}</td>
+              <td>{sub.default_auto_opt_in.toString()}</td>
               <td>{formatRules(sub.rules, sub.rule_logic)}</td>
               <td>{sub.timezone}</td>
               <td>{formatTimeSlots(sub.time_slots)}</td>
