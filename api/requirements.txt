@@ -10,9 +10,9 @@ arrow==1.2.3
     # via -r requirements-minimal.txt
 blinker==1.6.2
     # via flask
-boto3==1.28.51
+boto3==1.28.53
     # via -r requirements-minimal.txt
-botocore==1.31.51
+botocore==1.31.53
     # via
     #   boto3
     #   s3transfer
@@ -55,9 +55,9 @@ networkx==3.1
     # via -r requirements-minimal.txt
 psycopg2-binary==2.9.7
     # via -r requirements-minimal.txt
-pydantic==2.3.0
+pydantic==2.4.0
     # via -r requirements-minimal.txt
-pydantic-core==2.6.3
+pydantic-core==2.10.0
     # via pydantic
 pyparsing==3.1.1
     # via httplib2
@@ -89,7 +89,7 @@ typing-extensions==4.8.0
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
-urllib3==1.26.16
+urllib3==2.0.5
     # via
     #   -r requirements-minimal.txt
     #   botocore

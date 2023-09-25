@@ -79,7 +79,7 @@ six==1.16.0
     #   requests-mock
 tox==4.11.3
     # via -r requirements-dev-minimal.txt
-urllib3==1.26.16
+urllib3==2.0.5
     # via
     #   -c requirements.txt
     #   requests
