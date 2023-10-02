@@ -14,13 +14,13 @@ cfgv==3.4.0
     # via pre-commit
 chardet==5.2.0
     # via tox
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements.txt
     #   requests
 colorama==0.4.6
     # via tox
-coverage==7.3.1
+coverage==7.3.2
     # via -r requirements-dev-minimal.txt
 distlib==0.3.7
     # via virtualenv
@@ -28,7 +28,7 @@ filelock==3.12.4
     # via
     #   tox
     #   virtualenv
-identify==2.5.29
+identify==2.5.30
     # via pre-commit
 idna==3.4
     # via
@@ -40,12 +40,12 @@ mock==5.1.0
     # via -r requirements-dev-minimal.txt
 nodeenv==1.8.0
     # via pre-commit
-packaging==23.1
+packaging==23.2
     # via
     #   pyproject-api
     #   pytest
     #   tox
-platformdirs==3.10.0
+platformdirs==3.11.0
     # via
     #   tox
     #   virtualenv
