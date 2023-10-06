@@ -23,7 +23,7 @@ module.exports = (app) => {
     (req, res) => {
       const { state } = req.query;
       if (app.locals.stateStore.has(state)) {
-        const { redirectUrl } = app.locals.stateStore.get(state).returnUrl;
+        const redirectUrl = app.locals.stateStore.get(state).returnUrl;
         app.locals.stateStore.delete(state);
         res.redirect(redirectUrl);
       } else {
