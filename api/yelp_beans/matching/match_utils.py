@@ -123,11 +123,11 @@ def get_pairwise_distance(
     note: we considered using education and work experience, but think it likely correlates with the first attribute
     """
     user_a, user_b = user_pair
-    print(user_a, user_b)
+    print("(user_a,user_b)",user_a, user_b)
     # print("get_pairwise_distance: employee_df:")
-    # print(employee_df.to_string())
+    print("employee_df:",employee_df.to_string())
     # print(f"get_pairwise_distance, employee_df.columns: {employee_df.columns}")
-    employee_df.set_index("Work_Email", inplace=True)
+    employee_df.set_index("work_email", inplace=True)
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
@@ -141,13 +141,13 @@ def get_pairwise_distance(
 
     # location
     try:
-        user_a_city, user_a_country = user_a_attributes["Location"].split(", ")
+        user_a_city, user_a_country = user_a_attributes["location"].split(", ")
     except ValueError:
-        user_a_city, user_a_country = "unkown", user_a_attributes["Location"]
+        user_a_city, user_a_country = "unkown", user_a_attributes["location"]
     try:
-        user_b_city, user_b_country = user_b_attributes["Location"].split(", ")
+        user_b_city, user_b_country = user_b_attributes["location"].split(", ")
     except ValueError:
-        user_b_city, user_b_country = "unkown", user_b_attributes["Location"]
+        user_b_city, user_b_country = "unkown", user_b_attributes["location"]
     country_dist = 0 if user_a_country == user_b_country else 1
     city_dist = 0 if user_a_city == user_b_city else 1
     dist_2 = country_dist + city_dist
@@ -155,7 +155,7 @@ def get_pairwise_distance(
     distance += dist_2
 
     # tenure
-    dist_3 = abs(int(user_a_attributes["Days_Since_Start"]) - int(user_b_attributes["Days_Since_Start"]))
+    dist_3 = abs(int(user_a_attributes["days_since_start"]) - int(user_b_attributes["days_since_start"]))
     dist_3 = dist_3 / max_tenure
     distance += dist_3
 
@@ -181,18 +181,18 @@ def get_meeting_weights(allowed_meetings):
 
     # need to convert this to JSON to match the previous logic
     db_query_result = db.session.query(Employee).all()
-    print(f"db_query_result: {db_query_result}")
+    print(f"get_meeting_weights: db_query_result: {db_query_result}")
     json_dump = json.dumps([obj.serialize() for obj in db_query_result])
-    print(f"json_dump is: {json_dump}")
+    print(f"get_meeting_weights: json_dump is: {json_dump}")
     employees = pd.DataFrame(eval(json_dump))
-    print(f"employees is: {employees}")
+    print(f"get_meeting_weights: employees is: {employees}")
 
     employees = employees.set_index("work_email", drop=False)
     # print(f"get_meeting_weights: employees.columns: {employees.columns}")
     employees = employees[
         ["manager_id", "cost_center_name", "days_since_start", "location", "languages", "pronoun", "work_email", "employee_id"]
     ]
-    employees = employees.merge(employees, left_on="manager_id", right_on="employee_id", suffixes=("", "_manager"))
+    employees = employees.merge(employees, how ='left', left_on="manager_id", right_on="employee_id", suffixes=("", "_manager"))
     # print(f"get_meeting_weights: employees.columns after merge: {employees.columns}")
     max_tenure = max(employees["days_since_start"].astype(int))
 

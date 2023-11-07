@@ -45,16 +45,16 @@ class MockResponse:
 
 def test_generate_meetings_same_department(session, subscription, mock_requests_get):
     mock_requests_get.return_value = MockResponse()
-    rule = Rule(name="department", value="")
+    rule = Rule(name="cost_center_name", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
-    user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
-    session.add(user1)
-    test_employee = Employee(
-        cost_center_name="cost_center",
+    # user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # session.add(user1)
+    test_employee_1 = Employee(
+        cost_center_name="cost_center_1",
         days_since_start=123,
         employee_id="id_1",
         location="Earth",
@@ -63,10 +63,21 @@ def test_generate_meetings_same_department(session, subscription, mock_requests_
         work_email="1@yelp.com",
         languages="test",
     )
-    session.add(test_employee)
-    user2 = User(email="2@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
-    session.add(user2)
-    user_list = [user1, user2]
+    session.add(test_employee_1)
+    # user2 = User(email="2@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # session.add(user2)
+    test_employee_2 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=123,
+        employee_id="id_2",
+        location="Earth",
+        manager_id="id_3",
+        pronoun="they",
+        work_email="2@yelp.com",
+        languages="test",
+    )
+    session.add(test_employee_2)
+    user_list = [test_employee_1, test_employee_2]
     session.commit()
 
     _, specs = get_specs_from_subscription(subscription)
@@ -77,7 +88,7 @@ def test_generate_meetings_same_department(session, subscription, mock_requests_
 
 def test_generate_meetings_with_history(session, subscription, mock_requests_get):
     mock_requests_get.return_value = MockResponse()
-    rule = Rule(name="department", value="")
+    rule = Rule(name="cost_center_name", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
 
@@ -85,13 +96,18 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user1 = Employee(cost_center_name="cost_center_1", days_since_start=123, employee_id="id_1", location="Earth", manager_id="id_2", pronoun="they", work_email="1@yelp.com",languages="test",)
+    user2 = Employee(cost_center_name="cost_center_2", days_since_start=13, employee_id="id_2", location="Mars", manager_id="id_4", pronoun="they", work_email="2@yelp.com",languages="test",)
+    user3 = Employee(cost_center_name="cost_center_1", days_since_start=143, employee_id="id_3", location="Earth", manager_id="id_2", pronoun="they", work_email="3@yelp.com",languages="test",)
+    user4 = Employee(cost_center_name="cost_center_2", days_since_start=1, employee_id="id_4", location="Mercury", manager_id="id_5", pronoun="they", work_email="4@yelp.com",languages="test",)
+
+    # user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user1)
-    user2 = User(email="2@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    # user2 = User(email="2@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user2)
-    user3 = User(email="3@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # user3 = User(email="3@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user3)
-    user4 = User(email="4@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    # user4 = User(email="4@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user4)
 
     user_list = [user1, user2, user3, user4]
@@ -105,10 +121,10 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
 
     meeting_history = set(
         [
-            (user1.email, user2.email),
-            (user3.email, user4.email),
-            (user2.email, user3.email),
-            (user1.email, user4.email),
+            (user1.work_email, user2.work_email),
+            (user3.work_email, user4.work_email),
+            (user2.work_email, user3.work_email),
+            (user1.work_email, user4.work_email),
         ]
     )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
@@ -117,9 +133,9 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
 
     meeting_history = set(
         [
-            (user1.email, user2.email),
-            (user3.email, user4.email),
-            (user2.email, user3.email),
+            (user1.work_email, user2.work_email),
+            (user3.work_email, user4.work_email),
+            (user2.work_email, user3.work_email),
         ]
     )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
@@ -142,6 +158,7 @@ def test_no_re_matches(session, mock_requests_get):
     num_users = 20
     for i in range(0, num_users):
         user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        # user = Employee(cost_center_name=f"cost_center_{i}", days_since_start=100+i, employee_id=f"id_{i}", location="Earth", manager_id="id_2", pronoun="they", work_email=f"{i}@yelp.com",languages="test",)
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
@@ -169,6 +186,7 @@ def test_generate_group_meeting(session):
     num_users = 21
     for i in range(0, num_users):
         user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        # user = Employee(cost_center_name=f"cost_center_{i}", days_since_start=100+i, employee_id=f"id_{i}", location="Earth", manager_id="id_2", pronoun="they", work_email=f"{i}@yelp.com",languages="test",)
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
