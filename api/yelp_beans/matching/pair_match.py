@@ -30,7 +30,7 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
 
 
 def is_same(field, match, users):
-    return getattr(users[match[0]],field) == getattr(users[match[1]], field)
+    return getattr(users[match[0]], field) == getattr(users[match[1]], field)
 
 
 def generate_pair_meetings(users, spec, prev_meeting_tuples=None):

@@ -123,9 +123,9 @@ def get_pairwise_distance(
     note: we considered using education and work experience, but think it likely correlates with the first attribute
     """
     user_a, user_b = user_pair
-    print("(user_a,user_b)",user_a, user_b)
+    print("(user_a,user_b)", user_a, user_b)
     # print("get_pairwise_distance: employee_df:")
-    print("employee_df:",employee_df.to_string())
+    print("employee_df:", employee_df.to_string())
     # print(f"get_pairwise_distance, employee_df.columns: {employee_df.columns}")
     employee_df.set_index("work_email", inplace=True)
     user_a_attributes = dict(employee_df.loc[user_a])
@@ -192,7 +192,7 @@ def get_meeting_weights(allowed_meetings):
     employees = employees[
         ["manager_id", "cost_center_name", "days_since_start", "location", "languages", "pronoun", "work_email", "employee_id"]
     ]
-    employees = employees.merge(employees, how ='left', left_on="manager_id", right_on="employee_id", suffixes=("", "_manager"))
+    employees = employees.merge(employees, how="left", left_on="manager_id", right_on="employee_id", suffixes=("", "_manager"))
     # print(f"get_meeting_weights: employees.columns after merge: {employees.columns}")
     max_tenure = max(employees["days_since_start"].astype(int))
 

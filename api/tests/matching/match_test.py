@@ -96,10 +96,46 @@ def test_generate_meetings_with_history(session, subscription, mock_requests_get
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = Employee(cost_center_name="cost_center_1", days_since_start=123, employee_id="id_1", location="Earth", manager_id="id_2", pronoun="they", work_email="1@yelp.com",languages="test",)
-    user2 = Employee(cost_center_name="cost_center_2", days_since_start=13, employee_id="id_2", location="Mars", manager_id="id_4", pronoun="they", work_email="2@yelp.com",languages="test",)
-    user3 = Employee(cost_center_name="cost_center_1", days_since_start=143, employee_id="id_3", location="Earth", manager_id="id_2", pronoun="they", work_email="3@yelp.com",languages="test",)
-    user4 = Employee(cost_center_name="cost_center_2", days_since_start=1, employee_id="id_4", location="Mercury", manager_id="id_5", pronoun="they", work_email="4@yelp.com",languages="test",)
+    user1 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=123,
+        employee_id="id_1",
+        location="Earth",
+        manager_id="id_2",
+        pronoun="they",
+        work_email="1@yelp.com",
+        languages="test",
+    )
+    user2 = Employee(
+        cost_center_name="cost_center_2",
+        days_since_start=13,
+        employee_id="id_2",
+        location="Mars",
+        manager_id="id_4",
+        pronoun="they",
+        work_email="2@yelp.com",
+        languages="test",
+    )
+    user3 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=143,
+        employee_id="id_3",
+        location="Earth",
+        manager_id="id_2",
+        pronoun="they",
+        work_email="3@yelp.com",
+        languages="test",
+    )
+    user4 = Employee(
+        cost_center_name="cost_center_2",
+        days_since_start=1,
+        employee_id="id_4",
+        location="Mercury",
+        manager_id="id_5",
+        pronoun="they",
+        work_email="4@yelp.com",
+        languages="test",
+    )
 
     # user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user1)
