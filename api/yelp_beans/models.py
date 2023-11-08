@@ -25,12 +25,10 @@ class User(db.Model):
 
     # Additional fields for match algo
     languages = db.Column(db.Text)
-    # cost_center_name = db.Column(db.String())
     days_since_start = db.Column(db.Integer)
     employee_id = db.Column(db.String())
     location = db.Column(db.String())
     manager_id = db.Column(db.String())
-    # pronoun = db.Column(db.String())
 
     def get_username(self):
         return self.email.split("@")[0]
@@ -44,14 +42,11 @@ class User(db.Model):
             "photo_url": self.photo_url,
             "meta_data": self.meta_data,
             "terminated": self.terminated,
-            # "subscription_preferences": self.subscription_preferences,
             "languages": self.languages,
-            # "cost_center_name": self.cost_center_name,
             "days_since_start": self.days_since_start,
             "employee_id": self.employee_id,
             "location": self.location,
             "manager_id": self.manager_id,
-            # "pronoun": self.pronoun,
         }
 
 

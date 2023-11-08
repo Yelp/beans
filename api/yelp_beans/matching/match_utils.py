@@ -162,31 +162,20 @@ def get_meeting_weights(allowed_meetings):
 
     # need to convert this to JSON to match the previous logic
     db_query_result = db.session.query(User).all()
-    print(f"get_meeting_weights: db_query_result: {db_query_result}")
-    # json_dump = json.dumps([obj.serialize() for obj in db_query_result])
     json_dump = [obj.serialize() for obj in db_query_result]
-    print(f"get_meeting_weights: json_dump is: {json_dump}")
-    # print(f"get_meeting_weights: json_dump type is: {type(json_dump)}")
-    # print(f"get_meeting_weights: json_dump content type is: {type(json_dump[0])}")
     employees = pd.DataFrame(json_dump)
-    print(f"get_meeting_weights: employees is: {employees}")
 
     employees["languages"] = employees["languages"].apply(lambda x: x.split(", "))
-    print(f"get_meeting_weights: employees.columns: {employees.columns}")
     employees = employees[["id", "manager_id", "days_since_start", "location", "languages", "email", "employee_id"]]
     employees = employees.merge(
         employees[["employee_id", "id"]], how="left", left_on="manager_id", right_on="employee_id", suffixes=("", "_manager")
     )
     employees = employees.set_index("id", drop=False)
-    print(f"get_meeting_weights: employees.columns after merge: {employees.columns}")
     max_tenure = max(employees["days_since_start"].astype(int))
 
     # yelp employee network graph created through reporting line
     G = nx.Graph()
-    print("get_meeting_weights: link from nodes:", list(zip(employees["id"], employees["id_manager"])))
     G.add_edges_from(list(zip(employees["id"], employees["id_manager"])))
-    print(f"get_meeting_weights: G nodes: {G.nodes}")
-    print(f"get_meeting_weights: G edges: {G.edges}")
     for user_pair in allowed_meetings:
         users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees.copy(), max_tenure=max_tenure)
         meeting_to_weight[user_pair] = users_distance_score
