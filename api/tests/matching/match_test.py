@@ -69,13 +69,53 @@ def test_generate_meetings_with_history(session, subscription):
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user1 = User(
+        id=1,
+        email="a@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="0",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="101",
+        location="UK, London",
+    )
     session.add(user1)
-    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    user2 = User(
+        id=2,
+        email="b@yelp.com",
+        meta_data={"department": "dept2"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="102",
+        location="CA, London",
+    )
     session.add(user2)
-    user3 = User(email="c@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user3 = User(
+        id=3,
+        email="c@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="",
+        days_since_start=100,
+        employee_id="103",
+        location="UK, London",
+    )
     session.add(user3)
-    user4 = User(email="d@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    user4 = User(
+        id=4,
+        email="d@yelp.com",
+        meta_data={"department": "dept2"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="en",
+        days_since_start=100,
+        employee_id="104",
+        location="US, SF",
+    )
     session.add(user4)
 
     user_list = [user1, user2, user3, user4]
@@ -124,7 +164,18 @@ def test_no_re_matches(session):
     users = []
     num_users = 20
     for i in range(0, num_users):
-        user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        # user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        user = User(
+            id={i},
+            email=f"{i}@yelp.com",
+            meta_data={"department": f"dept{i//2}"},
+            subscription_preferences=[user_pref],
+            manager_id="101",
+            languages="en",
+            days_since_start=100,
+            employee_id=f"{100+i}",
+            location="",
+        )
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
