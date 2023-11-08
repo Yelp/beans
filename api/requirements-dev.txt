@@ -45,6 +45,7 @@ packaging==23.2
     #   pyproject-api
     #   pytest
     #   tox
+pandas==1.5.3
 platformdirs==3.11.0
     # via
     #   tox

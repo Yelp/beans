@@ -1,10 +1,15 @@
 import itertools
+import json
+import os
 from datetime import datetime
 from datetime import timedelta
+from unittest import mock
 
+import pytest
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.matching.match import generate_meetings
+from yelp_beans.models import Employee
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -17,19 +22,62 @@ from yelp_beans.models import UserSubscriptionPreferences
 
 MEETING_COOLDOWN_WEEKS = 10
 
+base_dir = os.path.dirname(__file__)
+mock_json_location = os.path.join(base_dir, "mock_employee_data")
 
-def test_generate_meetings_same_department(session, subscription):
-    rule = Rule(name="department", value="")
+
+@pytest.fixture
+def mock_requests_get():
+    with mock.patch("requests.get", autospec=True) as mock_requests_get:
+        yield mock_requests_get
+
+
+class MockResponse:
+    def __init__(self):
+        self.status_code = 200
+        self.text = "3"
+
+    def json(self):
+        with open(os.path.join(mock_json_location, "general_mock.json")) as f:
+            result = json.load(f)
+        return result
+
+
+def test_generate_meetings_same_department(session, subscription, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
+    rule = Rule(name="cost_center_name", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
-    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
-    session.add(user1)
-    user2 = User(email="b@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
-    session.add(user2)
-    user_list = [user1, user2]
+    # user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # session.add(user1)
+    test_employee_1 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=123,
+        employee_id="id_1",
+        location="Earth",
+        manager_id="id_2",
+        pronoun="they",
+        work_email="1@yelp.com",
+        languages="test",
+    )
+    session.add(test_employee_1)
+    # user2 = User(email="2@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # session.add(user2)
+    test_employee_2 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=123,
+        employee_id="id_2",
+        location="Earth",
+        manager_id="id_3",
+        pronoun="they",
+        work_email="2@yelp.com",
+        languages="test",
+    )
+    session.add(test_employee_2)
+    user_list = [test_employee_1, test_employee_2]
     session.commit()
 
     _, specs = get_specs_from_subscription(subscription)
@@ -38,8 +86,9 @@ def test_generate_meetings_same_department(session, subscription):
     assert len(matches) == 0
 
 
-def test_generate_meetings_with_history(session, subscription):
-    rule = Rule(name="department", value="")
+def test_generate_meetings_with_history(session, subscription, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
+    rule = Rule(name="cost_center_name", value="")
     session.add(rule)
     subscription.dept_rules = [rule]
 
@@ -47,13 +96,54 @@ def test_generate_meetings_with_history(session, subscription):
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
 
-    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user1 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=123,
+        employee_id="id_1",
+        location="Earth",
+        manager_id="id_2",
+        pronoun="they",
+        work_email="1@yelp.com",
+        languages="test",
+    )
+    user2 = Employee(
+        cost_center_name="cost_center_2",
+        days_since_start=13,
+        employee_id="id_2",
+        location="Mars",
+        manager_id="id_4",
+        pronoun="they",
+        work_email="2@yelp.com",
+        languages="test",
+    )
+    user3 = Employee(
+        cost_center_name="cost_center_1",
+        days_since_start=143,
+        employee_id="id_3",
+        location="Earth",
+        manager_id="id_2",
+        pronoun="they",
+        work_email="3@yelp.com",
+        languages="test",
+    )
+    user4 = Employee(
+        cost_center_name="cost_center_2",
+        days_since_start=1,
+        employee_id="id_4",
+        location="Mercury",
+        manager_id="id_5",
+        pronoun="they",
+        work_email="4@yelp.com",
+        languages="test",
+    )
+
+    # user1 = User(email="1@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user1)
-    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    # user2 = User(email="2@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user2)
-    user3 = User(email="c@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # user3 = User(email="3@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
     session.add(user3)
-    user4 = User(email="d@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    # user4 = User(email="4@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
     session.add(user4)
 
     user_list = [user1, user2, user3, user4]
@@ -67,10 +157,10 @@ def test_generate_meetings_with_history(session, subscription):
 
     meeting_history = set(
         [
-            (user1.id, user2.id),
-            (user3.id, user4.id),
-            (user2.id, user3.id),
-            (user1.id, user4.id),
+            (user1.work_email, user2.work_email),
+            (user3.work_email, user4.work_email),
+            (user2.work_email, user3.work_email),
+            (user1.work_email, user4.work_email),
         ]
     )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
@@ -79,9 +169,9 @@ def test_generate_meetings_with_history(session, subscription):
 
     meeting_history = set(
         [
-            (user1.id, user2.id),
-            (user3.id, user4.id),
-            (user2.id, user3.id),
+            (user1.work_email, user2.work_email),
+            (user3.work_email, user4.work_email),
+            (user2.work_email, user3.work_email),
         ]
     )
     matches, unmatched = generate_meetings(user_list, specs[0], meeting_history)
@@ -89,7 +179,8 @@ def test_generate_meetings_with_history(session, subscription):
     assert len(unmatched) == 2
 
 
-def test_no_re_matches(session):
+def test_no_re_matches(session, mock_requests_get):
+    mock_requests_get.return_value = MockResponse()
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
     subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
@@ -103,17 +194,18 @@ def test_no_re_matches(session):
     num_users = 20
     for i in range(0, num_users):
         user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        # user = Employee(cost_center_name=f"cost_center_{i}", days_since_start=100+i, employee_id=f"id_{i}", location="Earth", manager_id="id_2", pronoun="they", work_email=f"{i}@yelp.com",languages="test",)
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)
         users.append(user)
     session.commit()
 
-    previous_meetings = {pair for pair in itertools.combinations([user.id for user in users], 2)}
-    previous_meetings = previous_meetings - {(users[0].id, users[1].id)}
+    previous_meetings = {pair for pair in itertools.combinations([user.email for user in users], 2)}
+    previous_meetings = previous_meetings - {(users[0].email, users[1].email)}
     matches, unmatched = generate_meetings(users, meeting_spec, previous_meetings)
     assert len(unmatched) == num_users - 2
-    assert [(match[0].id, match[1].id) for match in matches] == [(users[0].id, users[1].id)]
+    assert [(match[0].email, match[1].email) for match in matches] == [(users[0].email, users[1].email)]
 
 
 def test_generate_group_meeting(session):
@@ -130,6 +222,7 @@ def test_generate_group_meeting(session):
     num_users = 21
     for i in range(0, num_users):
         user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
+        # user = Employee(cost_center_name=f"cost_center_{i}", days_since_start=100+i, employee_id=f"id_{i}", location="Earth", manager_id="id_2", pronoun="they", work_email=f"{i}@yelp.com",languages="test",)
         session.add(user)
         mr = MeetingRequest(user=user, meeting_spec=meeting_spec)
         session.add(mr)

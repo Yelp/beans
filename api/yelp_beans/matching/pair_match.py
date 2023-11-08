@@ -4,6 +4,7 @@ import logging
 import networkx as nx
 
 from yelp_beans.logic.user import user_preference
+from yelp_beans.matching.match_utils import get_meeting_weights
 from yelp_beans.matching.match_utils import get_previous_meetings
 
 
@@ -15,17 +16,21 @@ def get_disallowed_meetings(users, prev_meeting_tuples, spec):
     # don't match users with previous meetings
     pairs = prev_meeting_tuples
 
-    userids = sorted([user.id for user in users])
-    id_to_user = {user.id: user for user in users}
+    userids = sorted([user.work_email for user in users])
+    id_to_user = {user.work_email: user for user in users}
     all_pairs = {pair for pair in itertools.combinations(userids, 2)}
 
+    # Debugging message
+    print(f"get_disallowed_meetings: users: {users}")
     for rule in spec.meeting_subscription.dept_rules:
         pairs = pairs.union({pair for pair in all_pairs if is_same(rule.name, pair, id_to_user)})
+        # print(f"get_disallowed_meetings: rule: {rule.name}")
+        # print(f"get_disallowed_meetings: pairs: {pairs}")
     return pairs
 
 
 def is_same(field, match, users):
-    return users[match[0]].meta_data[field] == users[match[1]].meta_data[field]
+    return getattr(users[match[0]], field) == getattr(users[match[1]], field)
 
 
 def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
@@ -38,11 +43,15 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     if prev_meeting_tuples is None:
         prev_meeting_tuples = get_previous_meetings(spec.meeting_subscription)
 
-    uid_to_users = {user.id: user for user in users}
+    uid_to_users = {user.work_email: user for user in users}
     user_ids = sorted(uid_to_users.keys())
+    # print(f"generate_pair_meetings: user: {users}")
+    # print(f"generate_pair_meetings: USER_IDs: {user_ids}")
 
     # Determine matches that should not happen
     disallowed_meeting_set = get_disallowed_meetings(users, prev_meeting_tuples, spec)
+    # print(f"generate_pair_meetings: disallowed_meeting_set:{disallowed_meeting_set}")
+    # print(f"generate_pair_meetings: user_ids:{user_ids}")
     graph_matches = construct_graph(user_ids, disallowed_meeting_set)
 
     # matching returns (1,4) and (4,1) this de-dupes
@@ -66,8 +75,8 @@ def generate_pair_meetings(users, spec, prev_meeting_tuples=None):
     ]
 
     logging.info(f"{len(unmatched)} employees unmatched")
-    logging.info([user.get_username() for user in unmatched])
-
+    logging.info([user.employee_id for user in unmatched])
+    # print(f"generate_pair_meetings, matches: {matches}, unmatches: {unmatched}")
     return matches, unmatched
 
 
@@ -78,15 +87,20 @@ def construct_graph(user_ids, disallowed_meetings):
     Yay graphs! Networkx will do all the work for us.
     """
 
-    # special weights that be put on the matching potential of each meeting,
-    # depending on heuristics for what makes a good/bad potential meeting.
-    meeting_to_weight = {}
-
     # This creates the graph and the maximal matching set is returned.
     # It does not return anyone who didn't get matched.
     meetings = []
-    possible_meetings = {meeting for meeting in itertools.combinations(user_ids, 2)}
-    allowed_meetings = possible_meetings - disallowed_meetings
+    possible_meetings = {tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)}
+    print(f"construct_graph, user_ids: {user_ids}")
+    print(f"construct_graph, disallowed_meetings: {disallowed_meetings}")
+    print(f"construct_graph, possible_meetings: {possible_meetings}")
+    allowed_meetings = possible_meetings - {tuple(sorted(a)) for a in disallowed_meetings}
+
+    print(f"construct_graph, allowed_meetings: {allowed_meetings}")
+
+    # special weights that be put on the matching potential of each meeting,
+    # depending on heuristics for what makes a good/bad potential meeting.
+    meeting_to_weight = get_meeting_weights(allowed_meetings)
 
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)

@@ -5,6 +5,7 @@ flask-api-utils
 Flask-SQLAlchemy
 httplib2
 networkx
+pandas
 psycopg2-binary
 pydantic
 pytz
