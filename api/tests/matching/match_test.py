@@ -166,7 +166,7 @@ def test_no_re_matches(session):
     for i in range(0, num_users):
         # user = User(email=f"{i}@yelp.com", meta_data={"department": f"dept{i}"}, subscription_preferences=[user_pref])
         user = User(
-            id={i},
+            id=i,
             email=f"{i}@yelp.com",
             meta_data={"department": f"dept{i//2}"},
             subscription_preferences=[user_pref],
