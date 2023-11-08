@@ -85,8 +85,15 @@ def construct_graph(user_ids, disallowed_meetings):
     # This creates the graph and the maximal matching set is returned.
     # It does not return anyone who didn't get matched.
     meetings = []
-    possible_meetings = {meeting for meeting in itertools.combinations(user_ids, 2)}
-    allowed_meetings = possible_meetings - disallowed_meetings
+    # possible_meetings = {meeting for meeting in itertools.combinations(user_ids, 2)}
+    # allowed_meetings = possible_meetings - disallowed_meetings
+    possible_meetings = {tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)}
+    print(f"construct_graph, user_ids: {user_ids}")
+    print(f"construct_graph, disallowed_meetings: {disallowed_meetings}")
+    print(f"construct_graph, possible_meetings: {possible_meetings}")
+    allowed_meetings = possible_meetings - {tuple(sorted(a)) for a in disallowed_meetings}
+
+    print(f"construct_graph, allowed_meetings: {allowed_meetings}")
 
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)
