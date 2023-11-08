@@ -23,6 +23,15 @@ class User(db.Model):
     terminated = db.Column(db.Boolean, nullable=False, default=False)
     subscription_preferences = db.relationship("UserSubscriptionPreferences")
 
+    # Additional fields for match algo
+    languages = db.Column(db.Text)
+    cost_center_name = db.Column(db.String())
+    days_since_start = db.Column(db.Integer)
+    employee_id = db.Column(db.String())
+    location = db.Column(db.String())
+    manager_id = db.Column(db.String())
+    pronoun = db.Column(db.String())
+
     def get_username(self):
         return self.email.split("@")[0]
 
