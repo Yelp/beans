@@ -4,6 +4,7 @@ import logging
 import networkx as nx
 
 from yelp_beans.logic.user import user_preference
+from yelp_beans.matching.match_utils import get_meeting_weights
 from yelp_beans.matching.match_utils import get_previous_meetings
 
 
@@ -94,7 +95,7 @@ def construct_graph(user_ids, disallowed_meetings):
     allowed_meetings = possible_meetings - {tuple(sorted(a)) for a in disallowed_meetings}
 
     print(f"construct_graph, allowed_meetings: {allowed_meetings}")
-
+    meeting_to_weight = get_meeting_weights(allowed_meetings)
     for meeting in allowed_meetings:
         weight = meeting_to_weight.get(meeting, 1.0)
         meetings.append((*meeting, {"weight": weight}))

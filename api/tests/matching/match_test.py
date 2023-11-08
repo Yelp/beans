@@ -25,9 +25,31 @@ def test_generate_meetings_same_department(session, subscription):
     preference = subscription.datetime[0]
     user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
     session.add(user_pref)
-    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user1 = User(
+        id=1,
+        email="a@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="0",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="101",
+        location="UK, London",
+    )
     session.add(user1)
-    user2 = User(email="b@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    # user2 = User(email="b@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
+    user2 = User(
+        id=2,
+        email="b@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="102",
+        location="CA, London",
+    )
     session.add(user2)
     user_list = [user1, user2]
     session.commit()
