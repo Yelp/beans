@@ -118,18 +118,10 @@ def get_pairwise_distance(
     note: we considered using education and work experience, but think it likely correlates with the first attribute
     """
     user_a, user_b = user_pair
-    print("(user_a,user_b)", user_a, user_b)
-    # print("get_pairwise_distance: employee_df:")
-    print("employee_df:", employee_df.to_string())
-    # print(f"get_pairwise_distance, employee_df.columns: {employee_df.columns}")
-    # employee_df.set_index("email", inplace=True) -- keeping the index as id
     user_a_attributes = dict(employee_df.loc[user_a])
     user_b_attributes = dict(employee_df.loc[user_b])
 
     distance = 0
-    # print("get_pairwise_distance: org_graph nodes")
-    # print(org_graph.nodes)
-    # org chart distance
     dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)
     dist_1 = dist_1 / 10  # approx. min-max scaled
     distance += dist_1
@@ -168,12 +160,6 @@ def get_meeting_weights(allowed_meetings):
     """
     meeting_to_weight = {}
 
-    # fetching employee information and create a pandas dataframe with it
-    # employees = pd.DataFrame(requests.get(
-    #     f'{CORP_API}/employees',
-    #     headers={'X-API-Key': CORP_API_TOKEN},
-    # ).json())
-
     # need to convert this to JSON to match the previous logic
     db_query_result = db.session.query(User).all()
     print(f"get_meeting_weights: db_query_result: {db_query_result}")
@@ -187,10 +173,7 @@ def get_meeting_weights(allowed_meetings):
 
     employees["languages"] = employees["languages"].apply(lambda x: x.split(", "))
     print(f"get_meeting_weights: employees.columns: {employees.columns}")
-    employees = employees[
-        # ["manager_id", "cost_center_name", "days_since_start", "location", "languages", "pronoun", "email", "employee_id"]
-        ["id", "manager_id", "days_since_start", "location", "languages", "email", "employee_id"]
-    ]
+    employees = employees[["id", "manager_id", "days_since_start", "location", "languages", "email", "employee_id"]]
     employees = employees.merge(
         employees[["employee_id", "id"]], how="left", left_on="manager_id", right_on="employee_id", suffixes=("", "_manager")
     )
