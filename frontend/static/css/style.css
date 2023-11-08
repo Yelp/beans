@@ -1,12 +1,19 @@
+:root {
+  --preferences-margin-left: 8.5%;
+  --preference-header-margin-left: -9.25%;
+}
+
 * {
   font-family: "Open Sans";
   font-size: 12pt;
 }
+
 input[type="radio"],
 input[type="checkbox"] {
   margin-left: 30px;
   margin-right: 12px;
 }
+
 .left30 {
   margin-left: 30px;
 }
@@ -38,8 +45,16 @@ input[type="checkbox"] {
   text-align: center;
 }
 
+.preferences-spinner {
+  margin-left: var(--preference-header-margin-left);
+}
+
 .preferences {
   text-align: center;
+}
+
+.preferences:not(:has(.no-subscriptions)) {
+  margin-left: var(--preferences-margin-left);
 }
 
 .profile-img {
@@ -57,4 +72,64 @@ input[type="checkbox"] {
 
 .subscription-time-zone-input {
   max-width: 50ch;
+}
+
+.preference-header {
+  margin-left: var(--preference-header-margin-left);
+  padding-bottom: 5px;
+
+  > h3 {
+    font-weight: bold;
+  }
+
+  > h6 {
+    color: darkgreen;
+  }
+}
+
+div:first-of-type > .preference-header:first-of-type {
+  padding-top: 25px;
+}
+
+.preference-options {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 12px;
+  width: 792px;
+  flex-direction: row;
+  padding-bottom: 40px;
+}
+
+.preference-options > fieldset {
+  border: 3px solid lightgrey;
+  border-radius: 12px;
+  padding: 10px;
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  justify-content: center;
+  height: 165px;
+  align-content: center;
+}
+
+.preference-options > fieldset > legend {
+  width: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.preference-options > fieldset > label {
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  max-height: 45px;
+  margin-bottom: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: left;
+  max-width: 200px;
 }

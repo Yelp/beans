@@ -8,6 +8,9 @@ const config = require("./lib/config");
 
 const app = express();
 
+// Initialize the state store
+app.locals.stateStore = new Map();
+
 const corsOptions = {
   origin: [`${config.get("PROJECT")}.appspot.com`, "localhost:5000"],
   allowedHeaders: ["Content-Type"],
@@ -30,8 +33,8 @@ app.use(session(sessionConfig));
 /* eslint-disable consistent-return */
 const authRequired = function authRequired(req, res, next) {
   if (!req.user) {
-    req.session.oauth2return = req.originalUrl;
-    return res.redirect("/auth/google");
+    const params = new URLSearchParams({ return: req.originalUrl });
+    return res.redirect(`/auth/google?${params.toString()}`);
   }
   next();
 };

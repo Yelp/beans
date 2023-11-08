@@ -31,13 +31,15 @@ class MeetingSubscription(db.Model):
     """The base template for a meeting type, it is comprised of
     weekly Meeting days and times that are recurring
     Schema:
-        - title:            name of the meeting
-        - datetime:         datetimes available for the meeting subscription
-        - location:         location of the meetings
-        - size:             size of the meetings
-        - user_list:        users requested/ have access to join subscription
-        - user_rules:       rules set for allowing people to see a subscription
-        - dept_rules:       rules set for matching people
+        - title:                    name of the meeting
+        - datetime:                 datetimes available for the meeting subscription
+        - location:                 location of the meetings
+        - size:                     size of the meetings
+        - user_list:                users requested/ have access to join subscription
+        - user_rules:               rules set for allowing people to see a subscription
+        - dept_rules:               rules set for matching people
+        - default_auto_opt_in:      represents default value for auto opt in to meeting requests for a given meeting subscription
+
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +50,7 @@ class MeetingSubscription(db.Model):
     location = db.Column(db.String())
     timezone = db.Column(db.String())
     rule_logic = db.Column(db.String())
+    default_auto_opt_in = db.Column(db.Boolean, nullable=False, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user_list = db.relationship("User")
     user_rules = db.relationship("Rule", foreign_keys="Rule.user_subscription_id")
@@ -71,6 +74,7 @@ class UserSubscriptionPreferences(db.Model):
     Schema:
         - subscription:               subscription the employee is subscribed to
         - preference:                 time the employee prefers to meet
+        - auto_opt_in:                represents whether auto opt in for meeting requests is enabled
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -80,6 +84,7 @@ class UserSubscriptionPreferences(db.Model):
     subscription = db.relationship("MeetingSubscription", backref=db.backref("user_subscription_preferences", uselist=False))
     preference_id = db.Column(db.Integer, db.ForeignKey("subscription_date_time.id"))
     preference = db.relationship("SubscriptionDateTime", backref="user_subscription_preferences")
+    auto_opt_in = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class SubscriptionDateTime(db.Model):

@@ -180,10 +180,7 @@ def _fake_user(session):
     user_list = []
     subscription = MeetingSubscription.query.first()
     for user in FAKE_USER:
-        preferences = UserSubscriptionPreferences(
-            preference=subscription.datetime[0],
-            subscription=subscription,
-        )
+        preferences = UserSubscriptionPreferences(preference=subscription.datetime[0], subscription=subscription, auto_opt_in=True)
         session.add(preferences)
         user_entity = User(
             first_name=user["first_name"],

@@ -25,8 +25,9 @@ def test_preferences_api_user_exists(app, database, fake_user):
             "rule_logic": None,
             "datetime": [
                 {"active": False, "date": "2017-01-20T19:00:00+00:00", "id": database.sub.datetime[1].id},
-                {"active": True, "date": "2017-01-20T23:00:00+00:00", "id": database.sub.datetime[0].id},
+                {"active": True, "date": "2017-01-20T23:00:00+00:00", "id": database.sub.datetime[0].id, "auto_opt_in": True},
             ],
+            "default_auto_opt_in": False,
         }
     ]
 
@@ -40,7 +41,7 @@ def test_preference_api_post(monkeypatch, app, database, fake_user):
         method="POST",
         data=json.dumps(
             {
-                database.sub.datetime[0].id: False,
+                database.sub.datetime[0].id: {"active": False},
                 "email": fake_user.email,
             }
         ),

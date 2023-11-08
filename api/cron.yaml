@@ -19,6 +19,12 @@ cron:
     retry_parameters:
       min_backoff_seconds: 30
 
+  - description: weekly meeting requests generation for preferences with auto opt-in enabled
+    url: /tasks/generate_meeting_requests_for_auto_opt_in_preferences
+    schedule: every monday 7:00
+    timezone: America/Los_Angeles
+    target: api
+
   - description: weekly opt-in email
     url: /tasks/email_users_for_weekly_opt_in
     schedule: every monday 9:00

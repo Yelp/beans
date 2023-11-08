@@ -83,13 +83,14 @@ class RuleModel(BaseModel):
 
 class NewSubscription(BaseModel):
     location: str = "Online"
-    name: str = Field(min_lenth=1)
+    name: str = Field(min_length=1)
     office: str = "Remote"
     rule_logic: Literal["any", "all", None] = None
     rules: list[RuleModel] = Field(default_factory=list)
     size: int = Field(2, ge=2)
     time_slots: list[TimeSlot] = Field(min_length=1)
     timezone: str = "America/Los_Angeles"
+    default_auto_opt_in: bool = False
 
     @field_validator("timezone")
     @classmethod
@@ -116,6 +117,7 @@ class Subscription(NewSubscription):
             size=model.size,
             time_slots=time_slots,
             timezone=model.timezone,
+            default_auto_opt_in=model.default_auto_opt_in,
         )
 
 
@@ -153,6 +155,7 @@ def create_subscription():
         # Can only set this if there are rules
         rule_logic=data.rule_logic if rules else None,
         user_rules=rules,
+        default_auto_opt_in=data.default_auto_opt_in,
     )
 
     db.session.add(subscription)
@@ -199,6 +202,7 @@ def update_subscription(sub_id: int):
     sub_model.office = data.office
     sub_model.location = data.location
     sub_model.timezone = data.timezone
+    sub_model.default_auto_opt_in = data.default_auto_opt_in
     sub_model.rule_logic = data.rule_logic if data.rules else None
 
     existing_rules = {RuleModel.from_sqlalchemy(r): r for r in sub_model.user_rules}

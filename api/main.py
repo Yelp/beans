@@ -1,5 +1,3 @@
-import os
-
 from factory import create_app
 
 app = create_app()
@@ -16,11 +14,14 @@ def teardown_request(*args, **kwargs):
     db.session.remove()
 
 
-if "Development" in os.environ.get("SERVER_SOFTWARE", ""):
+@app.cli.command("create-dev-data")
+def create_dev_data_entrypoint():
+    """Add development data to the configured database"""
     from database import db
     from tests.conftest import create_dev_data
 
     create_dev_data(db.session)
+
 
 if __name__ == "__main__":
     app.run()
