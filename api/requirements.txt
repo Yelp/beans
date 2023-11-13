@@ -55,7 +55,7 @@ networkx==3.1
     # via -r requirements-minimal.txt
 psycopg2-binary==2.9.9
     # via -r requirements-minimal.txt
-pydantic==2.4.2
+pydantic==2.5.0
     # via -r requirements-minimal.txt
 pydantic-core==2.10.1
     # via pydantic
