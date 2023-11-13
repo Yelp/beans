@@ -29,7 +29,7 @@
     "@babel/core": "^7.23.2",
     "@babel/eslint-parser": "^7.22.15",
     "@babel/preset-env": "^7.23.2",
-    "@babel/preset-react": "^7.22.15",
+    "@babel/preset-react": "^7.23.3",
     "@webpack-cli/serve": "^2.0.5",
     "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^29.7.0",
