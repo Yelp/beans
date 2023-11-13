@@ -89,7 +89,7 @@ typing-extensions==4.8.0
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
-urllib3==2.0.7
+urllib3==2.1.0
     # via
     #   -r requirements-minimal.txt
     #   botocore
