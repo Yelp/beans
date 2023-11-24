@@ -130,11 +130,11 @@ def get_pairwise_distance(
     try:
         user_a_city, user_a_country = user_a_attributes["location"].split(", ")
     except ValueError:
-        user_a_city, user_a_country = "unkown", user_a_attributes["location"]
+        user_a_city, user_a_country = "unknown", user_a_attributes["location"]
     try:
         user_b_city, user_b_country = user_b_attributes["location"].split(", ")
     except ValueError:
-        user_b_city, user_b_country = "unkown", user_b_attributes["location"]
+        user_b_city, user_b_country = "unknown", user_b_attributes["location"]
     country_dist = 0 if user_a_country == user_b_country else 1
     city_dist = 0 if user_a_city == user_b_city else 1
     dist_2 = country_dist + city_dist
