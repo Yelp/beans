@@ -30,7 +30,7 @@ filelock==3.13.1
     #   virtualenv
 identify==2.5.31
     # via pre-commit
-idna==3.4
+idna==3.6
     # via
     #   -c requirements.txt
     #   requests

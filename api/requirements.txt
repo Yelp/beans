@@ -35,7 +35,7 @@ greenlet==3.0.1
     # via sqlalchemy
 httplib2==0.22.0
     # via -r requirements-minimal.txt
-idna==3.4
+idna==3.6
     # via requests
 importlib-metadata==6.8.0
     # via flask
