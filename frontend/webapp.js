@@ -61,6 +61,10 @@ app.get("/meeting_request/:id", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
+app.get("/subscribe/:id", (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
+
 app.get("/admin/subscriptions", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });

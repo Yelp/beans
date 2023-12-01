@@ -1,12 +1,17 @@
 from datetime import datetime
 from datetime import timedelta
+from typing import Any
 
 from database import db
 from pytz import timezone
 from pytz import utc
+from sqlalchemy import func
 
 from yelp_beans.models import MeetingSpec
 from yelp_beans.models import MeetingSubscription
+from yelp_beans.models import Rule
+from yelp_beans.models import User
+from yelp_beans.models import UserSubscriptionPreferences
 
 
 def filter_subscriptions_by_user_data(subscriptions, user):
@@ -20,7 +25,9 @@ def filter_subscriptions_by_user_data(subscriptions, user):
     return approved_subscriptions
 
 
-def apply_rules(user, subscription, subscription_rules):
+def apply_rules(
+    user: User, subscription: MeetingSubscription | dict[str, Any], subscription_rules: list[Rule]
+) -> MeetingSubscription | dict[str, Any] | None:
     """
     Apply logic to rules set for each subscription.  In a way this authorizes who can
     see the subscription.  Rules can be applied in two ways:  All rules must apply and
@@ -133,3 +140,17 @@ def store_specs_from_subscription(subscription, week_start, specs):
     db.session.add_all(specs)
     db.session.commit()
     return specs
+
+
+def get_subscriber_counts(subscription_id: int) -> dict[int, int]:
+    counts_query = (
+        db.select(UserSubscriptionPreferences.preference_id, func.count("*"))
+        .filter(UserSubscriptionPreferences.subscription_id == subscription_id)
+        .group_by(UserSubscriptionPreferences.preference_id)
+    )
+    counts = db.session.execute(counts_query).all()
+    return dict(counts)
+
+
+def get_subscription(subscription_id: int) -> MeetingSubscription:
+    return MeetingSubscription.query.filter(MeetingSubscription.id == subscription_id).one()
