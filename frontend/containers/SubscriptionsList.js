@@ -1,26 +1,10 @@
 import axios from "axios";
 import React from "react";
 
-const formatWeekday = (weekday) =>
-  weekday.charAt(0).toUpperCase() + weekday.substr(1);
-
-const formatTime = (hour, minute) => {
-  const date = new Date();
-  date.setHours(hour, minute);
-  return new Intl.DateTimeFormat(navigator.language, {
-    hour: "numeric",
-    minute: "numeric",
-  }).format(date);
-};
+import { formatTimeSlot } from "../lib/datetime";
 
 const formatTimeSlots = (timeSlots) => {
-  const slotStrings = timeSlots.map(
-    (timeSlot) =>
-      `${formatWeekday(timeSlot.day)} ${formatTime(
-        timeSlot.hour,
-        timeSlot.minute,
-      )}`,
-  );
+  const slotStrings = timeSlots.map(formatTimeSlot);
   return slotStrings.join(", ");
 };
 
