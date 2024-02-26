@@ -1,4 +1,4 @@
 click==8.1.7
-pip==23.3.1
-pip-tools==7.3.0
+pip==24.0
+pip-tools==7.4.0
 wheel==0.42.0
