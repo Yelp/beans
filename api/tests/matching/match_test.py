@@ -5,6 +5,8 @@ from datetime import timedelta
 from yelp_beans.logic.subscription import get_specs_from_subscription
 from yelp_beans.logic.subscription import store_specs_from_subscription
 from yelp_beans.matching.match import generate_meetings
+from yelp_beans.matching.match_utils import get_meeting_weights
+from yelp_beans.matching.pair_match import get_disallowed_meetings
 from yelp_beans.models import Meeting
 from yelp_beans.models import MeetingParticipant
 from yelp_beans.models import MeetingRequest
@@ -306,3 +308,90 @@ def test_previous_meeting_penalty(session):
         assert len(unmatched) == 2
         for matched_group in matches:
             assert not (users[0] in matched_group and users[1] in matched_group)
+
+
+def test_pairwise_distance(session, subscription):
+    preference = subscription.datetime[0]
+    user_pref = UserSubscriptionPreferences(preference=preference, subscription=subscription)
+    session.add(user_pref)
+
+    user1 = User(
+        id=1,
+        email="a@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="0",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="101",
+        location="UK, London",
+    )
+    session.add(user1)
+    user2 = User(
+        id=2,
+        email="b@yelp.com",
+        meta_data={"department": "dept2"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="102",
+        location="CA, London",
+    )
+    session.add(user2)
+    user3 = User(
+        id=3,
+        email="c@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="",
+        days_since_start=100,
+        employee_id="103",
+        location="UK, London",
+    )
+    session.add(user3)
+    user4 = User(
+        id=4,
+        email="d@yelp.com",
+        meta_data={"department": "dept2"},
+        subscription_preferences=[user_pref],
+        manager_id="102",
+        languages="en",
+        days_since_start=100,
+        employee_id="104",
+        location="US, SF",
+    )
+    session.add(user4)
+
+    user_list = [user1, user2, user3, user4]
+    user_ids = [user.id for user in user_list]
+    session.commit()
+
+    # WITHOUT considering disallowed meetings and rules
+    possible_meetings = {tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)}
+    allowed_meetings = possible_meetings
+    get_meeting_weights(allowed_meetings)
+
+    # assert meeting_to_weight[(1,2)] == ?
+    # assert meeting_to_weight[(2,3)] == ?
+    # assert meeting_to_weight[(3,4)] == ?
+
+    # considering disallowed meetings and rules
+    meeting_history = set(
+        [
+            (user1.id, user2.id),
+            (user3.id, user4.id),
+            (user2.id, user3.id),
+        ]
+    )
+    rule = Rule(name="department", value="")
+    session.add(rule)
+    subscription.dept_rules = [rule]
+    _, specs = get_specs_from_subscription(subscription)
+    possible_meetings = {tuple(sorted(meeting)) for meeting in itertools.combinations(user_ids, 2)}
+    disallowed_meetings = get_disallowed_meetings(user_list, meeting_history, specs[0])
+    allowed_meetings = possible_meetings - {tuple(sorted(a)) for a in disallowed_meetings}
+    get_meeting_weights(allowed_meetings)
+
+    # assert meeting_to_weight[(1,4)] == ?  # only (user1, user4) could be paired

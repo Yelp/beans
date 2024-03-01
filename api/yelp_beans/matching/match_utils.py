@@ -106,6 +106,7 @@ def get_pairwise_distance(
     max_tenure=1000,
 ):
     """
+    TODO@ichenkao: define input and output
     get the distance between two users.
     The returned distance score is a linear combination of the multiple user attributes' distnace (normalized).
     The importance of each attribute is considered equal.
