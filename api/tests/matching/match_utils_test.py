@@ -28,8 +28,26 @@ def test_generate_save_meetings(session, subscription):
     pref_1 = SubscriptionDateTime(datetime=datetime.now() - timedelta(weeks=MEETING_COOLDOWN_WEEKS - 1))
     subscription = MeetingSubscription(title="all engineering weekly", datetime=[pref_1])
     user_pref = UserSubscriptionPreferences(preference=pref_1, subscription=subscription)
-    user1 = User(email="a@yelp.com", meta_data={"department": "dept"}, subscription_preferences=[user_pref])
-    user2 = User(email="b@yelp.com", meta_data={"department": "dept2"}, subscription_preferences=[user_pref])
+    user1 = User(
+        email="a@yelp.com",
+        meta_data={"department": "dept"},
+        subscription_preferences=[user_pref],
+        manager_id="0",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="101",
+        location="UK, London",
+    )
+    user2 = User(
+        email="b@yelp.com",
+        meta_data={"department": "dept2"},
+        subscription_preferences=[user_pref],
+        manager_id="101",
+        languages="en, fr",
+        days_since_start=100,
+        employee_id="102",
+        location="CA, London",
+    )
     meeting_spec = MeetingSpec(meeting_subscription=subscription, datetime=pref_1.datetime)
     mr1 = MeetingRequest(user=user1, meeting_spec=meeting_spec)
     mr2 = MeetingRequest(user=user2, meeting_spec=meeting_spec)
