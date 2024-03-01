@@ -1,4 +1,6 @@
 import logging
+from typing import NotRequired
+from typing import TypedDict
 
 from database import db
 
@@ -182,7 +184,12 @@ def remove_preferences(user, updated_preferences, subscription_id):
     return removed
 
 
-def add_preferences(user, updated_preferences, subscription_id):
+class PreferenceOptions(TypedDict):
+    active: NotRequired[bool]
+    auto_opt_in: NotRequired[bool]
+
+
+def add_preferences(user: User, updated_preferences: dict[int, PreferenceOptions], subscription_id: int) -> set[int]:
     """
     Parameters
     ----------
