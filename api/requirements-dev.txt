@@ -69,7 +69,7 @@ requests==2.31.0
     # via
     #   -c requirements.txt
     #   requests-mock
-requests-mock==1.11.0
+requests-mock==1.12.1
     # via -r requirements-dev-minimal.txt
 requirements-tools==2.1.0
     # via -r requirements-dev-minimal.txt
