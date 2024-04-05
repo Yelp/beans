@@ -268,3 +268,72 @@ def test_subscribe_api_post_user_pick_popular(client, session):
 
     new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
     assert new_preference.preference == sub_time_2
+
+
+@pytest.mark.parametrize("auto_opt_in", (True, False))
+def test_subscribe_api_post_create_auto_opt_in_specified(client, session, auto_opt_in):
+    sub_time = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    subscription = MeetingSubscription(
+        timezone="America/Los_Angeles",
+        datetime=[sub_time],
+        title="Test",
+        size=2,
+        office="tester",
+        location="test place",
+        user_rules=[],
+        default_auto_opt_in=True,
+    )
+    session.add(subscription)
+
+    user = User(
+        first_name="tester",
+        last_name="user",
+        email="darwin@yelp.com",
+        meta_data={"email": "darwin@yelp.com"},
+        subscription_preferences=[],
+    )
+    session.add(user)
+    session.commit()
+    resp = client.post(f"/v1/user/preferences/subscribe/{subscription.id}", json={"email": user.email, "auto_opt_in": auto_opt_in})
+    assert resp.status_code == 200
+
+    new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
+    assert new_preference.auto_opt_in == auto_opt_in
+
+
+@pytest.mark.parametrize("auto_opt_in", (True, False))
+def test_subscribe_api_post_update_subscription(client, session, auto_opt_in):
+    sub_time = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    subscription = MeetingSubscription(
+        timezone="America/Los_Angeles",
+        datetime=[sub_time],
+        title="Test",
+        size=2,
+        office="tester",
+        location="test place",
+        user_rules=[],
+        default_auto_opt_in=True,
+    )
+    session.add(subscription)
+
+    user = User(
+        first_name="tester",
+        last_name="user",
+        email="darwin@yelp.com",
+        meta_data={"email": "darwin@yelp.com"},
+        subscription_preferences=[],
+    )
+    session.add(user)
+
+    preference_1 = UserSubscriptionPreferences(
+        subscription=subscription, preference=sub_time, auto_opt_in=not auto_opt_in, user_id=user.id
+    )
+    session.add(preference_1)
+
+    session.commit()
+    resp = client.post(f"/v1/user/preferences/subscribe/{subscription.id}", json={"email": user.email, "auto_opt_in": auto_opt_in})
+    assert resp.status_code == 200
+
+    new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
+
+    assert new_preference.auto_opt_in == auto_opt_in

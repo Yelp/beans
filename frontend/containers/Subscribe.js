@@ -9,6 +9,14 @@ const getSubscriptionId = () => {
   return path[path.length - 1];
 };
 
+const getAutoOptIn = () => {
+  const autoOptIn = window.location.search.get("auto_opt_in");
+  if (autoOptIn == null) {
+    return null;
+  }
+  return ["1", "t", "true", "y", "yes"].contains(autoOptIn);
+};
+
 function SubscribedMessage({ subscription, timeSlot, newPreference }) {
   let msg = "have been";
   if (!newPreference) {
@@ -67,6 +75,7 @@ function Subscribe() {
         axios
           .post(`/v1/user/preferences/subscribe/${getSubscriptionId()}`, {
             email: resEmail.data.email,
+            auto_opt_in: getAutoOptIn(),
           })
           .then((resSubscribe) => {
             setSubscribedSubscription(resSubscribe.data);
