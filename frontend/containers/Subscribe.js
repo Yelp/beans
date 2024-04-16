@@ -10,7 +10,8 @@ const getSubscriptionId = () => {
 };
 
 const getAutoOptIn = () => {
-  const autoOptIn = window.location.search.get("auto_opt_in");
+  const searchParams = new URLSearchParams(window.location.search);
+  const autoOptIn = searchParams.get("auto_opt_in");
   if (autoOptIn == null) {
     return null;
   }
