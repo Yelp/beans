@@ -10,7 +10,8 @@ const getSubscriptionId = () => {
 };
 
 const getAutoOptIn = () => {
-  const autoOptIn = window.location.search.get("auto_opt_in");
+  const searchParams = new URLSearchParams(window.location.search);
+  const autoOptIn = searchParams.get("auto_opt_in");
   if (autoOptIn == null) {
     return null;
   }
@@ -98,7 +99,7 @@ function Subscribe() {
 
   return (
     <div className="container mt-2 text-center">
-      {error && <ErrorMessage errors={error} />}
+      {error && <ErrorMessage error={error} />}
       {subscribedSubscription && (
         <SubscribedMessage
           subscription={subscribedSubscription.subscription}
