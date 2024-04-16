@@ -98,7 +98,7 @@ function Subscribe() {
 
   return (
     <div className="container mt-2 text-center">
-      {error && <ErrorMessage errors={error} />}
+      {error && <ErrorMessage error={error} />}
       {subscribedSubscription && (
         <SubscribedMessage
           subscription={subscribedSubscription.subscription}
