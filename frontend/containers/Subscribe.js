@@ -15,7 +15,7 @@ const getAutoOptIn = () => {
   if (autoOptIn == null) {
     return null;
   }
-  return ["1", "t", "true", "y", "yes"].contains(autoOptIn);
+  return ["1", "t", "true", "y", "yes"].includes(autoOptIn);
 };
 
 function SubscribedMessage({ subscription, timeSlot, newPreference }) {
