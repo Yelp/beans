@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from datetime import timedelta
 
+import networkx as nx
+import pandas as pd
 from database import db
 
 from yelp_beans.logic.config import get_config
@@ -86,3 +88,97 @@ def get_previous_meetings(subscription, cooldown=None):
     disallowed_meetings = {tuple([meeting.id for meeting in meeting]) for meeting in disallowed_meetings}
 
     return disallowed_meetings
+
+
+def jaccard(list1, list2):
+    intersection = len(list(set(list1).intersection(list2)))
+    if intersection == 0:
+        return 1
+    else:
+        union = (len(list1) + len(list2)) - intersection
+        return float(intersection) / union
+
+
+def get_pairwise_distance(
+    user_pair,
+    org_graph,
+    employee_df,
+    max_tenure=1000,
+):
+    """
+    TODO@ichenkao: define input and output
+    get the distance between two users.
+    The returned distance score is a linear combination of the multiple user attributes' distnace (normalized).
+    The importance of each attribute is considered equal.
+    User attribute considered:
+    1. team/function: distance in the org chart
+    2. location - country, city
+    3. tenure at Yelp
+    4. language
+
+    note: we considered using education and work experience, but think it likely correlates with the first attribute
+    """
+    user_a, user_b = user_pair
+    user_a_attributes = dict(employee_df.loc[user_a])
+    user_b_attributes = dict(employee_df.loc[user_b])
+
+    distance = 0
+    dist_1 = nx.shortest_path_length(org_graph, user_a, user_b)
+    dist_1 = dist_1 / 10  # approx. min-max scaled
+    distance += dist_1
+
+    # location
+    try:
+        user_a_city, user_a_country = user_a_attributes["location"].split(", ")
+    except ValueError:
+        user_a_city, user_a_country = "unknown", user_a_attributes["location"]
+    try:
+        user_b_city, user_b_country = user_b_attributes["location"].split(", ")
+    except ValueError:
+        user_b_city, user_b_country = "unknown", user_b_attributes["location"]
+    country_dist = 0 if user_a_country == user_b_country else 1
+    city_dist = 0 if user_a_city == user_b_city else 1
+    dist_2 = country_dist + city_dist
+    dist_2 = dist_2 / 2  # min-max scaled
+    distance += dist_2
+
+    # tenure
+    dist_3 = abs(int(user_a_attributes["days_since_start"]) - int(user_b_attributes["days_since_start"]))
+    dist_3 = dist_3 / max_tenure
+    distance += dist_3
+
+    # language
+    lang_similarity = jaccard(user_a_attributes["languages"], user_b_attributes["languages"])
+    dist_4 = 1 - lang_similarity
+    distance += dist_4
+
+    return distance
+
+
+def get_meeting_weights(allowed_meetings):
+    """
+    generate distance score for each user pairs.
+    """
+    meeting_to_weight = {}
+
+    # need to convert this to JSON to match the previous logic
+    db_query_result = db.session.query(User).all()
+    json_dump = [obj.serialize() for obj in db_query_result]
+    employees = pd.DataFrame(json_dump)
+
+    employees["languages"] = employees["languages"].apply(lambda x: x.split(", "))
+    employees = employees[["id", "manager_id", "days_since_start", "location", "languages", "email", "employee_id"]]
+    employees = employees.merge(
+        employees[["employee_id", "id"]], how="left", left_on="manager_id", right_on="employee_id", suffixes=("", "_manager")
+    )
+    employees = employees.set_index("id", drop=False)
+    max_tenure = max(employees["days_since_start"].astype(int))
+
+    # yelp employee network graph created through reporting line
+    G = nx.Graph()
+    G.add_edges_from(list(zip(employees["id"], employees["id_manager"])))
+    for user_pair in allowed_meetings:
+        users_distance_score = get_pairwise_distance(user_pair, org_graph=G, employee_df=employees.copy(), max_tenure=max_tenure)
+        meeting_to_weight[user_pair] = users_distance_score
+
+    return meeting_to_weight

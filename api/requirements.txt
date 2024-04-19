@@ -53,6 +53,7 @@ markupsafe==2.1.5
     #   werkzeug
 networkx==3.2.1
     # via -r requirements-minimal.txt
+pandas==1.5.3
 psycopg2-binary==2.9.9
     # via -r requirements-minimal.txt
 pydantic==2.6.4

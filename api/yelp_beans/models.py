@@ -23,8 +23,31 @@ class User(db.Model):
     terminated = db.Column(db.Boolean, nullable=False, default=False)
     subscription_preferences = db.relationship("UserSubscriptionPreferences")
 
+    # Additional fields for match algo
+    languages = db.Column(db.Text)
+    days_since_start = db.Column(db.Integer)
+    employee_id = db.Column(db.String())
+    location = db.Column(db.String())
+    manager_id = db.Column(db.String())
+
     def get_username(self):
         return self.email.split("@")[0]
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "photo_url": self.photo_url,
+            "meta_data": self.meta_data,
+            "terminated": self.terminated,
+            "languages": self.languages,
+            "days_since_start": self.days_since_start,
+            "employee_id": self.employee_id,
+            "location": self.location,
+            "manager_id": self.manager_id,
+        }
 
 
 class MeetingSubscription(db.Model):
