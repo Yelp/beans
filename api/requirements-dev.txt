@@ -20,17 +20,17 @@ charset-normalizer==3.3.2
     #   requests
 colorama==0.4.6
     # via tox
-coverage==7.4.4
+coverage==7.5.0
     # via -r requirements-dev-minimal.txt
 distlib==0.3.8
     # via virtualenv
-filelock==3.13.3
+filelock==3.14.0
     # via
     #   tox
     #   virtualenv
-identify==2.5.35
+identify==2.5.36
     # via pre-commit
-idna==3.6
+idna==3.7
     # via
     #   -c requirements.txt
     #   requests
@@ -45,11 +45,11 @@ packaging==24.0
     #   pyproject-api
     #   pytest
     #   tox
-platformdirs==4.2.0
+platformdirs==4.2.1
     # via
     #   tox
     #   virtualenv
-pluggy==1.4.0
+pluggy==1.5.0
     # via
     #   pytest
     #   tox
@@ -57,7 +57,7 @@ pre-commit==3.7.0
     # via -r requirements-dev-minimal.txt
 pyproject-api==1.6.1
     # via tox
-pytest==8.1.1
+pytest==8.2.0
     # via
     #   -r requirements-dev-minimal.txt
     #   requirements-tools
@@ -77,13 +77,13 @@ six==1.16.0
     # via
     #   -c requirements.txt
     #   requests-mock
-tox==4.14.2
+tox==4.15.0
     # via -r requirements-dev-minimal.txt
 urllib3==2.2.1
     # via
     #   -c requirements.txt
     #   requests
-virtualenv==20.25.1
+virtualenv==20.26.1
     # via
     #   pre-commit
     #   requirements-tools
