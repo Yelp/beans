@@ -6,7 +6,7 @@
     "axios": "^1.7.3",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-session": "^1.18.0",
     "http-proxy-middleware": "^3.0.0",
     "moment-timezone": "^0.5.45",
