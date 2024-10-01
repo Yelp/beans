@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev-minimal.txt
 #
-cachetools==5.4.0
+cachetools==5.5.0
     # via tox
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c requirements.txt
     #   requests
@@ -20,17 +20,17 @@ charset-normalizer==3.3.2
     #   requests
 colorama==0.4.6
     # via tox
-coverage==7.6.0
+coverage==7.6.1
     # via -r requirements-dev-minimal.txt
 distlib==0.3.8
     # via virtualenv
-filelock==3.15.4
+filelock==3.16.1
     # via
     #   tox
     #   virtualenv
-identify==2.6.0
+identify==2.6.1
     # via pre-commit
-idna==3.7
+idna==3.10
     # via
     #   -c requirements.txt
     #   requests
@@ -45,7 +45,7 @@ packaging==24.1
     #   pyproject-api
     #   pytest
     #   tox
-platformdirs==4.2.2
+platformdirs==4.3.6
     # via
     #   tox
     #   virtualenv
@@ -55,13 +55,13 @@ pluggy==1.5.0
     #   tox
 pre-commit==3.8.0
     # via -r requirements-dev-minimal.txt
-pyproject-api==1.7.1
+pyproject-api==1.8.0
     # via tox
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   -r requirements-dev-minimal.txt
     #   requirements-tools
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -c requirements.txt
     #   pre-commit
@@ -77,13 +77,13 @@ six==1.16.0
     # via
     #   -c requirements.txt
     #   requests-mock
-tox==4.16.0
+tox==4.21.0
     # via -r requirements-dev-minimal.txt
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -c requirements.txt
     #   requests
-virtualenv==20.26.3
+virtualenv==20.26.6
     # via
     #   pre-commit
     #   requirements-tools
