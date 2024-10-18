@@ -65,6 +65,7 @@ def subscribe_api_post(subscription_id: int) -> dict[str, Any]:
     data = request.json
     user = get_user(data.get("email"))
     auto_opt_in: bool | None = data.get("auto_opt_in")
+    time_slot_data: str | None = data.get("time_slot")
     if not user:
         resp = jsonify({"msg": f"A user doesn't exist with the email of \"{data.get('email')}\""})
         resp.status_code = 400
@@ -77,12 +78,28 @@ def subscribe_api_post(subscription_id: int) -> dict[str, Any]:
         resp.status_code = 403
         return resp
 
-    datetime_to_subscriber_counts = get_subscriber_counts(subscription_id)
-    if datetime_to_subscriber_counts:
-        best_datetime_id, _ = max(datetime_to_subscriber_counts.items(), key=lambda row: row[1])
+    if time_slot_data is None:
+        datetime_to_subscriber_counts = get_subscriber_counts(subscription_id)
+        if datetime_to_subscriber_counts:
+            datetime_id, _ = max(datetime_to_subscriber_counts.items(), key=lambda row: row[1])
+        else:
+            # No most popular time slot, so just pick the first one
+            datetime_id = subscription.datetime[0].id
     else:
-        # No most popular time slot, so just pick the first one
-        best_datetime_id = subscription.datetime[0].id
+        datetime_id = None
+        time_slot = TimeSlot.parse_obj(time_slot_data)
+        for sub_datetime in subscription.datetime:
+            sub_time_slot = TimeSlot.from_sqlalchemy(sub_datetime, subscription.timezone)
+            if sub_time_slot == time_slot:
+                datetime_id = sub_datetime.id
+                break
+
+        if datetime_id is None:
+            resp = jsonify({"msg": f"Unable to find subscription datetime from time slot {time_slot}"})
+            resp.status_code = 400
+            return resp
+
+    assert datetime_id is not None, "We shouldn't get to this point without picking a datetime"
 
     existing_matching_prefs = [pref for pref in user.subscription_preferences if pref.subscription_id == subscription_id]
 
@@ -95,11 +112,11 @@ def subscribe_api_post(subscription_id: int) -> dict[str, Any]:
         preference = PreferenceOptions(active=True)
         if auto_opt_in is not None:
             preference["auto_opt_in"] = auto_opt_in
-        add_preferences(user, {best_datetime_id: preference}, subscription_id)
+        add_preferences(user, {datetime_id: preference}, subscription_id)
         new_preference = True
 
     # get_subscriber_counts return this datetime id, so it should always exist in subscription.datetime
-    datetime = next(rule for rule in subscription.datetime if rule.id == best_datetime_id)
+    datetime = next(rule for rule in subscription.datetime if rule.id == datetime_id)
     return {
         "subscription": Subscription.from_sqlalchemy(subscription).model_dump(mode="json"),
         "time_slot": TimeSlot.from_sqlalchemy(datetime, subscription.timezone).model_dump(mode="json"),

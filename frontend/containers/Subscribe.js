@@ -9,13 +9,28 @@ const getSubscriptionId = () => {
   return path[path.length - 1];
 };
 
-const getAutoOptIn = () => {
-  const searchParams = new URLSearchParams(window.location.search);
+const getAutoOptIn = (searchParams) => {
   const autoOptIn = searchParams.get("auto_opt_in");
   if (autoOptIn == null) {
     return null;
   }
   return ["1", "t", "true", "y", "yes"].includes(autoOptIn);
+};
+
+const getTimeSlot = (searchParams) => {
+  const day = searchParams.get("day");
+  const hour = searchParams.get("hour");
+  const minute = searchParams.get("minute");
+
+  if (day == null || hour == null || minute == null) {
+    return null;
+  }
+
+  return {
+    day,
+    hour,
+    minute,
+  };
 };
 
 function SubscribedMessage({ subscription, timeSlot, newPreference }) {
@@ -73,10 +88,12 @@ function Subscribe() {
     axios
       .get("/email")
       .then((resEmail) => {
+        const searchParams = new URLSearchParams(window.location.search);
         axios
           .post(`/v1/user/preferences/subscribe/${getSubscriptionId()}`, {
             email: resEmail.data.email,
-            auto_opt_in: getAutoOptIn(),
+            auto_opt_in: getAutoOptIn(searchParams),
+            time_slot: getTimeSlot(searchParams),
           })
           .then((resSubscribe) => {
             setSubscribedSubscription(resSubscribe.data);

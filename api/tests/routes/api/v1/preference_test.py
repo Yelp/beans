@@ -10,6 +10,7 @@ from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.routes.api.v1 import preferences
 from yelp_beans.routes.api.v1.preferences import preferences_api
 from yelp_beans.routes.api.v1.preferences import preferences_api_post
+from yelp_beans.routes.api.v1.types import TimeSlot
 
 
 def test_preferences_api_no_user(app, session):
@@ -268,6 +269,49 @@ def test_subscribe_api_post_user_pick_popular(client, session):
 
     new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
     assert new_preference.preference == sub_time_2
+
+
+def test_subscribe_api_post_user_predefined_time(client, session):
+    sub_time_1 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    sub_time_2 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 18, 0))
+    subscription = MeetingSubscription(
+        timezone="America/Los_Angeles",
+        datetime=[sub_time_1, sub_time_2],
+        title="Test",
+        size=2,
+        office="tester",
+        location="test place",
+        user_rules=[],
+        default_auto_opt_in=True,
+    )
+    session.add(subscription)
+    # Make a fake preference, so second time slot is more popular
+    preference = UserSubscriptionPreferences(subscription=subscription, preference=sub_time_2, auto_opt_in=True, user_id=200)
+    session.add(preference)
+
+    user = User(
+        first_name="tester",
+        last_name="user",
+        email="darwin@yelp.com",
+        meta_data={"email": "darwin@yelp.com"},
+        subscription_preferences=[],
+    )
+    session.add(user)
+    session.commit()
+    time_slot = TimeSlot.from_sqlalchemy(sub_time_1, subscription.timezone)
+    resp = client.post(
+        f"/v1/user/preferences/subscribe/{subscription.id}",
+        json={"email": user.email, "time_slot": time_slot.model_dump(mode="json")},
+    )
+    assert resp.status_code == 200
+    assert resp.json["time_slot"] == {
+        "day": time_slot.day.value,
+        "hour": time_slot.hour,
+        "minute": time_slot.minute,
+    }
+
+    new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
+    assert new_preference.preference == sub_time_1
 
 
 @pytest.mark.parametrize("auto_opt_in", (True, False))
