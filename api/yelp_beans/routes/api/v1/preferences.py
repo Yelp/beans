@@ -14,6 +14,7 @@ from yelp_beans.logic.user import PreferenceOptions
 from yelp_beans.logic.user import add_preferences
 from yelp_beans.logic.user import get_user
 from yelp_beans.logic.user import remove_preferences
+from yelp_beans.models import UserSubscriptionPreferences
 from yelp_beans.routes.api.v1.types import Subscription
 from yelp_beans.routes.api.v1.types import TimeSlot
 
@@ -60,6 +61,12 @@ def preferences_api_post(subscription_id: int) -> str:
     return "OK"
 
 
+def update_auto_opt_in(user_prefs: list[UserSubscriptionPreferences], auto_opt_in: bool | None) -> None:
+    for matching_pref in user_prefs:
+        if auto_opt_in is not None and matching_pref.auto_opt_in != auto_opt_in:
+            matching_pref.auto_opt_in = auto_opt_in
+
+
 @preferences_blueprint.route("/subscribe/<int:subscription_id>", methods=["POST"])
 def subscribe_api_post(subscription_id: int) -> dict[str, Any]:
     data = request.json
@@ -101,12 +108,15 @@ def subscribe_api_post(subscription_id: int) -> dict[str, Any]:
 
     assert datetime_id is not None, "We shouldn't get to this point without picking a datetime"
 
-    existing_matching_prefs = [pref for pref in user.subscription_preferences if pref.subscription_id == subscription_id]
+    subscription_user_prefs = [pref for pref in user.subscription_preferences if pref.subscription_id == subscription_id]
 
-    if existing_matching_prefs:
-        for matching_pref in existing_matching_prefs:
-            if auto_opt_in is not None and matching_pref.auto_opt_in != auto_opt_in:
-                matching_pref.auto_opt_in = auto_opt_in
+    time_slot_prefs = [pref for pref in subscription_user_prefs if pref.preference_id == datetime_id]
+
+    if time_slot_data is None and subscription_user_prefs:
+        update_auto_opt_in(subscription_user_prefs, auto_opt_in)
+        new_preference = False
+    elif time_slot_prefs:
+        update_auto_opt_in(time_slot_prefs, auto_opt_in)
         new_preference = False
     else:
         preference = PreferenceOptions(active=True)
