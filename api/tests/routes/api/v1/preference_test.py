@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from unittest import mock
 
 import pytest
 from yelp_beans.models import MeetingSubscription
@@ -381,3 +382,111 @@ def test_subscribe_api_post_update_subscription(client, session, auto_opt_in):
     new_preference = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).one()
 
     assert new_preference.auto_opt_in == auto_opt_in
+
+
+def test_subscribe_api_post_update_subscription_time_slot_specified(client, session):
+    sub_time_1 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    sub_time_2 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 18, 0))
+    subscription = MeetingSubscription(
+        timezone="America/Los_Angeles",
+        datetime=[sub_time_1, sub_time_2],
+        title="Test",
+        size=2,
+        office="tester",
+        location="test place",
+        user_rules=[],
+        default_auto_opt_in=True,
+    )
+    session.add(subscription)
+
+    preference_1 = UserSubscriptionPreferences(
+        subscription=subscription,
+        preference=sub_time_1,
+        auto_opt_in=False,
+    )
+    preference_2 = UserSubscriptionPreferences(
+        subscription=subscription,
+        preference=sub_time_2,
+        auto_opt_in=False,
+    )
+    user = User(
+        first_name="tester",
+        last_name="user",
+        email="darwin@yelp.com",
+        meta_data={"email": "darwin@yelp.com"},
+        subscription_preferences=[preference_1, preference_2],
+    )
+    session.add(user)
+
+    session.commit()
+    time_slot = TimeSlot.from_sqlalchemy(sub_time_1, subscription.timezone)
+    resp = client.post(
+        f"/v1/user/preferences/subscribe/{subscription.id}",
+        json={"email": user.email, "time_slot": time_slot.model_dump(mode="json"), "auto_opt_in": True},
+    )
+    assert resp.status_code == 200
+
+    user_pref_1 = (
+        session.query(UserSubscriptionPreferences)
+        .filter(UserSubscriptionPreferences.user_id == user.id, UserSubscriptionPreferences.id == preference_1.id)
+        .one()
+    )
+    user_pref_2 = (
+        session.query(UserSubscriptionPreferences)
+        .filter(UserSubscriptionPreferences.user_id == user.id, UserSubscriptionPreferences.id == preference_2.id)
+        .one()
+    )
+
+    # Should only update the user preference for the specified time slot to auto_opt_in
+    assert user_pref_1.auto_opt_in
+    assert not user_pref_2.auto_opt_in
+
+
+def test_subscribe_api_post_create_subscription_when_subscribed_to_other_time_slot(client, session):
+    sub_time_1 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 13, 0))
+    sub_time_2 = SubscriptionDateTime(datetime=datetime(2017, 7, 20, 18, 0))
+    subscription = MeetingSubscription(
+        timezone="America/Los_Angeles",
+        datetime=[sub_time_1, sub_time_2],
+        title="Test",
+        size=2,
+        office="tester",
+        location="test place",
+        user_rules=[],
+        default_auto_opt_in=True,
+    )
+    session.add(subscription)
+    preference_2 = UserSubscriptionPreferences(
+        subscription=subscription,
+        preference=sub_time_2,
+        auto_opt_in=False,
+    )
+    user = User(
+        first_name="tester",
+        last_name="user",
+        email="darwin@yelp.com",
+        meta_data={"email": "darwin@yelp.com"},
+        subscription_preferences=[preference_2],
+    )
+    session.add(user)
+
+    session.commit()
+    time_slot = TimeSlot.from_sqlalchemy(sub_time_1, subscription.timezone)
+    resp = client.post(
+        f"/v1/user/preferences/subscribe/{subscription.id}",
+        json={"email": user.email, "time_slot": time_slot.model_dump(mode="json")},
+    )
+    assert resp.status_code == 200
+    assert resp.json == {
+        "subscription": mock.ANY,
+        "time_slot": {
+            "day": "thursday",
+            "hour": 6,
+            "minute": 0,
+        },
+        "new_preference": True,
+    }
+
+    preferences = session.query(UserSubscriptionPreferences).filter(UserSubscriptionPreferences.user_id == user.id).all()
+
+    assert len(preferences) == 2
