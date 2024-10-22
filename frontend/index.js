@@ -10,6 +10,7 @@ import MeetingRequest from "./containers/MeetingRequest";
 import User from "./containers/User";
 import SubscriptionsList from "./containers/SubscriptionsList";
 import Subscription from "./containers/Subscription";
+import CreateSubscription from "./containers/CreateSubscription";
 import Subscribe from "./containers/Subscribe";
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/subscribe/:id",
     element: <Subscribe />,
+  },
+  {
+    path: "/admin/subscriptions/create",
+    element: <CreateSubscription />,
   },
   {
     path: "/admin/subscriptions/:id",

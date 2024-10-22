@@ -69,6 +69,10 @@ app.get("/admin/subscriptions", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
+app.get("/admin/subscriptions/create", (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
+
 app.get("/admin/subscriptions/:id", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });

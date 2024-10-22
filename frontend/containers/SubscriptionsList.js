@@ -28,6 +28,9 @@ function SubscriptionList() {
   return (
     <div className="container-fluid">
       <h1>Subscriptions</h1>
+      <a className="btn btn-primary my-2" href="/admin/subscriptions/create">
+        New Subscription
+      </a>
       <table className="table table-striped">
         <thead>
           <tr>
