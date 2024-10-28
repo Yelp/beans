@@ -31,10 +31,12 @@ class UserPreferenceForm extends Component {
   handleSubmit(prefId, event) {
     event.preventDefault();
     if (this.state) {
+      const { email } = this.props;
+      const { [prefId]: preferenceData } = this.state;
       axios
         .post(`/v1/user/preferences/subscription/${prefId}`, {
-          ...this.state[prefId],
-          email: this.props.email,
+          ...preferenceData,
+          email,
         })
         .then(() => {
           alert("Preference Updated"); // eslint-disable-line
@@ -166,7 +168,8 @@ class UserPreferenceForm extends Component {
   }
 
   render() {
-    if (this.props.loading) {
+    const { loading } = this.props;
+    if (loading) {
       return (
         <div className="spinner-border preferences-spinner" role="status">
           <span className="sr-only">Loading...</span>
