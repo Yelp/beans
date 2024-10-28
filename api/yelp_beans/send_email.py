@@ -13,6 +13,7 @@ from sendgrid.helpers.mail import To
 
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_users_from_spec
+from yelp_beans.models import MeetingSpec
 from yelp_beans.models import User
 
 secrets = None
@@ -90,6 +91,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
                     "first_name": user.first_name,
                     "office": subscription.office,
                     "location": subscription.location,
+                    "meeting_title": subscription.title,
                     "meeting_day": meeting_datetime.strftime("%A"),
                     "meeting_time": meeting_datetime.strftime("%I:%M %p %Z"),
                     "meeting_url": create_url,
@@ -181,13 +183,18 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
     return invite_url
 
 
-def send_batch_unmatched_email(unmatched):
+def send_batch_unmatched_email(unmatched: list[User], spec: MeetingSpec) -> None:
     """Sends an email to a person that couldn't be matched for the week"""
     load_secrets()
+    subscription = spec.meeting_subscription
     for user in unmatched:
         send_single_email(
             user.email,
             "Your Beans meeting this week",
             "unmatched_email.html",
-            {"first_name": user.first_name, "project": secrets["PROJECT"]},
+            {
+                "first_name": user.first_name,
+                "project": secrets["PROJECT"],
+                "meeting_title": subscription.title,
+            },
         )
