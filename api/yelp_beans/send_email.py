@@ -2,6 +2,10 @@ import datetime
 import json
 import logging
 import urllib
+from collections.abc import Collection
+from dataclasses import dataclass
+from functools import cache
+from typing import Any
 
 from jinja2 import Environment
 from jinja2 import PackageLoader
@@ -13,60 +17,73 @@ from sendgrid.helpers.mail import To
 
 from yelp_beans.logic.meeting_spec import get_meeting_datetime
 from yelp_beans.logic.meeting_spec import get_users_from_spec
+from yelp_beans.models import MeetingSpec
 from yelp_beans.models import User
 
-secrets = None
-send_grid_client = None
-SENDGRID_SENDER = None
+
+@dataclass
+class Secrets:
+    send_grid_api_key: str
+    send_grid_sender: str
+    project: str
 
 
-def load_secrets():
-    global secrets, send_grid_client, SENDGRID_SENDER
-    if secrets is not None:
-        return
+@cache
+def get_secrets() -> Secrets:
+    with open("client_secrets.json") as f:
+        secrets = json.load(f)
 
-    secrets = json.loads(open("client_secrets.json").read())
-    # TODO (rkwills) switch to a yelp sendgrid account
-    send_grid_client = SendGridAPIClient(api_key=secrets["SENDGRID_API_KEY"])
-    SENDGRID_SENDER = secrets["SENDGRID_SENDER"]
+    return Secrets(
+        # TODO (rkwills) switch to a yelp sendgrid account
+        send_grid_api_key=secrets["SENDGRID_API_KEY"],
+        send_grid_sender=secrets["SENDGRID_SENDER"],
+        project=secrets["PROJECT"],
+    )
 
 
-def send_single_email(email, subject, template, template_arguments):
+@cache
+def get_sendgrid_client() -> SendGridAPIClient:
+    secrets = get_secrets()
+    return SendGridAPIClient(api_key=secrets.send_grid_api_key)
+
+
+def send_single_email(email: str, subject: str, template_filename: str, template_arguments: dict[str, Any]):
     """Send an email using the SendGrid API
     Args:
-        - email :string => the user's work email (ie username@company.com)
-        - subject :string => the subject line for the email
-        - template :string => the template file, corresponding to the email sent.
-        - template_arguments :dictionary => keyword arguments to specify to render_template
+        - email => the user's work email (ie username@company.com)
+        - subject => the subject line for the email
+        - template_filename => the template file, corresponding to the email sent.
+        - template_arguments => keyword arguments to specify to render_template
     Returns:
         - SendGrid response
     """
-    load_secrets()
+    secrets = get_secrets()
+    send_grid_client = get_sendgrid_client()
     env = Environment(loader=PackageLoader("yelp_beans", "templates"))
-    template = env.get_template(template)
+    template = env.get_template(template_filename)
     rendered_template = template.render(template_arguments)
 
-    message = Mail(Email(SENDGRID_SENDER), To(email), subject, Content("text/html", rendered_template))
+    message = Mail(Email(secrets.send_grid_sender), To(email), subject, Content("text/html", rendered_template))
 
     return send_grid_client.client.mail.send.post(request_body=message.get())
 
 
-def send_batch_initial_opt_in_email(users):
+def send_batch_initial_opt_in_email(users: Collection[User]) -> None:
     """Sends the initial batch email to ask if people want to join Beans"""
-    load_secrets()
+    secrets = get_secrets()
     for user in users:
         send_single_email(
             user.email,
             "Want to meet other employees through Beans?",
             "welcome_email.html",
-            {"first_name": user.first_name, "project": secrets["PROJECT"]},
+            {"first_name": user.first_name, "project": secrets.project},
         )
 
 
-def send_batch_weekly_opt_in_email(meeting_spec):
+def send_batch_weekly_opt_in_email(meeting_spec: MeetingSpec) -> None:
     """Sends an email for the week asking if members want a meeting"""
-    load_secrets()
-    create_url = "https://{}.appspot.com/meeting_request/{}".format(secrets["PROJECT"], meeting_spec.id)
+    secrets = get_secrets()
+    create_url = f"https://{secrets.project}.appspot.com/meeting_request/{meeting_spec.id}"
     logging.info("created url " + create_url)
 
     users = get_users_from_spec(meeting_spec, exclude_user_prefs_with_auto_opt_in=True)
@@ -90,11 +107,12 @@ def send_batch_weekly_opt_in_email(meeting_spec):
                     "first_name": user.first_name,
                     "office": subscription.office,
                     "location": subscription.location,
+                    "meeting_title": subscription.title,
                     "meeting_day": meeting_datetime.strftime("%A"),
                     "meeting_time": meeting_datetime.strftime("%I:%M %p %Z"),
                     "meeting_url": create_url,
-                    "link_to_change_pref": "https://{}.appspot.com/".format(secrets["PROJECT"]),
-                    "project": secrets["PROJECT"],
+                    "link_to_change_pref": f"https://{secrets.project}.appspot.com/",
+                    "project": secrets.project,
                 },
             )
             logging.info("sent email")
@@ -103,7 +121,7 @@ def send_batch_weekly_opt_in_email(meeting_spec):
             logging.info("terminated")
 
 
-def send_batch_meeting_confirmation_email(matches, spec):
+def send_batch_meeting_confirmation_email(matches: Collection[Collection[User]], spec: MeetingSpec) -> None:
     """
     Sends an email to all of the participants in a match for the week
         matches - list of meetings to participants
@@ -116,13 +134,14 @@ def send_batch_meeting_confirmation_email(matches, spec):
             send_match_email(participant, [participant for participant in others], spec)
 
 
-def send_match_email(user, participants, meeting_spec):
+def send_match_email(user: User, participants: Collection[User], meeting_spec: MeetingSpec) -> None:
     """
     Sends an email to one of the matches for the week
         user - user receiving the email
         participants - other people in the meeting
         meeting_spec - meeting specification
     """
+    secrets = get_secrets()
     meeting_datetime = get_meeting_datetime(meeting_spec)
     meeting_datetime_end = meeting_datetime + datetime.timedelta(minutes=30)
     subscription = meeting_spec.meeting_subscription
@@ -148,12 +167,19 @@ def send_match_email(user, participants, meeting_spec):
                 meeting_datetime,
                 meeting_datetime_end,
             ),
-            "project": secrets["PROJECT"],
+            "project": secrets.project,
         },
     )
 
 
-def create_google_calendar_invitation_link(user_list, title, office, location, meeting_datetime, end_time):
+def create_google_calendar_invitation_link(
+    user_list: Collection[User],
+    title: str,
+    office: str,
+    location: str,
+    meeting_datetime: datetime.datetime,
+    end_time: datetime.datetime,
+) -> str:
     invite_url = "https://www.google.com/calendar/render?action=TEMPLATE&"
     url_params = {
         "text": "Meeting with {users} for {title}".format(
@@ -171,6 +197,7 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
         "location": office + " " + location,
         "add": ",".join([user.email for user in user_list]),
     }
+    # TODO: Fix types around tzinfo
     if meeting_datetime.tzinfo and meeting_datetime.tzinfo.zone:
         # If the meeting time have a timezone specified
         # and Calendar URL link doesn't contain timezone
@@ -181,13 +208,18 @@ def create_google_calendar_invitation_link(user_list, title, office, location, m
     return invite_url
 
 
-def send_batch_unmatched_email(unmatched):
+def send_batch_unmatched_email(unmatched: Collection[User], spec: MeetingSpec) -> None:
     """Sends an email to a person that couldn't be matched for the week"""
-    load_secrets()
+    secrets = get_secrets()
+    subscription = spec.meeting_subscription
     for user in unmatched:
         send_single_email(
             user.email,
             "Your Beans meeting this week",
             "unmatched_email.html",
-            {"first_name": user.first_name, "project": secrets["PROJECT"]},
+            {
+                "first_name": user.first_name,
+                "project": secrets.project,
+                "meeting_title": subscription.title,
+            },
         )

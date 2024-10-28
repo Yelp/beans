@@ -69,7 +69,7 @@ def match_employees():
         matches, unmatched = generate_meetings(users, spec, prev_meeting_tuples=None, group_size=group_size)
         save_meetings(matches, spec)
 
-        send_batch_unmatched_email(unmatched)
+        send_batch_unmatched_email(unmatched, spec)
         send_batch_meeting_confirmation_email(matches, spec)
     return "OK"
 
