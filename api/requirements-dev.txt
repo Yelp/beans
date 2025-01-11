@@ -6,7 +6,7 @@
 #
 cachetools==5.5.0
     # via tox
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -c requirements.txt
     #   requests
@@ -14,13 +14,13 @@ cfgv==3.4.0
     # via pre-commit
 chardet==5.2.0
     # via tox
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c requirements.txt
     #   requests
 colorama==0.4.6
     # via tox
-coverage==7.6.8
+coverage==7.6.10
     # via -r requirements-dev-minimal.txt
 distlib==0.3.9
     # via virtualenv
@@ -28,7 +28,7 @@ filelock==3.16.1
     # via
     #   tox
     #   virtualenv
-identify==2.6.3
+identify==2.6.4
     # via pre-commit
 idna==3.10
     # via
@@ -73,13 +73,13 @@ requests-mock==1.12.1
     # via -r requirements-dev-minimal.txt
 requirements-tools==2.1.0
     # via -r requirements-dev-minimal.txt
-six==1.16.0
+six==1.17.0
     # via
     #   -c requirements.txt
     #   requests-mock
 tox==4.23.2
     # via -r requirements-dev-minimal.txt
-urllib3==2.2.3
+urllib3==2.3.0
     # via
     #   -c requirements.txt
     #   requests
