@@ -4,10 +4,10 @@
   "description": "App for meeting people.",
   "dependencies": {
     "axios": "^1.8.4",
-    "cookie-session": "^2.1.0",
+    "cookie-session": "^2.1.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "express-session": "^1.18.1",
+    "express-session": "^1.18.2",
     "http-proxy-middleware": "^3.0.5",
     "moment-timezone": "^0.5.46",
     "nconf": "^0.12.1",
