@@ -10,9 +10,9 @@ arrow==1.4.0
     # via -r requirements-minimal.txt
 blinker==1.9.0
     # via flask
-boto3==1.42.9
+boto3==1.42.19
     # via -r requirements-minimal.txt
-botocore==1.42.9
+botocore==1.42.19
     # via
     #   boto3
     #   s3transfer
@@ -37,7 +37,7 @@ httplib2==0.31.0
     # via -r requirements-minimal.txt
 idna==3.11
     # via requests
-importlib-metadata==8.7.0
+importlib-metadata==8.7.1
     # via flask
 itsdangerous==2.2.0
     # via flask
@@ -59,7 +59,7 @@ pydantic==2.12.5
     # via -r requirements-minimal.txt
 pydantic-core==2.41.5
     # via pydantic
-pyparsing==3.2.5
+pyparsing==3.3.1
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
