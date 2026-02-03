@@ -10,9 +10,9 @@ arrow==1.4.0
     # via -r requirements-minimal.txt
 blinker==1.9.0
     # via flask
-boto3==1.42.24
+boto3==1.42.39
     # via -r requirements-minimal.txt
-botocore==1.42.24
+botocore==1.42.39
     # via
     #   boto3
     #   s3transfer
@@ -31,9 +31,9 @@ flask-api-utils==1.0.2
     # via -r requirements-minimal.txt
 flask-sqlalchemy==3.1.1
     # via -r requirements-minimal.txt
-greenlet==3.3.0
+greenlet==3.3.1
     # via sqlalchemy
-httplib2==0.31.0
+httplib2==0.31.2
     # via -r requirements-minimal.txt
 idna==3.11
     # via requests
@@ -43,7 +43,7 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-jmespath==1.0.1
+jmespath==1.1.0
     # via
     #   boto3
     #   botocore
@@ -59,7 +59,7 @@ pydantic==2.12.5
     # via -r requirements-minimal.txt
 pydantic-core==2.41.5
     # via pydantic
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
@@ -79,7 +79,7 @@ sendgrid==6.12.5
     # via -r requirements-minimal.txt
 six==1.17.0
     # via python-dateutil
-sqlalchemy==2.0.45
+sqlalchemy==2.0.46
     # via flask-sqlalchemy
 starkbank-ecdsa==2.2.0
     # via sendgrid
