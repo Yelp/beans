@@ -22,7 +22,7 @@ charset-normalizer==3.4.4
     # via requests
 click==8.3.1
     # via flask
-flask==3.1.2
+flask==3.1.3
     # via
     #   -r requirements-minimal.txt
     #   flask-api-utils
