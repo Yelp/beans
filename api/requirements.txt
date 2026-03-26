@@ -71,7 +71,7 @@ pytz==2025.2
     # via -r requirements-minimal.txt
 pyyaml==6.0.3
     # via -r requirements-minimal.txt
-requests==2.32.5
+requests==2.33.0
     # via -r requirements-minimal.txt
 s3transfer==0.16.0
     # via boto3
