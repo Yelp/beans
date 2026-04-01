@@ -10,15 +10,15 @@ arrow==1.4.0
     # via -r requirements-minimal.txt
 blinker==1.9.0
     # via flask
-boto3==1.42.39
+boto3==1.42.81
     # via -r requirements-minimal.txt
-botocore==1.42.39
+botocore==1.42.81
     # via
     #   boto3
     #   s3transfer
-certifi==2026.1.4
+certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via requests
 click==8.3.1
     # via flask
@@ -31,13 +31,13 @@ flask-api-utils==1.0.2
     # via -r requirements-minimal.txt
 flask-sqlalchemy==3.1.1
     # via -r requirements-minimal.txt
-greenlet==3.3.1
+greenlet==3.3.2
     # via sqlalchemy
 httplib2==0.31.2
     # via -r requirements-minimal.txt
 idna==3.11
     # via requests
-importlib-metadata==8.7.1
+importlib-metadata==9.0.0
     # via flask
 itsdangerous==2.2.0
     # via flask
@@ -57,7 +57,7 @@ psycopg2-binary==2.9.11
     # via -r requirements-minimal.txt
 pydantic==2.12.5
     # via -r requirements-minimal.txt
-pydantic-core==2.41.5
+pydantic-core==2.45.0
     # via pydantic
 pyparsing==3.3.2
     # via httplib2
@@ -67,11 +67,11 @@ python-dateutil==2.9.0.post0
     #   botocore
 python-http-client==3.3.7
     # via sendgrid
-pytz==2025.2
+pytz==2026.1.post1
     # via -r requirements-minimal.txt
 pyyaml==6.0.3
     # via -r requirements-minimal.txt
-requests==2.33.0
+requests==2.33.1
     # via -r requirements-minimal.txt
 s3transfer==0.16.0
     # via boto3
@@ -79,7 +79,7 @@ sendgrid==6.12.5
     # via -r requirements-minimal.txt
 six==1.17.0
     # via python-dateutil
-sqlalchemy==2.0.46
+sqlalchemy==2.0.48
     # via flask-sqlalchemy
 starkbank-ecdsa==2.2.0
     # via sendgrid
@@ -94,7 +94,7 @@ urllib3==2.6.3
     #   -r requirements-minimal.txt
     #   botocore
     #   requests
-werkzeug==3.1.6
+werkzeug==3.1.7
     # via flask
 zipp==3.23.0
     # via importlib-metadata
