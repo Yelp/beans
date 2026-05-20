@@ -48,7 +48,7 @@
     "react-test-renderer": "^18.3.1",
     "webpack": "^5.105.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^5.2.4"
   },
   "scripts": {
     "start": "node webapp.js",
