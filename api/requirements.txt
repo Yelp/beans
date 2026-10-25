@@ -16,7 +16,7 @@ botocore==1.42.39
     # via
     #   boto3
     #   s3transfer
-certifi==2026.1.4
+certifi==2026.10.19
     # via requests
 charset-normalizer==3.4.4
     # via requests
